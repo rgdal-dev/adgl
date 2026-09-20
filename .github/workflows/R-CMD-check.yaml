@@ -49,7 +49,14 @@ jobs:
 
       - name: Install GDAL (macOS)
         if: runner.os == 'macOS'
-        run: brew install gdal
+        run: |
+          brew install gdal
+          # The PROJ package's macOS binary carries a libproj whose compiled-in
+          # data directory is not present on the runner, so proj_create cannot
+          # find proj.db and every transform fails. Homebrew's proj arrives as
+          # a dependency of gdal, so point PROJ at that copy of the database.
+          echo "PROJ_DATA=$(brew --prefix proj)/share/proj" >> $GITHUB_ENV
+          echo "PROJ_LIB=$(brew --prefix proj)/share/proj" >> $GITHUB_ENV
 
       - name: Install GDAL (Windows)
         if: runner.os == 'Windows'
