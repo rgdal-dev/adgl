@@ -1,0 +1,8 @@
+pandoc: 3.8.3
+pkgdown: 2.2.1
+pkgdown_sha: ~
+articles: {}
+last_built: 2026-09-20T12:53Z
+urls:
+  reference: https://rgdal-dev.github.io/adgl/reference
+  article: https://rgdal-dev.github.io/adgl/articles
