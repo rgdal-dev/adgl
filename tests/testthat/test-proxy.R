@@ -73,3 +73,21 @@ test_that("a warped plan has no grid to be lazy over, and says so", {
   on.exit(src_close(x), add = TRUE)
   expect_error(as_grd(warp(x, "EPSG:3857")), "cannot be lazy")
 })
+
+test_that("the lazy grid masks nodata too, so a plot does not draw the fill", {
+  path <- nodata_tif()
+  on.exit(unlink(path), add = TRUE)
+  x <- src(path)
+  on.exit(src_close(x), add = TRUE)
+
+  g <- as_grd(x)
+  expect_equal(as.vector(g$data[1L, 1:2, 1L]), c(NA_real_, NA_real_))
+  expect_equal(as.vector(g$data[1L, 3:4, 1L]), c(3, 4))
+
+  # A crop is a fresh windowed read, so the mask has to survive the subset
+  # rather than having been applied once to something held in memory.
+  expect_true(all(is.na(wk::grd_subset(g, i = 1L, j = 1:2)$data)))
+
+  expect_equal(as.vector(as_grd(x, mask = FALSE)$data[1L, 1:2, 1L]),
+               c(-32768, -32768))
+})

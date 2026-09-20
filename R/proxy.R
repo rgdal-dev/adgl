@@ -34,7 +34,13 @@ NULL
 #' the bounding window at full resolution and subsets in R, and says so when
 #' that window is large.
 #'
+#' Every read through the proxy is a double, so `mask` needs no `type` pivot
+#' here: a band's nodata value comes back as `NA` unless you say otherwise.
+#' That is what keeps a fill out of the plot rather than drawing it as the
+#' darkest colour in the ramp. See [collect()] for the whole argument.
+#'
 #' @param x A raster source from [src()], usually after [query()].
+#' @param mask Return each band's nodata value as `NA`. `TRUE` by default.
 #'
 #' @return A `wk_grd_rct` whose `data` reads on demand.
 #' @export
@@ -45,8 +51,9 @@ NULL
 #'
 #' # Reading a corner is one windowed read, not a read of the whole raster.
 #' dim(wk::grd_subset(g, i = 1:2, j = 1:3)$data)
-as_grd <- function(x) {
+as_grd <- function(x, mask = TRUE) {
   stopifnot(S7::S7_inherits(x, raster_source))
+  mask <- resolve_mask(mask, "double")
   refuse_on_blocking(x, "as_grd")
   if (!is.null(S7::prop(x, "plan")$warp)) {
     stop("as_grd() cannot be lazy over a warped plan, because the warp has ",
@@ -60,7 +67,7 @@ as_grd <- function(x) {
   crs <- S7::prop(x, "dataset")@crs
 
   wk::grd_rct(
-    new_proxy(x),
+    new_proxy(x, mask),
     bbox = wk::rct(
       extent[["xmin"]], extent[["ymin"]], extent[["xmax"]], extent[["ymax"]],
       crs = crs_or_null(crs)
@@ -68,13 +75,14 @@ as_grd <- function(x) {
   )
 }
 
-new_proxy <- function(x) {
+new_proxy <- function(x, mask = TRUE) {
   plan <- S7::prop(x, "plan")
   # dim() is a method rather than an attribute, because a `dim` attribute on
   # a list has to match its length and this object holds no elements at all.
   structure(
     list(
       source = x,
+      mask = mask,
       dim = c(plan$dimension[2L], plan$dimension[1L], length(plan$bands))
     ),
     class = "adgl_proxy"
@@ -125,6 +133,9 @@ as.array.adgl_proxy <- function(x, ...) {
   }
 
   values <- proxy_read(source, i[keep_i], j[keep_j], bands)
+  if (isTRUE(unclass(x)$mask)) {
+    values <- mask_values(values, band_nodata(S7::prop(source, "dataset"), bands))
+  }
   for (b in seq_along(values)) {
     out[keep_i, keep_j, b] <- t(matrix(values[[b]],
                                        nrow = length(keep_j),

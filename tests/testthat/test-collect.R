@@ -59,6 +59,50 @@ test_that("the narrow read types come through", {
   expect_error(collect(src(test_tif()), type = "raw"), "Int16")
 })
 
+test_that("a nodata value comes back as missing, not as a measurement", {
+  path <- nodata_tif()
+  on.exit(unlink(path), add = TRUE)
+  x <- src(path)
+  on.exit(src_close(x), add = TRUE)
+
+  g <- collect(x)
+  # The fill is the first two cells of the first row, and the rest is 3:16.
+  expect_equal(as.vector(t(g$data))[1:2], c(NA_real_, NA_real_))
+  expect_equal(as.vector(t(g$data))[3:16], as.double(3:16))
+  expect_false(any(g$data == -32768, na.rm = TRUE))
+
+  # The same on the gis path, which is a flat vector rather than an array.
+  expect_equal(sum(is.na(collect(x, as = "gis"))), 2L)
+
+  # And the value itself is still there for anyone who asks for it.
+  expect_equal(as.vector(t(collect(x, mask = FALSE)$data))[1:2],
+               c(-32768, -32768))
+})
+
+test_that("masking pivots on type rather than pretending", {
+  path <- nodata_tif()
+  on.exit(unlink(path), add = TRUE)
+  x <- src(path)
+  on.exit(src_close(x), add = TRUE)
+
+  # A narrow type has no missing value to put there, so it does not mask by
+  # default and will not be talked into it.
+  expect_equal(collect(x, type = "integer")$data[1L], -32768L)
+  expect_error(collect(x, type = "integer", mask = TRUE), "type = \"double\"")
+  expect_error(collect(x, type = "raw", mask = TRUE), "type = \"double\"")
+  expect_error(collect(x, mask = NA), "TRUE or FALSE")
+})
+
+test_that("a band that declares no nodata value is left alone", {
+  path <- byte_tif()
+  on.exit(unlink(path), add = TRUE)
+  x <- src(path)
+  on.exit(src_close(x), add = TRUE)
+
+  expect_false(anyNA(collect(x)$data))
+  expect_equal(as.vector(t(collect(x)$data)), as.double(seq_len(16) - 1))
+})
+
 test_that("a vector collect is a tibble with a wk geometry column", {
   v <- src(test_gpkg())
   on.exit(src_close(v), add = TRUE)

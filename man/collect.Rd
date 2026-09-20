@@ -41,6 +41,21 @@ Int16, UInt16 and Int32. A band whose type will not fit is an error rather
 than a silent clamp. The \code{"grd"} form is built from whatever comes back, so
 a raw read stays a raw array.
 
+\code{mask} decides what happens to a value the source itself declares absent.
+A band's nodata value is a fill, not a measurement, so by default it comes
+back as \code{NA} rather than as the number that stands for it. This is what
+terra and stars do, and what rasterio calls \code{masked}. It pivots on \code{type},
+because only a double has a missing value to put there: \code{mask} defaults to
+\code{TRUE} for \code{"double"} and to \code{FALSE} for \code{"integer"} and \code{"raw"}, and
+asking for it with either of those is an error rather than a pretence.
+
+Masking is exact rather than approximate, and that matters when the read is
+resampled. A nearest read returns source values unchanged, so every fill
+pixel is caught. An averaging or bilinear read blends a fill with its
+neighbours, and the blend is no longer equal to the nodata value, so it
+survives as a number. That is the same in every package that does this, and
+it is why \code{resample = "nearest"} is the default.
+
 For a vector, the result is a tibble whose geometry column is \code{\link[wk:wkb]{wk::wkb()}}
 with its CRS set. The column keeps whatever name GDAL gave it, because wk
 finds a geometry column by asking rather than by name, so \code{wk_bbox()},
@@ -56,6 +71,8 @@ geometry and nothing else.
 \item{\code{as}}{Raster only. \code{"grd"} (the default) or \code{"gis"}.}
 \item{\code{type}}{Raster only. \code{"double"} (the default), \code{"integer"} or
 \code{"raw"}.}
+\item{\code{mask}}{Raster only. Return each band's nodata value as \code{NA}.
+Defaults to \code{TRUE} for \code{type = "double"} and \code{FALSE} otherwise.}
 }
 }
 

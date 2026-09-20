@@ -199,7 +199,28 @@ gap("write-overwrite", "an explicit overwrite (terra::writeRaster(overwrite =))"
 gap("vrt", "as_vrt() (gdalraster::buildVRT, vapour_vrt)")
 gap("subdatasets", "reaching a subdataset (stars::read_stars(sub =), read_ncdf(var =))")
 gap("colour-table", "reading a colour table (gdalraster::plot_raster(col_tbl =))")
-gap("nodata-mask", "nodata as missing rather than as data (rasterio src.read(masked =))")
+test_that("nodata-mask: a nodata value comes back as missing, not as data", {
+  # rasterio: src.read(masked = True) ; terra and stars do this by default
+  path <- tempfile(fileext = ".tif")
+  on.exit(unlink(path), add = TRUE)
+  ds <- GDAL7::gdal_create(path, 4, 4, bands = 1, type = "Int16")
+  ds@geotransform <- c(0, 1, 0, 4, 0, -1)
+  ds@crs <- "EPSG:4326"
+  band <- GDAL7::get_raster_band(ds, 1)
+  band@nodata_value <- -32768
+  GDAL7::write_raster(ds, list(c(-32768, -32768, as.double(3:16))))
+  GDAL7::gdal_close(ds)
+
+  x <- src(path)
+  on.exit(src_close(x), add = TRUE)
+  expect_equal(sum(is.na(collect(x)$data)), 2L)
+  expect_false(any(collect(x)$data == -32768, na.rm = TRUE))
+
+  # rasterio's masked is opt-in and adgl's is the default, so the opt-out is
+  # the thing to check is still there.
+  expect_equal(sum(collect(x, mask = FALSE)$data == -32768), 2L)
+})
+
 gap("boundless", "a window that runs past the edge, padded (rasterio src.read(boundless =), terra::crop(extend =))")
 gap("read-masks", "the mask itself rather than the values (rasterio src.read_masks)")
 

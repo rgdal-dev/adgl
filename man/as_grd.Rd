@@ -4,10 +4,12 @@
 \alias{as_grd}
 \title{A raster source as a lazy grid}
 \usage{
-as_grd(x)
+as_grd(x, mask = TRUE)
 }
 \arguments{
 \item{x}{A raster source from \code{\link[=src]{src()}}, usually after \code{\link[=query]{query()}}.}
+
+\item{mask}{Return each band's nodata value as \code{NA}. \code{TRUE} by default.}
 }
 \value{
 A \code{wk_grd_rct} whose \code{data} reads on demand.
@@ -32,6 +34,11 @@ arithmetic sequence, which is all \code{grd_crop()} ever produces, the read is
 one \code{RasterIO} call at the output size; when they are not, the proxy reads
 the bounding window at full resolution and subsets in R, and says so when
 that window is large.
+
+Every read through the proxy is a double, so \code{mask} needs no \code{type} pivot
+here: a band's nodata value comes back as \code{NA} unless you say otherwise.
+That is what keeps a fill out of the plot rather than drawing it as the
+darkest colour in the ramp. See \code{\link[=collect]{collect()}} for the whole argument.
 }
 \examples{
 x <- src(system.file("extdata/test.tif", package = "GDAL7"))

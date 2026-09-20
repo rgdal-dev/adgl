@@ -26,6 +26,21 @@ NULL
 #' than a silent clamp. The `"grd"` form is built from whatever comes back, so
 #' a raw read stays a raw array.
 #'
+#' `mask` decides what happens to a value the source itself declares absent.
+#' A band's nodata value is a fill, not a measurement, so by default it comes
+#' back as `NA` rather than as the number that stands for it. This is what
+#' terra and stars do, and what rasterio calls `masked`. It pivots on `type`,
+#' because only a double has a missing value to put there: `mask` defaults to
+#' `TRUE` for `"double"` and to `FALSE` for `"integer"` and `"raw"`, and
+#' asking for it with either of those is an error rather than a pretence.
+#'
+#' Masking is exact rather than approximate, and that matters when the read is
+#' resampled. A nearest read returns source values unchanged, so every fill
+#' pixel is caught. An averaging or bilinear read blends a fill with its
+#' neighbours, and the blend is no longer equal to the nodata value, so it
+#' survives as a number. That is the same in every package that does this, and
+#' it is why `resample = "nearest"` is the default.
+#'
 #' For a vector, the result is a tibble whose geometry column is [wk::wkb()]
 #' with its CRS set. The column keeps whatever name GDAL gave it, because wk
 #' finds a geometry column by asking rather than by name, so `wk_bbox()`,
@@ -43,6 +58,8 @@ NULL
 #'   \item{`as`}{Raster only. `"grd"` (the default) or `"gis"`.}
 #'   \item{`type`}{Raster only. `"double"` (the default), `"integer"` or
 #'     `"raw"`.}
+#'   \item{`mask`}{Raster only. Return each band's nodata value as `NA`.
+#'     Defaults to `TRUE` for `type = "double"` and `FALSE` otherwise.}
 #' }
 #'
 #' @return For a raster, a `wk_grd_rct` or a vector carrying a `"gis"`
@@ -60,9 +77,10 @@ collect <- S7::new_generic("collect", "x", function(x, ...) {
 })
 
 S7::method(collect, raster_source) <- function(x, ..., as = c("grd", "gis"),
-                                               type = "double") {
+                                               type = "double", mask = NULL) {
   rlang_check_empty(...)
   as <- match.arg(as)
+  mask <- resolve_mask(mask, type)
   refuse_on_blocking(x, "collect")
 
   # A warped plan is realised into a MEM dataset first, and read from there
@@ -84,6 +102,10 @@ S7::method(collect, raster_source) <- function(x, ..., as = c("grd", "gis"),
     bands = plan$bands,
     type = type
   )
+
+  if (mask) {
+    values <- mask_values(values, band_nodata(ds, plan$bands))
+  }
 
   crs <- ds@crs
   if (identical(as, "gis")) {
@@ -155,6 +177,55 @@ raster_window <- function(plan) {
     plan$dimension[1L],
     plan$dimension[2L]
   )
+}
+
+# Nodata is a fill value, not a measurement, so it comes back as NA. The
+# decision pivots on type because only a double has a missing value to put
+# there: a raw has none at all, and NA_integer_ is a real Int32 value, so
+# masking an integer read would make a measurement and a fill indis-
+# tinguishable in the other direction.
+resolve_mask <- function(mask, type) {
+  if (is.null(mask)) {
+    return(identical(type, "double"))
+  }
+  if (!is.logical(mask) || length(mask) != 1L || is.na(mask)) {
+    stop("mask must be TRUE or FALSE", call. = FALSE)
+  }
+  if (mask && !identical(type, "double")) {
+    stop("mask = TRUE needs type = \"double\", and this read is type = \"",
+         type, "\".\n",
+         "  A raw has no missing value, and NA_integer_ is a real Int32 ",
+         "value,\n",
+         "  so neither can say \"absent\" without also losing a number.\n",
+         "  Use type = \"double\", or mask = FALSE and compare against the ",
+         "nodata value yourself.",
+         call. = FALSE)
+  }
+  mask
+}
+
+band_nodata <- function(ds, bands) {
+  vapply(bands, function(i) {
+    value <- GDAL7::get_raster_band(ds, i)@nodata_value
+    if (is.null(value)) NA_real_ else as.double(value)
+  }, double(1))
+}
+
+mask_values <- function(values, nodata) {
+  for (i in seq_along(values)) {
+    # GDAL is entitled to declare NaN as the nodata value, and NaN is not
+    # equal to itself, so that case is asked about rather than compared. It
+    # also has to be tested before is.na(), which is TRUE for a NaN as well.
+    nan_fill <- is.nan(nodata[i])
+    if (!nan_fill && is.na(nodata[i])) {
+      next
+    }
+    v <- values[[i]]
+    hit <- if (nan_fill) is.nan(v) else !is.na(v) & v == nodata[i]
+    v[hit] <- NA_real_
+    values[[i]] <- v
+  }
+  values
 }
 
 band_types <- function(ds, bands) {

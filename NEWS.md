@@ -54,3 +54,14 @@ document rather than grown by accretion.
 * `write_to()` sends a plan to any format GDAL can write, taking the driver
   from the extension. A warped plan compiles into GDAL's own pipeline and
   never enters R.
+
+* A band's nodata value is a fill rather than a measurement, so `collect()`
+  and `as_grd()` return it as `NA` by default, which is what terra and stars
+  do and what rasterio calls `masked`. The decision pivots on `type`, because
+  only a double has a missing value to put there: masking is on for
+  `type = "double"` and off for `"integer"` and `"raw"`, and asking for it
+  with either of those is an error rather than a pretence. `mask = FALSE`
+  gives the raw values back. Masking is exact, so a resampled read that
+  averages a fill with its neighbours no longer matches the nodata value and
+  survives as a number; that is the same everywhere and is why
+  `resample = "nearest"` is the default.
