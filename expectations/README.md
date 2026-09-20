@@ -24,7 +24,7 @@ suites.
 
 ```sh
 mkdir -p ../cran
-for p in sf terra gdalraster stars vapour tmap s2; do
+for p in sf terra gdalraster stars vapour tmap s2 geos geodata supercells; do
   git clone --depth 1 https://github.com/cran/$p ../cran/$p
 done
 Rscript expectations/harvest.R ../cran expectations
@@ -32,7 +32,8 @@ Rscript expectations/harvest.R ../cran expectations
 
 ```sh
 mkdir -p ../py
-for r in rasterio/rasterio corteva/rioxarray geopandas/geopandas; do
+for r in rasterio/rasterio corteva/rioxarray geopandas/geopandas \
+         geopandas/pyogrio; do
   git clone --depth 1 https://github.com/$r ../py/$(basename $r)
 done
 python3 expectations/harvest.py ../py expectations
@@ -70,6 +71,25 @@ It is not a compatibility layer and it is not a plan to grow adgl until it
 matches sf. A `gap` row is a question, not a commitment: several of them are
 things adgl declines on purpose, and the point of writing them down is to
 decline them once, in public, rather than repeatedly in private.
+
+## What a second pass taught us about choosing packages
+
+The first pass took the obvious neighbours. The second took packages that
+*consume* a spatial object rather than producing one, and it barely paid:
+geos, geodata and supercells added 1,590 calls and not one new expectation.
+geos round-trips WKB and does geometry, geodata's examples are downloads, and
+supercells has one function. They validate that adgl's output is usable by a
+wk-native package, which is worth knowing, and nothing else.
+
+pyogrio in the same pass was worth all three several times over, because it is
+an IO layer rather than a consumer of one: 520 calls whose argument names are
+almost exactly adgl's vector surface. It corroborated the four biggest open
+gaps, and its argument ranking is the clearest statement of priority in either
+corpus.
+
+So the rule is: harvest what *is* an IO layer, or what calls one heavily.
+A package that receives an already-loaded object has nothing to say about
+loading it.
 
 ## Still to harvest
 

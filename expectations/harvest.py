@@ -27,7 +27,7 @@ import re
 import sys
 import tokenize
 
-PACKAGES = ("rasterio", "rioxarray", "geopandas")
+PACKAGES = ("rasterio", "rioxarray", "geopandas", "pyogrio")
 
 # Calls worth counting are the ones that reach the library, so a call is kept
 # when its dotted name starts with one of these. Bare numpy, pytest and
@@ -38,6 +38,9 @@ PREFIXES = {
     "rioxarray": ("rioxarray", "rio", "xr", "rds", "xds", "raster"),
     "geopandas": ("geopandas", "gpd", "gdf", "df", "GeoDataFrame",
                   "GeoSeries", "read_file", "to_file"),
+    "pyogrio": ("pyogrio", "read_dataframe", "write_dataframe", "read_info",
+                "read_arrow", "write_arrow", "open_arrow", "list_layers",
+                "list_drivers", "read_bounds", "set_gdal_config_options"),
 }
 
 DOC_SUFFIXES = (".rst", ".md", ".ipynb", ".txt")

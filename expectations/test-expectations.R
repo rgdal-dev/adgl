@@ -352,3 +352,39 @@ gap("geometry-type", "geometry type control (sf::st_read(promote_to_multi =, typ
 gap("write-append", "appending to a layer rather than creating it (sf::st_write(append =))")
 gap("spatial-filter-geometry", "filtering by an arbitrary geometry, not a rectangle (geopandas read_file(mask =), sf::st_read(wkt_filter =))")
 gap("arrow-out", "handing back the Arrow stream rather than a tibble (geopandas to_arrow)")
+gap("geometry-name", "knowing or choosing the geometry column's name (pyogrio geometry_name =)")
+gap("datetime", "datetimes and time zones surviving the read (pyogrio datetime_as_string =)")
+gap("force-2d", "dropping Z and M on read (pyogrio force_2d =)")
+
+test_that("fid: the feature id is there, but under whatever name the driver used", {
+  # pyogrio: read_dataframe(fid_as_index = True). This is a gap written as a
+  # passing test, because what it asserts is the inconsistency itself: the
+  # same five features read back through two drivers name their identifier
+  # and their geometry differently, and adgl passes both through untouched.
+  v <- src(gpkg())
+  on.exit(src_close(v), add = TRUE)
+  expect_true("fid" %in% names(collect(v)))
+
+  path <- tempfile(fileext = ".geojson")
+  on.exit(unlink(path), add = TRUE)
+  write_to(v, path)
+  again <- src(path)
+  on.exit(src_close(again), add = TRUE)
+  expect_true("OGC_FID" %in% names(collect(again)))
+  expect_false("fid" %in% names(collect(again)))
+})
+
+test_that("encoding: an encoding is an open option, not an argument", {
+  # pyogrio: read_dataframe(encoding = ). GDAL takes it as an open option, so
+  # src(options = ) is the whole answer and no new argument is needed.
+  v <- src(gpkg())
+  on.exit(src_close(v), add = TRUE)
+  path <- tempfile(fileext = ".shp")
+  on.exit(unlink(path), add = TRUE)
+  write_to(v, path)
+
+  x <- src(path, options = "ENCODING=ISO-8859-1")
+  on.exit(src_close(x), add = TRUE)
+  expect_equal(nrow(collect(x)), 5L)
+})
+

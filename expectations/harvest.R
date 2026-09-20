@@ -16,11 +16,15 @@
 # `source-directory` holds one checkout per package, named after the package.
 # The CRAN mirror on GitHub is the easy way to fill it:
 #
-#   for p in sf terra gdalraster stars vapour tmap s2; do
+#   for p in sf terra gdalraster stars vapour tmap s2 geos geodata supercells; do
 #     git clone --depth 1 https://github.com/cran/$p <source-directory>/$p
 #   done
 
-PACKAGES <- c("sf", "terra", "gdalraster", "stars", "vapour", "tmap", "s2")
+PACKAGES <- c("sf", "terra", "gdalraster", "stars", "vapour", "tmap", "s2",
+              # A second pass, on packages that consume a spatial source
+              # rather than being one: what they ask an IO layer for is the
+              # test of whether adgl can sit underneath them.
+              "geos", "geodata", "supercells")
 
 args <- commandArgs(trailingOnly = TRUE)
 source_dir <- if (length(args) >= 1L) args[[1L]] else "../cran"

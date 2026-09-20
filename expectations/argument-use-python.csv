@@ -3,8 +3,10 @@ geopandas,GeoDataFrame,geometry,98
 geopandas,GeoDataFrame,crs geometry,64
 geopandas,GeoSeries,crs,59
 rasterio,src.read,masked,37
+pyogrio,read_dataframe,use_arrow,37
 geopandas,read_file,engine,34
 geopandas,GeoDataFrame,crs,33
+pyogrio,write_dataframe,use_arrow,33
 rasterio,dst.write,indexes,27
 rasterio,rasterio.open,count driver dtype height width,25
 geopandas,GeoSeries,index,25
@@ -30,6 +32,7 @@ geopandas,df.reindex,columns,10
 geopandas,df.apply,axis,10
 geopandas,GeoDataFrame,columns geometry,10
 geopandas,df.to_parquet,write_covering_bbox,10
+pyogrio,read_dataframe,sql sql_dialect use_arrow,10
 rasterio,src.build_overviews,resampling,9
 rasterio,src.read,boundless window,9
 rasterio,src.tags,ns,9
@@ -44,12 +47,17 @@ rasterio,rasterio.open,count height width,8
 geopandas,df.drop,columns,8
 geopandas,df.to_file,driver engine,8
 geopandas,geopandas.read_file,engine,8
+pyogrio,read_dataframe,datetime_as_string mixed_offsets_as_utc use_arrow,8
+pyogrio,write_arrow,crs driver geometry_name geometry_type layer,8
+pyogrio,read_arrow,max_features,8
 rasterio,rasterio.env.Env,session,7
 rioxarray,xds.rio.set_spatial_dims,x_dim y_dim,7
 geopandas,GeoSeries.from_wkt,crs,7
 geopandas,GeoSeries.from_wkt,crs name,7
 geopandas,df.sindex.nearest,return_all,7
 geopandas,GeoDataFrame,columns data geometry,7
+pyogrio,read_dataframe,use_arrow where,7
+pyogrio,write_arrow,crs geometry_name geometry_type,7
 rasterio,rasterio.Env,session,6
 rasterio,rasterio.open,count crs driver dtype height transform width,6
 rasterio,rasterio.open,mode,6
@@ -67,6 +75,9 @@ rasterio,src.read,boundless masked window,5
 rioxarray,rioxarray.open_rasterio,parse_coordinates,5
 rioxarray,xr.DataArray,coords dims,5
 geopandas,df.set_geometry,crs,5
+pyogrio,read_info,encoding,5
+pyogrio,write_dataframe,encoding,5
+pyogrio,write_arrow,crs driver geometry_name geometry_type,5
 rasterio,rasterio.Env,CPL_DEBUG,4
 rasterio,rasterio.open,count crs driver dtype height nodata transform width,4
 rasterio,rasterio.session.AWSSession,aws_access_key_id aws_secret_access_key aws_session_token region_name,4
@@ -90,6 +101,10 @@ geopandas,df.to_arrow,geometry_encoding,4
 geopandas,df.to_file,engine,4
 geopandas,read_file,bbox engine,4
 geopandas,geopandas.read_parquet,bbox,4
+pyogrio,read_bounds,bbox,4
+pyogrio,read_dataframe,columns use_arrow,4
+pyogrio,read_dataframe,fid_as_index,4
+pyogrio,write_dataframe,driver layer,4
 rasterio,dataset.stats,indexes,3
 rasterio,src.get_tag_item,bidx ovr,3
 rasterio,dataset.read,out,3
@@ -126,6 +141,17 @@ geopandas,read_file,bbox engine rows,3
 geopandas,df.to_file,driver engine index,3
 geopandas,df.geometry.to_file,driver engine index,3
 geopandas,gdf.to_parquet,schema_version,3
+pyogrio,open_arrow,use_pyarrow,3
+pyogrio,read_bounds,where,3
+pyogrio,read_bounds,max_features,3
+pyogrio,read_dataframe,encoding use_arrow,3
+pyogrio,read_dataframe,read_geometry use_arrow,3
+pyogrio,read_dataframe,layer,3
+pyogrio,read_dataframe,encoding,3
+pyogrio,read_dataframe,sql use_arrow,3
+pyogrio,write_dataframe,driver layer use_arrow,3
+pyogrio,write_dataframe,spatial_index use_arrow,3
+pyogrio,write_arrow,crs encoding geometry_name geometry_type,3
 rasterio,rasterio.open,driver thread_safe,2
 rasterio,dataset.stats,approx indexes,2
 rasterio,src.get_tag_item,bidx,2
@@ -208,6 +234,24 @@ geopandas,df.to_parquet,engine,2
 geopandas,geopandas.GeoDataFrame,index,2
 geopandas,geopandas.read_parquet,columns,2
 geopandas,df.to_parquet,geometry_encoding,2
+pyogrio,read_info,force_feature_count,2
+pyogrio,read_bounds,skip_features,2
+pyogrio,read_bounds,mask,2
+pyogrio,read_info,INVALID,2
+pyogrio,read_dataframe,columns fid_as_index read_geometry use_arrow,2
+pyogrio,read_dataframe,bbox use_arrow,2
+pyogrio,read_dataframe,mask use_arrow,2
+pyogrio,read_dataframe,skip_features use_arrow,2
+pyogrio,write_dataframe,driver use_arrow,2
+pyogrio,write_dataframe,layer use_arrow,2
+pyogrio,write_dataframe,layer promote_to_multi use_arrow,2
+pyogrio,read_dataframe,fids use_arrow,2
+pyogrio,write_dataframe,geometry_type promote_to_multi use_arrow,2
+pyogrio,write_dataframe,geometry_type use_arrow,2
+pyogrio,write_arrow,crs geometry_type,2
+pyogrio,read_arrow,encoding,2
+pyogrio,read_arrow,skip_features,2
+pyogrio,open_arrow,columns,2
 rasterio,rasterio.shutil.copy,driver quality,1
 rasterio,dataset.update_stats,indexes stats,1
 rasterio,src.dataset_mask,indexes,1
@@ -442,3 +486,76 @@ geopandas,df.to_feather,compression,1
 geopandas,df.assign,bbox,1
 geopandas,gdf.to_parquet,geometry_encoding schema_version,1
 geopandas,geopandas.read_parquet,filters,1
+pyogrio,open_arrow,batch_size bbox columns datetime_as_string encoding fids force_2d layer mask read_geometry return_fids skip_features sql sql_dialect use_pyarrow where,1
+pyogrio,write_arrow,append crs dataset_metadata dataset_options driver encoding geometry_name geometry_type layer layer_metadata layer_options metadata,1
+pyogrio,pyogrio.read_dataframe,where,1
+pyogrio,list_drivers,read,1
+pyogrio,list_drivers,append,1
+pyogrio,list_drivers,write,1
+pyogrio,list_drivers,read write,1
+pyogrio,list_drivers,append read write,1
+pyogrio,read_info,USE_CUSTOM_INDEXING force_feature_count layer,1
+pyogrio,read_info,force_total_bounds,1
+pyogrio,read_bounds,bbox mask,1
+pyogrio,read_info,force_feature_count layer,1
+pyogrio,read_bounds,layer,1
+pyogrio,read_dataframe,sql sql_dialect,1
+pyogrio,read_dataframe,columns fid_as_index use_arrow,1
+pyogrio,read_dataframe,force_2d max_features use_arrow,1
+pyogrio,write_dataframe,layer,1
+pyogrio,write_dataframe,append layer,1
+pyogrio,read_dataframe,columns use_arrow where,1
+pyogrio,read_dataframe,bbox sql use_arrow,1
+pyogrio,read_dataframe,bbox use_arrow where,1
+pyogrio,read_dataframe,mask sql use_arrow,1
+pyogrio,read_dataframe,mask use_arrow where,1
+pyogrio,read_dataframe,fid_as_index fids use_arrow,1
+pyogrio,read_dataframe,fids,1
+pyogrio,read_dataframe,fids force_2d,1
+pyogrio,read_dataframe,max_features skip_features use_arrow,1
+pyogrio,read_dataframe,columns sql sql_dialect use_arrow where,1
+pyogrio,read_dataframe,bbox columns sql sql_dialect use_arrow where,1
+pyogrio,read_dataframe,max_features skip_features sql sql_dialect use_arrow,1
+pyogrio,read_dataframe,max_features sql sql_dialect use_arrow,1
+pyogrio,read_dataframe,skip_features sql sql_dialect use_arrow,1
+pyogrio,write_dataframe,encoding use_arrow,1
+pyogrio,read_dataframe,fid_as_index use_arrow,1
+pyogrio,read_dataframe,read_geometry,1
+pyogrio,write_dataframe,append use_arrow,1
+pyogrio,write_dataframe,SPATIAL_INDEX use_arrow,1
+pyogrio,write_dataframe,layer_options use_arrow,1
+pyogrio,write_dataframe,ADD_GPKG_OGR_CONTENTS use_arrow,1
+pyogrio,write_dataframe,dataset_options use_arrow,1
+pyogrio,write_dataframe,promote_to_multi use_arrow,1
+pyogrio,read_dataframe,FLATTEN_NESTED_ATTRIBUTES use_arrow,1
+pyogrio,read_dataframe,arrow_to_pandas_kwargs use_arrow,1
+pyogrio,read_dataframe,ENCODING use_arrow,1
+pyogrio,read_dataframe,encoding sql use_arrow,1
+pyogrio,write_dataframe,append driver layer use_arrow,1
+pyogrio,read_dataframe,force_2d use_arrow,1
+pyogrio,write_dataframe,RFC7946 driver layer use_arrow,1
+pyogrio,write_dataframe,RFC7946 append driver layer use_arrow,1
+pyogrio,read_dataframe,layer use_arrow,1
+pyogrio,read_dataframe,bbox mask use_arrow,1
+pyogrio,read_dataframe,max_features use_arrow,1
+pyogrio,read_dataframe,layer sql use_arrow,1
+pyogrio,read_dataframe,on_invalid use_arrow,1
+pyogrio,read_dataframe,INVALID use_arrow,1
+pyogrio,write_dataframe,append driver layer,1
+pyogrio,read_dataframe,ENCODING encoding use_arrow,1
+pyogrio,write_dataframe,encoding layer_options,1
+pyogrio,read_arrow,columns,1
+pyogrio,read_dataframe,arrow_to_pandas_kwargs read_geometry use_arrow,1
+pyogrio,read_arrow,columns max_features,1
+pyogrio,write_arrow,append crs geometry_name geometry_type,1
+pyogrio,read_arrow,max_features skip_features,1
+pyogrio,open_arrow,batch_size use_pyarrow,1
+pyogrio,write_arrow,driver geometry_name geometry_type,1
+pyogrio,write_arrow,append crs driver geometry_name geometry_type,1
+pyogrio,write_arrow,crs geometry_name,1
+pyogrio,write_arrow,crs geometry_name geometry_type promote_to_multi,1
+pyogrio,write_arrow,geometry_name geometry_type,1
+pyogrio,write_arrow,append crs driver geometry_name geometry_type layer,1
+pyogrio,write_arrow,crs encoding geometry_name geometry_type layer_options,1
+pyogrio,open_arrow,skip_features,1
+pyogrio,open_arrow,max_features,1

@@ -9,27 +9,27 @@ proxy,raster,Hold a raster lazily and only read what is drawn,stars::read_stars(
 warp,raster,Reproject a grid,terra::project; stars::st_warp; gdalraster::warp; vapour_warp_raster,have,warp()
 warp-grid,raster,Pin the reprojected grid by size or resolution or extent,vapour_warp_raster(dimension extent); stars::st_warp(cellsize),have,warp(dim = resolution = extent = )
 warp-unbounded,raster,Notice a target extent that is all projection stretch,terra::project; stars::st_warp,have,"the flag is the distance across the extent, not its size: a global source into EPSG:3031 gives an extent 8e23 m across whose corners are all the north pole. Warned after the run with a dim, refused with a resolution, and quiet where GDAL clamps for itself"
-warp-pipeline,raster,Give a PROJ pipeline instead of a target CRS,terra::project(pipe) 9 calls; sf::st_transform(pipeline reverse),gap,"a pipeline is the escape hatch when the default transformation is wrong; PROJ::proj_trans_create takes one"
-warp-options,raster,Pass warp and transform options through to GDAL,vapour_warp_raster(warp_options); gdalraster::warp(cl_arg),gap,"adgl has options = for open and for creation but nothing for the warper"
-extract-points,raster,Read values at points rather than over a window,terra::extract 72 calls; gdalraster::pixel_extract 32 calls,gap,"the most-used raster verb in terra's own examples after rast() itself"
+warp-pipeline,raster,Give a PROJ pipeline instead of a target CRS,terra::project(pipe) 9 calls; sf::st_transform(pipeline reverse),gap,a pipeline is the escape hatch when the default transformation is wrong; PROJ::proj_trans_create takes one
+warp-options,raster,Pass warp and transform options through to GDAL,vapour_warp_raster(warp_options); gdalraster::warp(cl_arg),gap,adgl has options = for open and for creation but nothing for the warper
+extract-points,raster,Read values at points rather than over a window,terra::extract 72 calls; gdalraster::pixel_extract 32 calls,gap,the most-used raster verb in terra's own examples after rast() itself
 write-datatype,raster,Choose the data type of the written file,terra::writeRaster(datatype),gap,write_to() takes the source's type
 write-overwrite,raster,Overwrite a file that is already there,terra::writeRaster(overwrite) 4 calls; sf::st_write(overwrite) 22 calls,gap,"write_to() neither refuses nor overwrites deliberately, it just calls GDAL"
 write-options,raster,Creation options,terra::writeRaster(gdal); sf::st_write(layer_options),have,write_to(options = )
 vrt,raster,Build a VRT rather than a materialised file,gdalraster::buildVRT; vapour_vrt,gap,already on the README's list
-subdatasets,raster,Reach a subdataset of a container format,stars::read_stars(sub); stars::read_ncdf(var); vapour_sds_names,gap,"src() errors with no bands and no layers and does not mention subdatasets"
+subdatasets,raster,Reach a subdataset of a container format,stars::read_stars(sub); stars::read_ncdf(var); vapour_sds_names,gap,src() errors with no bands and no layers and does not mention subdatasets
 colour-table,raster,Read a colour table or palette,gdalraster::plot_raster(col_tbl),gap,an engine gap in GDAL7 as well
 read-layer,vector,Read a layer,sf::st_read 205 calls; terra::vect 208 calls,have,src() then collect()
-sql,vector,Run an SQL SELECT against the source,sf::st_read(query) 15 calls; vapour_read_fields(sql) 9 calls,gap,"adgl has where = only, so a join or an aggregate or a computed column is out of reach"
+sql,vector,Run an SQL SELECT against the source,sf::st_read(query) and vapour_read_fields(sql); pyogrio sql 24 + sql_dialect 17,gap,"adgl has where = only, so a join or an aggregate or a computed column is out of reach"
 where,vector,Filter features by an attribute expression,sf::st_read(query); OGR where,have,query(where = )
-spatial-filter-geometry,vector,Filter features by an arbitrary geometry rather than a rectangle,geopandas read_file(mask) 14 calls; sf::st_read(wkt_filter),gap,"query(extent = ) takes four numbers; a mask takes a polygon, and GDAL has SetSpatialFilter for it"
+spatial-filter-geometry,vector,Filter features by an arbitrary geometry rather than a rectangle,"geopandas read_file(mask), sf::st_read(wkt_filter), pyogrio mask 9",gap,"query(extent = ) takes four numbers; a mask takes a polygon, and GDAL has SetSpatialFilter for it"
 spatial-filter,vector,Filter features by a rectangle,sf::st_read(wkt_filter); vapour_read_extent(extent); geopandas read_file(bbox),have,query(extent = )
 fields,vector,Read only some attribute columns,vapour_read_fields; geopandas read_file(columns ignore_fields),have,"query(fields = ), though the narrowing happens in R rather than in the driver - both corpora expect the driver to do it"
-limit-skip,vector,Take the first n features or skip the first n,vapour_read_geometry(limit_n skip_n); geopandas read_file(rows),gap,"limit is there, skip is not, and paging needs both"
+limit-skip,vector,Take the first n features or skip the first n,vapour_read_geometry(skip_n); pyogrio skip_features 12,gap,"limit is there, skip is not, and paging needs both"
 layer-choice,vector,Choose the layer by name or by position,sf::st_read(layer); terra::vect(layer),have,src(layer = )
 transform-features,vector,Reproject the features themselves,sf::st_transform 88 calls; gdalraster::ogr_reproject,have,query(crs = )
-geometry-only,vector,Read geometry without attributes or attributes without geometry,vapour_read_geometry; vapour_read_attributes; geopandas read_file(ignore_geometry),gap,"fields = drops attributes but the geometry always comes back"
-geometry-type,vector,Control the geometry type coming out,sf::st_read(promote_to_multi type geometry_column),gap,"a layer mixing POLYGON and MULTIPOLYGON is the common case this answers"
-write-append,vector,Append to a layer or replace it,sf::st_write(append delete_layer overwrite) 40 calls,gap,write_to() always creates
+geometry-only,vector,Read geometry without attributes or attributes without geometry,vapour_read_geometry; vapour_read_attributes; geopandas read_file(ignore_geometry),gap,fields = drops attributes but the geometry always comes back
+geometry-type,vector,Control the geometry type coming out,"sf::st_read(promote_to_multi, type); pyogrio geometry_type 37, promote_to_multi 6",gap,a layer mixing POLYGON and MULTIPOLYGON is the common case this answers
+write-append,vector,Append to a layer or replace it,sf::st_write(append); pyogrio append 11,gap,write_to() always creates
 feature-count,vector,Ask how many features there are without reading them,sf::st_layers(do_count); vapour_layer_info,have,src() reports it and report() says when it is unknown
 layer-extent,vector,Ask for the layer extent without reading features,vapour_read_extent; sf::st_bbox,have,src() reports it
 nodata-mask,raster,Return a nodata value as missing rather than as data,rasterio src.read(masked) 37 calls - its most-used argument; terra and stars mask by default,have,"collect() and as_grd() mask by default; the decision pivots on type, since only a double has a missing value to put there"
@@ -37,5 +37,10 @@ boundless,raster,Read a window that runs past the edge and pad it,rasterio src.r
 read-masks,raster,Read the mask itself rather than the values,rasterio src.read_masks,gap,"the per-pixel validity, which is not the same question as the values"
 overview-level,raster,Choose an overview level explicitly,rasterio.open(overview_level),have,"src(options = ""OVERVIEW_LEVEL=2"") - GDAL's own open option, which is why src() takes them"
 block-windows,raster,Iterate the source's own blocks or tiles,rasterio src.block_windows; windows.Window.from_slices,elsewhere,grout owns tiling
-create-from-nothing,raster,Create a raster from a dtype and a transform with no source,rasterio.open(driver dtype count width height crs transform) 25 calls,wont,"adgl is IO over sources; GDAL7::gdal_create() is the answer and stays there"
-arrow-out,vector,Hand back the Arrow stream rather than a materialised table,geopandas to_arrow and from_arrow 32 calls,gap,"adgl reads through nanoarrow and then builds a tibble, so the stream is already there and is thrown away"
+create-from-nothing,raster,Create a raster from a dtype and a transform with no source,rasterio.open(driver dtype count width height crs transform) 25 calls,wont,adgl is IO over sources; GDAL7::gdal_create() is the answer and stays there
+arrow-out,vector,Hand back the Arrow stream rather than a materialised table,"geopandas to_arrow; pyogrio use_arrow 172, its single most-used argument",gap,"adgl reads through nanoarrow and then builds a tibble, so the stream is already there and is thrown away"
+fid,vector,"Read the feature id, and read by it","pyogrio fid_as_index 9, fids 6",gap,"the id arrives under a driver-dependent name - fid from GPKG, OGC_FID from shapefile and GeoJSON - and adgl neither normalises it, documents it, nor lets you select by it"
+geometry-name,vector,Know or choose the geometry column's name,pyogrio geometry_name 32,gap,"same root cause as fid: geom from GPKG, wkb_geometry from shapefile, and write_to() cannot name it"
+datetime,vector,Datetimes and time zones survive the read,"pyogrio datetime_as_string 9, mixed_offsets_as_utc 8",gap,"adgl hands back whatever nanoarrow makes of GDAL's Arrow stream, never checked against a source with a zoned datetime field"
+force-2d,vector,Drop Z and M from geometries on read,pyogrio force_2d 4,gap,"small, and wk can do it after the fact"
+encoding,vector,Tell GDAL what encoding a source is in,pyogrio encoding 28,have,"src(options = ""ENCODING=..."") is how GDAL itself takes it, so the open option covers it without a new argument"

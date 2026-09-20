@@ -361,6 +361,97 @@
 "gdalraster","vsi_sync","show_progress",1
 "gdalraster","warp","cl_arg t_srs",7
 "gdalraster","warp","t_srs",1
+"geodata","bio_oracle","benthic depth path time",1
+"geodata","cmip6_world","path res var",1
+"geodata","country_codes","query",1
+"geodata","crop_calendar_sacks","path",1
+"geodata","crop_monfreda","path",1
+"geodata","crop_spam","path",1
+"geodata","elevation_30s","country path",1
+"geodata","gadm","country level path",1
+"geodata","osm","country path",1
+"geodata","population","path",1
+"geodata","rice_calendar","path",1
+"geodata","soil_af","depth path var",1
+"geodata","soil_af_elements","path quiet",1
+"geodata","soil_af_isda","path quiet",1
+"geodata","soil_af_water","depth path var",1
+"geodata","soil_world","depth path var",1
+"geodata","soil_world_vsi","depth var",1
+"geodata","sp_occurrence","down",1
+"geodata","sp_occurrence","download",1
+"geodata","sp_occurrence","end geo",1
+"geodata","world","path",1
+"geodata","worldclim_country","path var",1
+"geos","as_geos_geometry","crs",18
+"geos","as_xy","dims",1
+"geos","geos_basic_strtree_query","fill limit",1
+"geos","geos_buffer","params",3
+"geos","geos_clearance_line_between","prepare",3
+"geos","geos_difference_prec","grid_size",1
+"geos","geos_distance_frechet","densify",1
+"geos","geos_distance_hausdorff","densify",1
+"geos","geos_empty","crs",1
+"geos","geos_equals_exact","tolerance",3
+"geos","geos_equals_exact_any","tolerance",2
+"geos","geos_equals_exact_matrix","tolerance",2
+"geos","geos_geometry","crs",1
+"geos","geos_hilbert_code","level",3
+"geos","geos_inner_join_keys","distance",3
+"geos","geos_intersection_prec","grid_size",1
+"geos","geos_largest_empty_circle_spec","tolerance",1
+"geos","geos_largest_empty_crc","tolerance",1
+"geos","geos_make_collection","feature_id",2
+"geos","geos_make_collection","type_id",1
+"geos","geos_make_linestring","crs",1
+"geos","geos_make_point","crs",1
+"geos","geos_make_polygon","ring_id",2
+"geos","geos_make_polygon","crs",1
+"geos","geos_make_polygon","feature_id",1
+"geos","geos_make_valid_params","keep_collapsed",1
+"geos","geos_make_valid_params","method",1
+"geos","geos_nearest_frechet","densify",1
+"geos","geos_nearest_hausdorff","densify",1
+"geos","geos_polygon_hull_simplify","hull_type",2
+"geos","geos_polygon_hull_simplify","hull_type ratio_mode",2
+"geos","geos_read_hex","crs",1
+"geos","geos_read_hex","fix_structure",1
+"geos","geos_read_wkb","crs",1
+"geos","geos_read_wkb","fix_structure",1
+"geos","geos_read_wkt","crs",5
+"geos","geos_read_wkt","fix_structure",1
+"geos","geos_relate_pattern_create","EE",3
+"geos","geos_relate_pattern_create","II",1
+"geos","geos_set_precision","keep_collapsed",2
+"geos","geos_set_precision","preserve_topology",2
+"geos","geos_snap","tolerance",2
+"geos","geos_sym_difference_prec","grid_size",1
+"geos","geos_unary_union_prec","grid_size",1
+"geos","geos_union_prec","grid_size",2
+"geos","geos_unnest","max_depth",5
+"geos","geos_unnest","keep_empty keep_multi max_depth",2
+"geos","geos_version","runtime",11
+"geos","geos_voronoi_edges","env",2
+"geos","geos_voronoi_polygons","env",2
+"geos","geos_write_hex","endian",2
+"geos","geos_write_hex","include_srid",2
+"geos","geos_write_hex","include_z",2
+"geos","geos_write_hex","flavor",1
+"geos","geos_write_wkb","endian",5
+"geos","geos_write_wkb","endian include_srid",2
+"geos","geos_write_wkb","include_srid",2
+"geos","geos_write_wkb","include_z",2
+"geos","geos_write_wkb","flavor",1
+"geos","geos_write_wkt","include_z",2
+"geos","geos_write_wkt","precision",1
+"geos","geos_write_wkt","precision trim",1
+"geos","new_geos_geometry","crs",39
+"geos","plot","add",2
+"geos","plot","add border col",1
+"geos","plot","add col pch",1
+"geos","plot","bbox",1
+"geos","plot","col lwd",1
+"geos","rep","each",2
 "s2","as_s2_geography","check",2
 "s2","as_s2_geography","check oriented",2
 "s2","as_s2_geography","oriented",1
@@ -1083,6 +1174,18 @@
 "stars","write_mdim","as_float",1
 "stars","write_stars","driver",2
 "stars","write_stars","dsn",1
+"supercells","supercells","clean compactness iter k step",3
+"supercells","supercells","compactness",2
+"supercells","supercells","avg_fun compactness",1
+"supercells","supercells","avg_fun compactness dist_fun step",1
+"supercells","supercells","chunk compactness",1
+"supercells","supercells","clean compactness",1
+"supercells","supercells","compactness iter k step",1
+"supercells","supercells","compactness iter step",1
+"supercells","supercells","compactness k",1
+"supercells","supercells","compactness minarea step",1
+"supercells","supercells","compactness step",1
+"supercells","supercells","compactness transform",1
 "terra","[","drop",10
 "terra","add_abline","col h lty v",1
 "terra","add_box","col lwd xpd",1
