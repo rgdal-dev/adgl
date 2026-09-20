@@ -18,6 +18,9 @@ sources and the network; the suite is meant to be read as much as run.
 package checkouts and it parses every `man/*.Rd` example, every file under
 `tests/`, and the R chunks of every vignette, then records each call to one of
 that package's own functions along with the argument names the caller used.
+`harvest.py` does the same for the Python side, reading docstrings, the
+doctest and code-block fragments under `docs/`, notebook cells and the test
+suites.
 
 ```sh
 mkdir -p ../cran
@@ -27,14 +30,30 @@ done
 Rscript expectations/harvest.R ../cran expectations
 ```
 
-It writes `inventory.csv` (function, how many calls, how many files, which
+```sh
+mkdir -p ../py
+for r in rasterio/rasterio corteva/rioxarray geopandas/geopandas; do
+  git clone --depth 1 https://github.com/$r ../py/$(basename $r)
+done
+python3 expectations/harvest.py ../py expectations
+```
+
+They write `inventory.csv` (function, how many calls, how many files, which
 kinds of source) and `argument-use.csv` (which argument combinations are
-actually used). The arguments are the more useful half: `st_read(dsn)` and
+actually used), and the `-python` pair beside them. The arguments are the more useful half: `st_read(dsn)` and
 `st_read(dsn, query = )` are different expectations wearing the same name.
 
 `coverage.csv` is the curated part, and the only file here that is a
 judgement rather than a measurement. One row per expectation, with where it
-was seen, and what adgl does about it: `have`, `gap`, or `bug`.
+was seen, and what adgl does about it: `have`, `gap`, `bug`, `wont` for
+something that belongs outside this package, or `elsewhere` for something a
+neighbour already owns.
+
+Where the two corpora agree, the expectation is worth more than its count.
+Reading past the edge of a raster is `boundless` in rasterio and `extend` in
+terra; narrowing fields in the driver is `ignore_fields` in geopandas and
+`SetIgnoredFields` in GDAL's own API. Neither corpus alone made those look
+like more than one package's habit.
 
 `test-expectations.R` is the suite. Every `have` row has a test that does in
 adgl what the harvested call does in its own package, with the original call
@@ -55,5 +74,11 @@ decline them once, in public, rather than repeatedly in private.
 ## Still to harvest
 
 Issue trackers, where the expectation is usually a complaint and therefore
-sharper than an example; and the Python side, `rasterio`, `rioxarray` and
-`geopandas`, whose users arrive with the same expectations in different words.
+sharper than an example. The GitHub API is not reachable from the sessions
+this was built in, so that stage needs a different route.
+
+Two other seams worth opening: the connection strings and driver names the
+examples use, which say what kinds of source people expect to hand a reader
+(`/vsicurl/`, `NETCDF:"f":var`, `PG:`, GeoParquet); and GDAL's own autotest
+suite, which is the closest thing to a specification of what the library
+promises.

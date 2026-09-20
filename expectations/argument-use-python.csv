@@ -1,0 +1,444 @@
+package,fun,args,calls
+geopandas,GeoDataFrame,geometry,98
+geopandas,GeoDataFrame,crs geometry,64
+geopandas,GeoSeries,crs,59
+rasterio,src.read,masked,37
+geopandas,read_file,engine,34
+geopandas,GeoDataFrame,crs,33
+rasterio,dst.write,indexes,27
+rasterio,rasterio.open,count driver dtype height width,25
+geopandas,GeoSeries,index,25
+rioxarray,rds.isel,x y,24
+rioxarray,xr.DataArray,dims,21
+rasterio,rasterio.open,opener,19
+geopandas,GeoSeries,crs index,18
+geopandas,GeoDataFrame,index,16
+geopandas,geopandas.GeoDataFrame,crs,15
+geopandas,geopandas.GeoDataFrame,crs geometry,14
+geopandas,geopandas.GeoDataFrame,geometry,14
+geopandas,GeoDataFrame.from_file,engine,14
+geopandas,GeoDataFrame,columns,13
+geopandas,GeoDataFrame,geometry index,12
+geopandas,read_file,engine mask,12
+geopandas,GeoSeries,crs name,11
+geopandas,df.explode,index_parts,11
+rasterio,src.read,window,10
+rasterio,dst.write,window,10
+rioxarray,xds.analysed_sst.rio.set_spatial_dims,x_dim y_dim,10
+geopandas,df.to_crs,epsg,10
+geopandas,df.reindex,columns,10
+geopandas,df.apply,axis,10
+geopandas,GeoDataFrame,columns geometry,10
+geopandas,df.to_parquet,write_covering_bbox,10
+rasterio,src.build_overviews,resampling,9
+rasterio,src.read,boundless window,9
+rasterio,src.tags,ns,9
+rioxarray,rioxarray.open_rasterio,chunks,9
+geopandas,df.plot,cmap column k legend legend_kwds scheme,9
+geopandas,GeoDataFrame,columns crs,9
+geopandas,GeoDataFrame,data geometry,9
+geopandas,df.iterfeatures,na,9
+geopandas,gdf.to_arrow,geometry_encoding,9
+rasterio,rasterio.Env,GDAL_NUM_THREADS,8
+rasterio,rasterio.open,count height width,8
+geopandas,df.drop,columns,8
+geopandas,df.to_file,driver engine,8
+geopandas,geopandas.read_file,engine,8
+rasterio,rasterio.env.Env,session,7
+rioxarray,xds.rio.set_spatial_dims,x_dim y_dim,7
+geopandas,GeoSeries.from_wkt,crs,7
+geopandas,GeoSeries.from_wkt,crs name,7
+geopandas,df.sindex.nearest,return_all,7
+geopandas,GeoDataFrame,columns data geometry,7
+rasterio,rasterio.Env,session,6
+rasterio,rasterio.open,count crs driver dtype height transform width,6
+rasterio,rasterio.open,mode,6
+rioxarray,xds.rio.to_raster,dtype,6
+rioxarray,rioxarray.set_options,skip_missing_spatial_dims,6
+geopandas,gdf.to_file,driver,6
+geopandas,df.rename,columns,6
+geopandas,gdf.dissolve,level,6
+geopandas,df.plot,column,6
+rasterio,rasterio.Env,GDAL_TIFF_INTERNAL_MASK,5
+rasterio,rasterio.open,sharing,5
+rasterio,rasterio.open,count driver dtype height nodata width,5
+rasterio,src.checksum,window,5
+rasterio,src.read,boundless masked window,5
+rioxarray,rioxarray.open_rasterio,parse_coordinates,5
+rioxarray,xr.DataArray,coords dims,5
+geopandas,df.set_geometry,crs,5
+rasterio,rasterio.Env,CPL_DEBUG,4
+rasterio,rasterio.open,count crs driver dtype height nodata transform width,4
+rasterio,rasterio.session.AWSSession,aws_access_key_id aws_secret_access_key aws_session_token region_name,4
+rasterio,src.read,out_shape,4
+rasterio,src.sample,indexes,4
+rasterio,src.sample,masked,4
+rasterio,rasterio.open,overview_level,4
+rasterio,windows.get_data_window,nodata,4
+rasterio,dst.tags,ns,4
+rasterio,src.xy,offset,4
+rasterio,dst.write_mask,window,4
+rasterio,src.read,boundless,4
+rioxarray,xds.rio.write_crs,inplace,4
+rioxarray,rioxarray.open_rasterio,mask_and_scale,4
+geopandas,GeoSeries,index name,4
+geopandas,df.take,axis,4
+geopandas,df.set_geometry,drop,4
+geopandas,df.plot,categorical column,4
+geopandas,df.plot,classification_kwds legend legend_kwds scheme,4
+geopandas,df.to_arrow,geometry_encoding,4
+geopandas,df.to_file,engine,4
+geopandas,read_file,bbox engine,4
+geopandas,geopandas.read_parquet,bbox,4
+rasterio,dataset.stats,indexes,3
+rasterio,src.get_tag_item,bidx ovr,3
+rasterio,dataset.read,out,3
+rasterio,rasterio.shutil.delete,driver,3
+rasterio,merge,dtype method output_count,3
+rasterio,merge,res,3
+rasterio,rasterio.open,dtype,3
+rasterio,rasterio.warp.transform,zs,3
+rasterio,mask,crop pad pad_width,3
+rasterio,dst.read,masked,3
+rasterio,src.write,indexes,3
+rasterio,merge,bounds,3
+rasterio,src.read,masked window,3
+rioxarray,rioxarray.open_rasterio,chunks lock,3
+rioxarray,rioxarray.open_rasterio,masked,3
+rioxarray,xds.rio.clip_box,crs maxx maxy minx miny,3
+geopandas,geopandas.read_file,rows,3
+geopandas,read_file,driver,3
+geopandas,df.reset_index,drop,3
+geopandas,df.set_geometry,inplace,3
+geopandas,GeoSeries.from_wkb,on_invalid,3
+geopandas,GeoSeries.from_wkt,on_invalid,3
+geopandas,GeoDataFrame.from_features,crs,3
+geopandas,gpd.GeoDataFrame,geometry,3
+geopandas,GeoDataFrame,crs geometry index,3
+geopandas,df.plot,cmap column k legend scheme,3
+geopandas,df.plot,classification_kwds legend scheme,3
+geopandas,df.plot,classification_kwds legend legend_kwds missing_kwds scheme,3
+geopandas,df.plot,categories legend,3
+geopandas,df.to_arrow,geometry_encoding interleaved,3
+geopandas,read_file,engine rows,3
+geopandas,geopandas.read_file,columns engine,3
+geopandas,read_file,bbox engine rows,3
+geopandas,df.to_file,driver engine index,3
+geopandas,df.geometry.to_file,driver engine index,3
+geopandas,gdf.to_parquet,schema_version,3
+rasterio,rasterio.open,driver thread_safe,2
+rasterio,dataset.stats,approx indexes,2
+rasterio,src.get_tag_item,bidx,2
+rasterio,rasterio.Env,aws_access_key_id aws_secret_access_key aws_session_token region_name,2
+rasterio,rasterio.env.Env,aws_unsigned,2
+rasterio,rasterio.Env,aws_access_key_id aws_secret_access_key,2
+rasterio,src.read,out,2
+rasterio,rasterio.open,OVERVIEW_LEVEL,2
+rasterio,src.read,masked out,2
+rasterio,src.read,out_shape resampling,2
+rasterio,rasterio.open,thread_safe,2
+rasterio,rasterio.Env,GDAL_DISABLE_READDIR_ON_OPEN,2
+rasterio,rasterio.open,count dtype height mode width,2
+rasterio,dataset.read,out_dtype,2
+rasterio,rasterio.shutil.copy,driver strict,2
+rasterio,rasterio.open,count driver dtype height nodata opener width,2
+rasterio,dst.update_tags,a b,2
+rasterio,dst.update_tags,c,2
+rasterio,rasterio.open,count crs driver dtype gcps height width,2
+rasterio,rasterio.Env,CHECK_WITH_INVERT_PROJ,2
+rasterio,rasterio.MemoryFile,dirname filename,2
+rasterio,rasterio.open,overview_level sharing,2
+rasterio,mask,crop,2
+rasterio,dst.read,masked window,2
+rasterio,src.read,indexes,2
+rasterio,rasterio.open,count crs dtype height nodata transform width,2
+rasterio,merge,dtype nodata,2
+rasterio,merge,nodata,2
+rasterio,rasterio.open,BIGTIFF count driver dtype height width,2
+rasterio,rasterio.open,count dtype height width,2
+rasterio,rasterio.open,count driver dtype height transform width,2
+rasterio,dst.write,indexes masked,2
+rasterio,src.read,boundless fill_value window,2
+rasterio,src.read_masks,boundless window,2
+rasterio,src.read_masks,boundless out_shape window,2
+rasterio,rasterio.open,driver,2
+rasterio,dataset.read,boundless window,2
+rasterio,dataset.read,boundless fill_value window,2
+rasterio,src.xy,transform_method z,2
+rasterio,windows.from_bounds,transform,2
+rasterio,windows.Window,col_off height row_off width,2
+rasterio,dst.update_tags,ns resampling,2
+rioxarray,xds.rio.transform,recalc,2
+rioxarray,raster.rio.write_nodata,encoded inplace,2
+rioxarray,rds.write,window,2
+rioxarray,xds.rio.write_coordinate_system,inplace,2
+rioxarray,rioxarray.open_rasterio,chunks mask_and_scale,2
+rioxarray,rds.isel,band,2
+rioxarray,xds.isel,x y,2
+rioxarray,rds.sel,method,2
+geopandas,df.plot,alpha edgecolor figsize,2
+geopandas,df.plot,cmap column legend legend_kwds scheme,2
+geopandas,df.plot,figsize,2
+geopandas,geopandas.read_file,mask,2
+geopandas,geopandas.read_file,bbox,2
+geopandas,gdf.plot,legend,2
+geopandas,geopandas.clip,keep_geom_type mask sort,2
+geopandas,df.rename_geometry,inplace,2
+geopandas,geopandas.GeoSeries,crs,2
+geopandas,df.reindex,index,2
+geopandas,GeoDataFrame,crs index,2
+geopandas,gdf.replace,inplace,2
+geopandas,df.merge,left_index right_index,2
+geopandas,df.reindex,columns index,2
+geopandas,GeoSeries.from_xy,crs index,2
+geopandas,GeoSeries.from_xy,crs,2
+geopandas,df.copy,deep,2
+geopandas,geopandas.clip,sort,2
+geopandas,geopandas.overlay,how,2
+geopandas,df.drop,axis,2
+geopandas,df.plot,cmap column legend,2
+geopandas,df.plot,column k legend scheme,2
+geopandas,gdf.plot,column edgecolor,2
+geopandas,gdf.to_arrow,geometry_encoding include_z,2
+geopandas,df.to_file,crs engine,2
+geopandas,geopandas.read_file,engine ignore_fields,2
+geopandas,gdf.to_file,engine layer,2
+geopandas,geopandas.read_file,engine where,2
+geopandas,df.to_parquet,engine,2
+geopandas,geopandas.GeoDataFrame,index,2
+geopandas,geopandas.read_parquet,columns,2
+geopandas,df.to_parquet,geometry_encoding,2
+rasterio,rasterio.shutil.copy,driver quality,1
+rasterio,dataset.update_stats,indexes stats,1
+rasterio,src.dataset_mask,indexes,1
+rasterio,src.dataset_mask,out_shape resampling,1
+rasterio,rasterio.vrt._boundless_vrt_doc,nodata,1
+rasterio,src.get_tag_item,ovr,1
+rasterio,rasterio.open,count driver dtype height rpcs width,1
+rasterio,rasterio.Env,foo,1
+rasterio,rasterio.Env.from_defaults,foo,1
+rasterio,rasterio.Env,AWS_ACCESS_KEY_ID,1
+rasterio,rasterio.Env,AWS_SECRET_ACCESS_KEY,1
+rasterio,rasterio.Env,aws_session,1
+rasterio,src.read,indexes out_shape,1
+rasterio,src.read,indexes out,1
+rasterio,dst.build_overviews,resampling,1
+rasterio,rasterio.Env,GTIFF_IMPLICIT_JPEG_OVR,1
+rasterio,rasterio.shutil.copy,BLOCKYSIZE blockxsize tiled,1
+rasterio,rasterio.shutil.copy,driver,1
+rasterio,rio.Env,FROM_MAIN,1
+rasterio,rio.Env,lol,1
+rasterio,rasterio.open,num_threads opener,1
+rasterio,rasterio.open,opener thread_safe,1
+rasterio,merge,method output_count,1
+rasterio,merge,dst_kwds dst_path res,1
+rasterio,merge,masked nodata,1
+rasterio,src.read,boundless out_shape resampling,1
+rasterio,dst.update_tags,ns rus,1
+rasterio,dst.update_tags,a,1
+rasterio,dst.update_tags,d,1
+rasterio,src.tag_namespaces,bidx,1
+rasterio,dst.read,indexes,1
+rasterio,dst.read,indexes masked,1
+rasterio,rasterio.features.rasterize,out_shape shapes,1
+rasterio,rasterio.open,driver mode,1
+rasterio,dataset.read,masked,1
+rasterio,rasterio.open,blockxsize blockysize count crs driver dtype height transform width,1
+rasterio,rasterio.open,blockysize count dtype height tiled width,1
+rasterio,src.block_windows,bidx,1
+rasterio,rasterio.Env,GDAL_VALIDATE_CREATION_OPTIONS,1
+rasterio,mask,indexes,1
+rasterio,mask,invert,1
+rasterio,mask,nodata,1
+rasterio,mask,all_touched invert nodata,1
+rasterio,mask,all_touched crop,1
+rasterio,mask,crop pad,1
+rasterio,mask,filled,1
+rasterio,merge,masked,1
+rasterio,rasterio.Env,AWS_NO_SIGN_REQUEST,1
+rasterio,rasterio.merge.merge,bounds,1
+rasterio,rasterio.open,count driver height width,1
+rasterio,rasterio.open,driver dtype height width,1
+rasterio,rasterio.open,count driver dtype height,1
+rasterio,src.read,boundless masked out window,1
+rasterio,rasterio.Env,CPL_CURL_VERBOSE,1
+rasterio,src.read,boundless fill_value indexes out_shape resampling window,1
+rasterio,rasterio.open,GEOREF_SOURCES driver,1
+rasterio,src.read,boundless fill_value out_shape window,1
+rasterio,src.read,boundless fill_value masked out_shape window,1
+rasterio,dst.read,boundless masked window,1
+rasterio,rasterio.open,transform,1
+rasterio,src.xy,transform_method,1
+rasterio,src.index,transform_method,1
+rasterio,dataset.read,indexes masked out_shape window,1
+rasterio,src.read,indexes masked out_shape resampling window,1
+rasterio,src.read,boundless indexes masked out_shape resampling window,1
+rasterio,warp.transform_geom,antimeridian_cutting precision,1
+rasterio,windows.Window,height width,1
+rasterio,src.read,boundless masked out_shape window,1
+rasterio,src.read_masks,window,1
+rasterio,src.stats,indexes,1
+rasterio,rasterio.open,format,1
+rasterio,features.shapes,mask transform,1
+rasterio,features.rasterize,out_shape,1
+rasterio,features.rasterize,out_shape transform,1
+rioxarray,raster.rio.write_nodata,inplace,1
+rioxarray,xds.rio.bounds,recalc,1
+rioxarray,xds.rio.resolution,recalc,1
+rioxarray,raster.rio.write_crs,inplace,1
+rioxarray,rds.write,indexes window,1
+rioxarray,rioxarray.set_options,convention,1
+rioxarray,xds.to_netcdf,encoding,1
+rioxarray,rioxarray.open_rasterio,chunks default_name masked,1
+rioxarray,rioxarray.open_rasterio,lock overview_level,1
+rioxarray,xds.rio.write_nodata,inplace,1
+rioxarray,rioxarray.open_rasterio,cache,1
+rioxarray,rioxarray.open_rasterio,band_as_variable,1
+rioxarray,xds.rio.write_grid_mapping,inplace,1
+rioxarray,rds.rio.write_crs,inplace,1
+rioxarray,rds.rio.reproject,gcps,1
+rioxarray,xds.rio.to_raster,compute lock windowed,1
+rioxarray,rds.green.rio.write_nodata,inplace,1
+rioxarray,rds.blue.rio.write_nodata,inplace,1
+rioxarray,rioxarray.set_options,export_grid_mapping,1
+rioxarray,xds.rio.reproject,georeferencing_convention src_geoloc_array,1
+rioxarray,xds.rio.clip_box,crs,1
+rioxarray,xds.rio.set_spatial_dims,inplace,1
+rioxarray,rds.squeeze,dim drop,1
+rioxarray,xds.rio.to_raster,tiled,1
+rioxarray,xds.rio.to_raster,lock tiled,1
+rioxarray,xds.plot,ax,1
+rioxarray,xds.rio.clip_box,maxx maxy minx miny,1
+rioxarray,rds.sel,band,1
+rioxarray,xds.rio.clip,drop invert,1
+rioxarray,xds.rio.reproject,resampling shape,1
+rioxarray,xds.rio.pad_box,maxx maxy minx miny,1
+rioxarray,rds.isel,time,1
+rioxarray,rds.blue.rio.to_raster,driver,1
+rioxarray,rds.blue.rio.to_raster,compress driver,1
+rioxarray,rioxarray.open_rasterio,cache lock,1
+rioxarray,rds.green.rio.to_raster,tiled windowed,1
+rioxarray,rds.rio.to_raster,driver,1
+rioxarray,rioxarray.open_rasterio,masked overview_level,1
+rioxarray,rds.rename,lat lon,1
+geopandas,df.plot,categorical column legend legend_kwds,1
+geopandas,geopandas.read_file,columns,1
+geopandas,geopandas.read_file,ignore_geometry,1
+geopandas,geopandas.read_file,fid_as_index,1
+geopandas,geopandas.read_file,where,1
+geopandas,geopandas.geocode,provider user_agent,1
+geopandas,gdf.explore,legend,1
+geopandas,gdf.plot,categorical legend legend_kwds,1
+geopandas,geopandas.io.sql._read_postgis,chunksize coerce_float crs geom_col index_col params parse_dates,1
+geopandas,df.to_geo_dict,drop_id na show_bbox,1
+geopandas,df.geometry.set_crs,allow_override crs epsg inplace,1
+geopandas,df.geometry.to_crs,crs epsg,1
+geopandas,geopandas.sjoin,how left_df lsuffix predicate right_df rsuffix,1
+geopandas,geopandas.sjoin_nearest,distance_col exclusive how lsuffix max_distance rsuffix,1
+geopandas,geopandas.overlay,how keep_geom_type make_valid,1
+geopandas,df.reset_index,drop inplace,1
+geopandas,df.set_index,append,1
+geopandas,gdf.set_crs,allow_override,1
+geopandas,GeoSeries,crs data index,1
+geopandas,geopandas.GeoSeries.from_xy,crs,1
+geopandas,GeoSeries,crs index name,1
+geopandas,df.groupby,observed,1
+geopandas,df.plot,cmap,1
+geopandas,gdf.drop,columns,1
+geopandas,df.assign,new,1
+geopandas,df.sum,numeric_only,1
+geopandas,df.select_dtypes,include,1
+geopandas,df.pivot,columns,1
+geopandas,df.set_flags,allows_duplicate_labels,1
+geopandas,df.to_csv,index,1
+geopandas,geopandas.sjoin,how,1
+geopandas,df.set_crs,epsg,1
+geopandas,gdf.explode,column,1
+geopandas,gdf.explode,ignore_index,1
+geopandas,gdf.explode,column ignore_index,1
+geopandas,df.explode,ignore_index,1
+geopandas,df.explode,ignore_index index_parts,1
+geopandas,GeoSeries,dtype,1
+geopandas,geopandas.GeoSeries,index,1
+geopandas,df.sindex.nearest,max_distance return_all return_distance,1
+geopandas,df.sindex.nearest,exclusive max_distance return_all return_distance,1
+geopandas,geopandas.GeoSeries,dtype,1
+geopandas,GeoSeries.from_xy,index,1
+geopandas,df.to_crs,epsg inplace,1
+geopandas,df.set_crs,allow_override crs,1
+geopandas,GeoSeries,copy,1
+geopandas,GeoSeries.from_wkb,index,1
+geopandas,GeoSeries.from_wkt,index,1
+geopandas,df.unstack,level,1
+geopandas,df.align,axis,1
+geopandas,GeoDataFrame.from_dict,crs,1
+geopandas,GeoDataFrame.from_dict,geometry,1
+geopandas,geopandas.sjoin,how predicate,1
+geopandas,geopandas.sjoin,distance how predicate,1
+geopandas,geopandas.sjoin_nearest,distance_col how max_distance,1
+geopandas,GeoDataFrame,columns geometry index,1
+geopandas,GeoSeries,name,1
+geopandas,GeoDataFrame,columns crs data,1
+geopandas,df.set_geometry,crs drop,1
+geopandas,df.explore,color,1
+geopandas,df.explore,column,1
+geopandas,df.explore,vmax vmin,1
+geopandas,gpd.GeoDataFrame,crs geometry,1
+geopandas,df.explore,categories,1
+geopandas,df.itertuples,index,1
+geopandas,gdf.dissolve,grid_size,1
+geopandas,gdf.dissolve,sort,1
+geopandas,gdf.dissolve,observed,1
+geopandas,gdf.dissolve,dropna,1
+geopandas,geopandas.points_from_xy,x y,1
+geopandas,geopandas.points_from_xy,x y z,1
+geopandas,geopandas.points_from_xy,x,1
+geopandas,geopandas.points_from_xy,y,1
+geopandas,geopandas.points_from_xy,z,1
+geopandas,df.plot,legend missing_kwds,1
+geopandas,df.plot,facecolor,1
+geopandas,df.plot,column k legend legend_kwds scheme,1
+geopandas,df.plot,classification_kwds cmap column k legend scheme,1
+geopandas,df.plot,legend scheme vmin,1
+geopandas,df.plot,legend scheme vmax,1
+geopandas,df.plot,legend scheme vmax vmin,1
+geopandas,df.plot,legend legend_kwds scheme vmin,1
+geopandas,df.plot,legend legend_kwds scheme vmax,1
+geopandas,df.plot,legend legend_kwds scheme vmax vmin,1
+geopandas,df.plot,column legend scheme,1
+geopandas,df.plot,cax cmap column legend,1
+geopandas,df.plot,ax cax cmap column legend,1
+geopandas,df.plot,legend_kwds norm scheme,1
+geopandas,geopandas.GeoDataFrame,crs index,1
+geopandas,gdf.sindex.query,predicate sort,1
+geopandas,df.drop,axis inplace,1
+geopandas,df.sjoin_nearest,distance_col exclusive max_distance,1
+geopandas,GeoDataFrame,columns crs geometry,1
+geopandas,GeoDataFrame.from_features,columns crs,1
+geopandas,geopandas.read_file,layer,1
+geopandas,gdf.to_sql,chunksize dtype if_exists index index_label method schema,1
+geopandas,gdf.crs.to_epsg,min_confidence,1
+geopandas,gdf.crs.to_authority,auth_name min_confidence,1
+geopandas,GeoDataFrame.from_postgis,geom_col,1
+geopandas,GeoDataFrame.from_arrow,to_pandas_kwargs,1
+geopandas,GeoDataFrame.from_arrow,geometry,1
+geopandas,df.geometry.to_arrow,geometry_encoding interleaved,1
+geopandas,gdf.geometry.to_arrow,geometry_encoding,1
+geopandas,gdf.to_arrow,geometry_encoding interleaved,1
+geopandas,GeoSeries.from_arrow,name,1
+geopandas,df.set_crs,allow_override,1
+geopandas,geopandas.read_file,engine ignore_geometry,1
+geopandas,gdf.to_file,engine,1
+geopandas,geopandas.read_file,engine include_fields,1
+geopandas,geopandas.read_file,engine ignore_fields include_fields,1
+geopandas,geopandas.read_file,columns engine include_fields,1
+geopandas,geopandas.read_file,columns engine ignore_fields,1
+geopandas,read_file,bbox engine layer,1
+geopandas,read_file,engine layer mask,1
+geopandas,read_file,bbox mask,1
+geopandas,df.to_file,engine schema,1
+geopandas,df.to_parquet,compression,1
+geopandas,df.to_feather,compression,1
+geopandas,df.assign,bbox,1
+geopandas,gdf.to_parquet,geometry_encoding schema_version,1
+geopandas,geopandas.read_parquet,filters,1

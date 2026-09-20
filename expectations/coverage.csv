@@ -21,13 +21,21 @@ colour-table,raster,Read a colour table or palette,gdalraster::plot_raster(col_t
 read-layer,vector,Read a layer,sf::st_read 205 calls; terra::vect 208 calls,have,src() then collect()
 sql,vector,Run an SQL SELECT against the source,sf::st_read(query) 15 calls; vapour_read_fields(sql) 9 calls,gap,"adgl has where = only, so a join or an aggregate or a computed column is out of reach"
 where,vector,Filter features by an attribute expression,sf::st_read(query); OGR where,have,query(where = )
-spatial-filter,vector,Filter features by a rectangle,sf::st_read(wkt_filter); vapour_read_extent(extent); gdalraster::ogr_reproject(spat_bbox),have,query(extent = )
-fields,vector,Read only some attribute columns,vapour_read_fields; sf::st_read,have,"query(fields = ), though the narrowing happens in R"
-limit-skip,vector,Take the first n features or skip the first n,vapour_read_geometry(limit_n skip_n),gap,"limit is there, skip is not, and paging needs both"
+spatial-filter-geometry,vector,Filter features by an arbitrary geometry rather than a rectangle,geopandas read_file(mask) 14 calls; sf::st_read(wkt_filter),gap,"query(extent = ) takes four numbers; a mask takes a polygon, and GDAL has SetSpatialFilter for it"
+spatial-filter,vector,Filter features by a rectangle,sf::st_read(wkt_filter); vapour_read_extent(extent); geopandas read_file(bbox),have,query(extent = )
+fields,vector,Read only some attribute columns,vapour_read_fields; geopandas read_file(columns ignore_fields),have,"query(fields = ), though the narrowing happens in R rather than in the driver - both corpora expect the driver to do it"
+limit-skip,vector,Take the first n features or skip the first n,vapour_read_geometry(limit_n skip_n); geopandas read_file(rows),gap,"limit is there, skip is not, and paging needs both"
 layer-choice,vector,Choose the layer by name or by position,sf::st_read(layer); terra::vect(layer),have,src(layer = )
 transform-features,vector,Reproject the features themselves,sf::st_transform 88 calls; gdalraster::ogr_reproject,have,query(crs = )
-geometry-only,vector,Read geometry without attributes or attributes without geometry,vapour_read_geometry; vapour_read_attributes,gap,"fields = drops attributes but the geometry always comes back"
+geometry-only,vector,Read geometry without attributes or attributes without geometry,vapour_read_geometry; vapour_read_attributes; geopandas read_file(ignore_geometry),gap,"fields = drops attributes but the geometry always comes back"
 geometry-type,vector,Control the geometry type coming out,sf::st_read(promote_to_multi type geometry_column),gap,"a layer mixing POLYGON and MULTIPOLYGON is the common case this answers"
 write-append,vector,Append to a layer or replace it,sf::st_write(append delete_layer overwrite) 40 calls,gap,write_to() always creates
 feature-count,vector,Ask how many features there are without reading them,sf::st_layers(do_count); vapour_layer_info,have,src() reports it and report() says when it is unknown
 layer-extent,vector,Ask for the layer extent without reading features,vapour_read_extent; sf::st_bbox,have,src() reports it
+nodata-mask,raster,Return a nodata value as missing rather than as data,rasterio src.read(masked) 37 calls - its most-used argument; terra and stars mask by default,gap,"adgl carries nodata through write_to() and never applies it on read, so collect() hands back -32768 as if it were a measurement"
+boundless,raster,Read a window that runs past the edge and pad it,rasterio src.read(boundless) 18 calls; terra::crop(extend) 6 calls,gap,"two corpora ask for the same thing independently; query(extent = ) intersects instead"
+read-masks,raster,Read the mask itself rather than the values,rasterio src.read_masks,gap,"the per-pixel validity, which is not the same question as the values"
+overview-level,raster,Choose an overview level explicitly,rasterio.open(overview_level),have,"src(options = ""OVERVIEW_LEVEL=2"") - GDAL's own open option, which is why src() takes them"
+block-windows,raster,Iterate the source's own blocks or tiles,rasterio src.block_windows; windows.Window.from_slices,elsewhere,grout owns tiling
+create-from-nothing,raster,Create a raster from a dtype and a transform with no source,rasterio.open(driver dtype count width height crs transform) 25 calls,wont,"adgl is IO over sources; GDAL7::gdal_create() is the answer and stays there"
+arrow-out,vector,Hand back the Arrow stream rather than a materialised table,geopandas to_arrow and from_arrow 32 calls,gap,"adgl reads through nanoarrow and then builds a tibble, so the stream is already there and is thrown away"

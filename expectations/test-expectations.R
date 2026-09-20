@@ -158,6 +158,38 @@ test_that("warp-unbounded: a meaningless target extent is measured, not returned
                "no useful position")
 })
 
+test_that("overview-level: an overview is chosen through GDAL's own option", {
+  # rasterio: rasterio.open(f, overview_level = 0)
+  full <- src(cog())
+  on.exit(src_close(full), add = TRUE)
+  level <- src(cog(), options = "OVERVIEW_LEVEL=0")
+  on.exit(src_close(level), add = TRUE)
+
+  expect_lt(S7::prop(level, "plan")$dimension[1L],
+            S7::prop(full, "plan")$dimension[1L])
+})
+
+test_that("write-options: a raster writes with creation options", {
+  # terra: writeRaster(r, f, gdal = c("COMPRESS=ZSTD"))
+  x <- src(tif())
+  on.exit(src_close(x), add = TRUE)
+  out <- tempfile(fileext = ".tif")
+  write_to(x, out, options = c("COMPRESS=DEFLATE", "TILED=NO"))
+  expect_true(file.exists(out))
+
+  back <- src(out)
+  on.exit(src_close(back), add = TRUE)
+  expect_equal(S7::prop(back, "plan")$dimension, c(20L, 10L))
+})
+
+test_that("report: what the source does not say is said once, and not fixed", {
+  # No neighbour does this; it is the reason the package exists.
+  x <- src(tif())
+  on.exit(src_close(x), add = TRUE)
+  findings <- report(x)
+  expect_true(all(findings$severity %in% c("blocks", "degrades", "note")))
+})
+
 gap("read-window-pixel", "a window given in pixel coordinates (vapour_read_raster(window =))")
 gap("warp-pipeline", "a PROJ pipeline in place of a target CRS (terra::project(pipe =))")
 gap("warp-options", "warp and transform option pass-through (vapour_warp_raster(warp_options =))")
@@ -167,6 +199,9 @@ gap("write-overwrite", "an explicit overwrite (terra::writeRaster(overwrite =))"
 gap("vrt", "as_vrt() (gdalraster::buildVRT, vapour_vrt)")
 gap("subdatasets", "reaching a subdataset (stars::read_stars(sub =), read_ncdf(var =))")
 gap("colour-table", "reading a colour table (gdalraster::plot_raster(col_tbl =))")
+gap("nodata-mask", "nodata as missing rather than as data (rasterio src.read(masked =))")
+gap("boundless", "a window that runs past the edge, padded (rasterio src.read(boundless =), terra::crop(extend =))")
+gap("read-masks", "the mask itself rather than the values (rasterio src.read_masks)")
 
 # -- vector ----------------------------------------------------------------
 
@@ -275,3 +310,5 @@ gap("limit-skip-offset", "skipping the first n features (vapour_read_geometry(sk
 gap("geometry-only", "geometry without attributes, or attributes without geometry")
 gap("geometry-type", "geometry type control (sf::st_read(promote_to_multi =, type =))")
 gap("write-append", "appending to a layer rather than creating it (sf::st_write(append =))")
+gap("spatial-filter-geometry", "filtering by an arbitrary geometry, not a rectangle (geopandas read_file(mask =), sf::st_read(wkt_filter =))")
+gap("arrow-out", "handing back the Arrow stream rather than a tibble (geopandas to_arrow)")
