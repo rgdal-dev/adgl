@@ -1,0 +1,1758 @@
+"package","fun","args","calls"
+"gdalraster","addFilesInZip","content_type full_paths num_threads sozip_chunk_size sozip_enabled sozip_min_file_size",1
+"gdalraster","addFilesInZip","full_paths num_threads overwrite sozip_enabled",1
+"gdalraster","addFilesInZip","full_paths num_threads sozip_enabled",1
+"gdalraster","addFilesInZip","full_paths sozip_enabled",1
+"gdalraster","autoCreateWarpedVRT","alpha_band",1
+"gdalraster","autoCreateWarpedVRT","resample_alg",1
+"gdalraster","bandCopyWholeRaster","options",5
+"gdalraster","bbox_from_wkt","extend_x extend_y",1
+"gdalraster","bbox_transform","use_transform_bounds",1
+"gdalraster","bbox_union","as_wkt",1
+"gdalraster","buildRAT","join_df na_value table_type",5
+"gdalraster","buildVRT","cl_arg",3
+"gdalraster","calc","dtName expr nodata_value rasterfiles setRasterNodataValue var.names",3
+"gdalraster","calc","dstfile dtName expr nodata_value rasterfiles setRasterNodataValue var.names",2
+"gdalraster","calc","dtName expr fmt nodata_value quiet rasterfiles return_obj setRasterNodataValue var.names",2
+"gdalraster","calc","dtName expr rasterfiles setRasterNodataValue var.names",2
+"gdalraster","calc","rasterfiles var.names",2
+"gdalraster","calc","bands dstfile dtName expr nodata_value quiet rasterfiles setRasterNodataValue var.names",1
+"gdalraster","calc","bands dstfile expr out_band quiet rasterfiles var.names write_mode",1
+"gdalraster","calc","bands dstfile expr out_band rasterfiles var.names write_mode",1
+"gdalraster","calc","bands dtName expr fmt nodata_value rasterfiles setRasterNodataValue var.names",1
+"gdalraster","calc","bands dtName expr nodata_value rasterfiles setRasterNodataValue var.names",1
+"gdalraster","calc","dstfile dtName expr fmt nodata_value quiet rasterfiles return_obj setRasterNodataValue var.names",1
+"gdalraster","calc","dstfile dtName expr nodata_value out_band quiet rasterfiles var.names",1
+"gdalraster","calc","dstfile dtName expr nodata_value quiet rasterfiles return_obj setRasterNodataValue var.names",1
+"gdalraster","calc","dstfile dtName expr nodata_value quiet rasterfiles setRasterNodataValue var.names write_mode",1
+"gdalraster","calc","dstfile dtName nodata_value setRasterNodataValue",1
+"gdalraster","calc","dstfile expr quiet rasterfiles var.names write_mode",1
+"gdalraster","calc","dtName expr fmt nodata_value rasterfiles return_obj setRasterNodataValue var.names",1
+"gdalraster","calc","dtName expr nodata_value rasterfiles setRasterNodataValue",1
+"gdalraster","calc","dtName fmt return_obj setRasterNodataValue var.names",1
+"gdalraster","calc","expr rasterfiles var.names",1
+"gdalraster","combine","options",1
+"gdalraster","create","dataType dst_filename format nbands return_obj xsize ysize",17
+"gdalraster","create","dataType dst_filename format nbands xsize ysize",10
+"gdalraster","create","dataType dst_filename format nbands options return_obj xsize ysize",3
+"gdalraster","create","return_obj",3
+"gdalraster","create","dataType dst_filename format nbands options xsize ysize",1
+"gdalraster","create","dataType nbands options return_obj",1
+"gdalraster","create","dataType nbands options return_obj xsize ysize",1
+"gdalraster","createColorRamp","end_color end_index start_color start_index",2
+"gdalraster","createCopy","dst_filename format src_filename",6
+"gdalraster","createCopy","dst_filename format return_obj src_filename",4
+"gdalraster","createCopy","return_obj",3
+"gdalraster","createCopy","dst_filename format options return_obj src_filename",2
+"gdalraster","createCopy","dst_filename format options src_filename",2
+"gdalraster","createCopy","dst_filename format quiet src_filename",1
+"gdalraster","createCopy","dst_filename format src_filename strict",1
+"gdalraster","dem_proc","color_file",1
+"gdalraster","displayRAT","title",2
+"gdalraster","dt_find","bits is_floating is_signed",2
+"gdalraster","dt_find_for_value","is_complex",1
+"gdalraster","dt_size","as_bytes",4
+"gdalraster","epsg_to_wkt","pretty",2
+"gdalraster","fillNodata","band",3
+"gdalraster","fillNodata","band mask_file",1
+"gdalraster","g_add_geom","as_wkb",3
+"gdalraster","g_add_geom","as_iso",2
+"gdalraster","g_add_geom","byte_order",2
+"gdalraster","g_boundary","as_wkb",3
+"gdalraster","g_boundary","as_iso as_wkb byte_order quiet",1
+"gdalraster","g_buffer","as_wkb dist",2
+"gdalraster","g_buffer","dist",2
+"gdalraster","g_buffer","as_iso as_wkb byte_order dist quad_segs quiet",1
+"gdalraster","g_buffer","as_iso as_wkb byte_order dist quiet",1
+"gdalraster","g_buffer","as_wkb",1
+"gdalraster","g_buffer","dist geom",1
+"gdalraster","g_build_collection","as_wkb",4
+"gdalraster","g_build_collection","byte_order",3
+"gdalraster","g_build_collection","coll_type",3
+"gdalraster","g_build_collection","as_iso",2
+"gdalraster","g_build_polygon_from_edges","as_wkb",3
+"gdalraster","g_build_polygon_from_edges","byte_order",3
+"gdalraster","g_build_polygon_from_edges","as_iso",2
+"gdalraster","g_build_polygon_from_edges","auto_close",2
+"gdalraster","g_build_polygon_from_edges","tolerance",2
+"gdalraster","g_concave_hull","allow_holes as_wkb ratio",3
+"gdalraster","g_concave_hull","allow_holes ratio",3
+"gdalraster","g_concave_hull","allow_holes as_iso as_wkb byte_order quiet ratio",1
+"gdalraster","g_concave_hull","ratio",1
+"gdalraster","g_convex_hull","as_wkb",5
+"gdalraster","g_convex_hull","as_iso as_wkb byte_order quiet",1
+"gdalraster","g_create","as_wkb",7
+"gdalraster","g_create","as_iso",2
+"gdalraster","g_create","byte_order",2
+"gdalraster","g_delaunay_triangulation","as_wkb",5
+"gdalraster","g_delaunay_triangulation","as_iso as_wkb byte_order only_edges quiet tolerance",1
+"gdalraster","g_delaunay_triangulation","as_wkb constrained",1
+"gdalraster","g_difference","as_wkb",6
+"gdalraster","g_difference","as_iso as_wkb byte_order quiet",1
+"gdalraster","g_envelope","as_3d",2
+"gdalraster","g_geodesic_area","traditional_gis_order",1
+"gdalraster","g_geodesic_length","traditional_gis_order",1
+"gdalraster","g_get_geom","as_wkb",4
+"gdalraster","g_intersection","as_wkb",4
+"gdalraster","g_intersection","as_iso as_wkb byte_order quiet",1
+"gdalraster","g_intersects","quiet",2
+"gdalraster","g_is_empty","quiet",2
+"gdalraster","g_is_valid","quiet",2
+"gdalraster","g_make_valid","as_wkb",4
+"gdalraster","g_make_valid","method quiet",2
+"gdalraster","g_make_valid","as_iso as_wkb byte_order keep_collapsed method quiet",1
+"gdalraster","g_make_valid","method",1
+"gdalraster","g_name","quiet",2
+"gdalraster","g_normalize","as_wkb",2
+"gdalraster","g_normalize","as_wkb quiet",2
+"gdalraster","g_normalize","as_iso as_wkb byte_order quiet",1
+"gdalraster","g_segmentize","as_wkb max_length",4
+"gdalraster","g_segmentize","as_iso as_wkb byte_order max_length quiet",1
+"gdalraster","g_segmentize","max_length",1
+"gdalraster","g_set_3D","is_3d",6
+"gdalraster","g_set_3D","as_iso is_3d",4
+"gdalraster","g_set_3D","as_wkb is_3d",2
+"gdalraster","g_set_3D","byte_order is_3d",2
+"gdalraster","g_set_3D","is_3d quiet",2
+"gdalraster","g_set_measured","is_measured",6
+"gdalraster","g_set_measured","as_iso is_measured",4
+"gdalraster","g_set_measured","as_wkb is_measured",2
+"gdalraster","g_set_measured","byte_order is_measured",2
+"gdalraster","g_set_measured","is_measured quiet",2
+"gdalraster","g_simplify","as_wkb tolerance",5
+"gdalraster","g_simplify","as_iso as_wkb byte_order preserve_topology quiet tolerance",1
+"gdalraster","g_simplify","as_wkb preserve_topology tolerance",1
+"gdalraster","g_simplify","tolerance",1
+"gdalraster","g_swap_xy","as_wkb",3
+"gdalraster","g_swap_xy","as_wkb quiet",2
+"gdalraster","g_swap_xy","as_iso as_wkb byte_order quiet",1
+"gdalraster","g_sym_difference","as_wkb",4
+"gdalraster","g_sym_difference","as_iso as_wkb byte_order quiet",1
+"gdalraster","g_transform","as_wkb srs_from srs_to",3
+"gdalraster","g_transform","srs_from srs_to",3
+"gdalraster","g_transform","as_wkb",2
+"gdalraster","g_transform","traditional_gis_order",2
+"gdalraster","g_transform","as_iso as_wkb byte_order date_line_offset quiet traditional_gis_order wrap_date_line",1
+"gdalraster","g_transform","as_wkb wrap_date_line",1
+"gdalraster","g_unary_union","as_wkb",5
+"gdalraster","g_unary_union","as_iso as_wkb byte_order quiet",1
+"gdalraster","g_union","as_wkb",4
+"gdalraster","g_union","as_iso as_wkb byte_order quiet",1
+"gdalraster","g_wk2wk","as_iso",7
+"gdalraster","gdal_alg","parse",1
+"gdalraster","gdal_commands","cout",3
+"gdalraster","gdal_commands","recurse",2
+"gdalraster","gdal_commands","cout recurse",1
+"gdalraster","gdal_run","close quiet",1
+"gdalraster","gdal_run_piped","other_args output_format output_index",4
+"gdalraster","gdal_run_piped","outputLayerNameForOpen",1
+"gdalraster","identifyDriver","allowed_drivers",2
+"gdalraster","identifyDriver","raster",2
+"gdalraster","identifyDriver","file_list",1
+"gdalraster","identifyDriver","vector",1
+"gdalraster","inspectDataset","vector",1
+"gdalraster","inv_project","pts srs well_known_gcs",12
+"gdalraster","inv_project","srs well_known_gcs",1
+"gdalraster","is_los_visible","ZinterpA ZinterpB band quiet srsA srsB",16
+"gdalraster","is_los_visible","ZinterpB srsB",4
+"gdalraster","is_los_visible","srsA",2
+"gdalraster","is_los_visible","ZinterpA",1
+"gdalraster","is_los_visible","ZinterpA ZinterpB",1
+"gdalraster","is_los_visible","srsB",1
+"gdalraster","make_chunk_index","block_xsize block_ysize gt max_pixels raster_xsize raster_ysize",3
+"gdalraster","mdim_as_classic","read_only view_expr",2
+"gdalraster","mdim_as_classic","read_only",1
+"gdalraster","mdim_info","cout",2
+"gdalraster","mdim_info","allowed_drivers detailed limit open_options pretty",1
+"gdalraster","mdim_info","array_options",1
+"gdalraster","mdim_translate","scaleaxes_specs",2
+"gdalraster","mdim_translate","subset_specs",2
+"gdalraster","mdim_translate","allowed_drivers array_specs creation_options open_options quiet",1
+"gdalraster","mdim_translate","array_specs",1
+"gdalraster","mdim_translate","creation_options",1
+"gdalraster","mdim_translate","group_specs",1
+"gdalraster","ogr2ogr","cl_arg",5
+"gdalraster","ogr2ogr","src_layers",3
+"gdalraster","ogr2ogr","cl_arg src_layers",2
+"gdalraster","ogr2ogr","cl_arg open_options",1
+"gdalraster","ogr2ogr","dst_dsn src_dsn src_layers",1
+"gdalraster","ogr_def_field","fld_subtype",3
+"gdalraster","ogr_def_field","is_nullable is_unique",3
+"gdalraster","ogr_def_field","default_value",2
+"gdalraster","ogr_def_field","default_value fld_width is_nullable",2
+"gdalraster","ogr_def_field","domain_name",2
+"gdalraster","ogr_def_field","fld_width",2
+"gdalraster","ogr_def_field","default_value fld_type",1
+"gdalraster","ogr_def_field","default_value fld_type fld_width is_nullable",1
+"gdalraster","ogr_def_field","default_value fld_width",1
+"gdalraster","ogr_def_field","fld_type is_nullable is_unique",1
+"gdalraster","ogr_def_field_domain","coded_values fld_type",8
+"gdalraster","ogr_def_field_domain","fld_type range_max range_min",7
+"gdalraster","ogr_def_field_domain","fld_type glob",6
+"gdalraster","ogr_def_field_domain","description fld_type range_max range_min",3
+"gdalraster","ogr_def_field_domain","coded_values description fld_type",2
+"gdalraster","ogr_def_field_domain","fld_type max_is_inclusive range_max range_min",2
+"gdalraster","ogr_def_field_domain","fld_type min_is_inclusive range_max range_min",2
+"gdalraster","ogr_def_field_domain","fld_type",1
+"gdalraster","ogr_def_geom_field","srs",4
+"gdalraster","ogr_def_geom_field","is_nullable srs",1
+"gdalraster","ogr_def_layer","srs",11
+"gdalraster","ogr_ds_create","geom_type overwrite",11
+"gdalraster","ogr_ds_create","geom_type overwrite return_obj",3
+"gdalraster","ogr_ds_create","layer_defn lco overwrite return_obj",3
+"gdalraster","ogr_ds_create","fld_name fld_type geom_type layer overwrite return_obj srs",2
+"gdalraster","ogr_ds_create","fld_name fld_type geom_type overwrite",2
+"gdalraster","ogr_ds_create","fld_name geom_type overwrite",2
+"gdalraster","ogr_ds_create","geom_type",2
+"gdalraster","ogr_ds_create","geom_type overwrite srs",2
+"gdalraster","ogr_ds_create","geom_type return_obj",2
+"gdalraster","ogr_ds_create","layer_defn",2
+"gdalraster","ogr_ds_create","layer_defn overwrite",2
+"gdalraster","ogr_ds_create","dsco",1
+"gdalraster","ogr_ds_create","dsco geom_type overwrite",1
+"gdalraster","ogr_ds_create","dsco layer_defn lco",1
+"gdalraster","ogr_ds_create","geom_type lco overwrite",1
+"gdalraster","ogr_ds_create","layer_defn lco overwrite",1
+"gdalraster","ogr_ds_create","layer_defn overwrite return_obj",1
+"gdalraster","ogr_ds_create","layer_defn return_obj",1
+"gdalraster","ogr_ds_create","overwrite",1
+"gdalraster","ogr_ds_exists","with_update",8
+"gdalraster","ogr_ds_format","dsn",1
+"gdalraster","ogr_ds_layer_names","dsn",1
+"gdalraster","ogr_ds_test_cap","with_update",2
+"gdalraster","ogr_execute_sql","spatial_filter",5
+"gdalraster","ogr_execute_sql","dialect",2
+"gdalraster","ogr_execute_sql","dialect dsn sql",1
+"gdalraster","ogr_execute_sql","dsn sql",1
+"gdalraster","ogr_execute_sql","sql",1
+"gdalraster","ogr_field_create","fld_defn",5
+"gdalraster","ogr_field_create","domain_name fld_type",3
+"gdalraster","ogr_field_create","fld_type",3
+"gdalraster","ogr_field_create","default_value domain_name fld_type",1
+"gdalraster","ogr_field_create","default_value fld_type",1
+"gdalraster","ogr_field_create","fld_name fld_subtype fld_type",1
+"gdalraster","ogr_field_create","fld_name fld_type is_nullable layer",1
+"gdalraster","ogr_field_create","fld_name fld_type layer",1
+"gdalraster","ogr_field_delete","fld_name layer",1
+"gdalraster","ogr_field_rename","fld_name layer new_name",1
+"gdalraster","ogr_field_set_domain_name","domain_name fld_name",2
+"gdalraster","ogr_geom_field_create","geom_fld_defn",8
+"gdalraster","ogr_geom_field_create","geom_type",1
+"gdalraster","ogr_geom_field_create","geom_type is_nullable",1
+"gdalraster","ogr_geom_field_create","geom_type srs",1
+"gdalraster","ogr_layer_create","layer_defn",4
+"gdalraster","ogr_layer_create","geom_type",2
+"gdalraster","ogr_layer_create","geom_type layer srs",2
+"gdalraster","ogr_layer_create","return_obj",2
+"gdalraster","ogr_layer_create","srs",2
+"gdalraster","ogr_layer_create","layer layer_defn",1
+"gdalraster","ogr_layer_create","lco",1
+"gdalraster","ogr_layer_field_names","layer",3
+"gdalraster","ogr_layer_field_names","dsn layer",2
+"gdalraster","ogr_layer_test_cap","with_update",2
+"gdalraster","ogr_proc","input_lyr method_lyr mode mode_opt out_dsn out_geom_type out_lyr_name",10
+"gdalraster","ogr_proc","input_lyr method_lyr mode mode_opt out_dsn out_geom_type",1
+"gdalraster","ogr_proc","input_lyr method_lyr mode mode_opt out_dsn out_geom_type out_lyr_name overwrite",1
+"gdalraster","ogr_proc","input_lyr method_lyr mode mode_opt out_dsn out_geom_type overwrite",1
+"gdalraster","ogr_reproject","append",3
+"gdalraster","ogr_reproject","overwrite",3
+"gdalraster","ogr_reproject","add_cl_arg",2
+"gdalraster","ogr_reproject","nln",2
+"gdalraster","ogr_reproject","spat_bbox",2
+"gdalraster","ogr_reproject","dialect",1
+"gdalraster","ogr_reproject","dialect nln",1
+"gdalraster","ogr_reproject","dsco",1
+"gdalraster","ogr_reproject","lco",1
+"gdalraster","ogr_reproject","nlt",1
+"gdalraster","ogr_reproject","out_dsn out_srs src_dsn src_layer",1
+"gdalraster","ogr_reproject","out_fmt",1
+"gdalraster","ogr_reproject","progress",1
+"gdalraster","ogr_reproject","src_open_options",1
+"gdalraster","ogrinfo","cl_arg read_only",3
+"gdalraster","ogrinfo","cl_arg",2
+"gdalraster","pixel_extract","as_data_frame",3
+"gdalraster","pixel_extract","interp",3
+"gdalraster","pixel_extract","krnl_dim",3
+"gdalraster","pixel_extract","as_data_frame bands",2
+"gdalraster","pixel_extract","bands",2
+"gdalraster","pixel_extract","max_ram",2
+"gdalraster","pixel_extract","xy_srs",2
+"gdalraster","pixel_extract","xy xy_srs",1
+"gdalraster","plot","col",3
+"gdalraster","plot","add border col",2
+"gdalraster","plot","add col pch",2
+"gdalraster","plot","col main xlab ylab",2
+"gdalraster","plot","add border col main",1
+"gdalraster","plot","add cex pch",1
+"gdalraster","plot","add col lwd",1
+"gdalraster","plot","asp xlab xlim ylab ylim",1
+"gdalraster","plot_geom","add",1
+"gdalraster","plot_raster","interpolate legend main",6
+"gdalraster","plot_raster","legend",6
+"gdalraster","plot_raster","legend main",3
+"gdalraster","plot_raster","col_map_fn legend main",2
+"gdalraster","plot_raster","col_map_fn legend main na_col",2
+"gdalraster","plot_raster","col_tbl interpolate",2
+"gdalraster","plot_raster","main",2
+"gdalraster","plot_raster","col_map_fn interpolate legend main pixel_fn",1
+"gdalraster","plot_raster","col_map_fn legend",1
+"gdalraster","plot_raster","col_map_fn legend main minmax_pct_cut",1
+"gdalraster","plot_raster","col_map_fn legend main na_col pixel_fn",1
+"gdalraster","plot_raster","col_tbl data interpolate main maxColorValue",1
+"gdalraster","plot_raster","col_tbl interpolate main",1
+"gdalraster","plot_raster","interpolate pixel_fn",1
+"gdalraster","plot_raster","main nbands",1
+"gdalraster","plot_raster","minmax_def nbands xsize ysize",1
+"gdalraster","plot_raster","minmax_pct_cut nbands xsize ysize",1
+"gdalraster","polygonize","connectedness lco",2
+"gdalraster","polygonize","connectedness overwrite",1
+"gdalraster","polygonize","dsco",1
+"gdalraster","polygonize","mask_file overwrite",1
+"gdalraster","polygonize","nomask overwrite",1
+"gdalraster","rasterFromRaster","dstfile dtName init nbands options srcfile",3
+"gdalraster","rasterFromRaster","dstfile dtName init nbands srcfile",3
+"gdalraster","rasterFromRaster","dstfile init srcfile",2
+"gdalraster","rasterFromRaster","init nbands",2
+"gdalraster","rasterFromRaster","dstfile dtName fmt init nbands srcfile",1
+"gdalraster","rasterFromRaster","dstnodata dtName",1
+"gdalraster","rasterToVRT","krnl krnl_fn",5
+"gdalraster","rasterToVRT","src_align subwindow",5
+"gdalraster","rasterToVRT","resampling resolution",2
+"gdalraster","rasterToVRT","resolution src_align subwindow",2
+"gdalraster","rasterToVRT","krnl",1
+"gdalraster","rasterToVRT","krnl resolution",1
+"gdalraster","rasterize","burn_attr co dstfile dstnodata dtName init sql src_dsn tap tr",2
+"gdalraster","rasterize","add_options burn_value co dstfile dtName fmt init layer src_dsn te ts where",1
+"gdalraster","rasterize","burn_value",1
+"gdalraster","read_ds","as_raw",3
+"gdalraster","read_ds","as_list",1
+"gdalraster","read_ds","as_list bands",1
+"gdalraster","read_ds","bands",1
+"gdalraster","read_to_nativeRaster","out_xsize out_ysize xsize ysize",1
+"gdalraster","rvector_to_MEM","nbands",3
+"gdalraster","rvector_to_MEM","gt srs",2
+"gdalraster","rvector_to_MEM","bbox",1
+"gdalraster","rvector_to_MEM","bbox srs",1
+"gdalraster","rvector_to_MEM","gt",1
+"gdalraster","rvector_to_MEM","srs",1
+"gdalraster","rvector_to_MEM","xsize ysize",1
+"gdalraster","sieveFilter","connectedness dst_band dst_filename mask_band mask_filename size_threshold src_band src_filename",1
+"gdalraster","srs_find_epsg","all_matches",2
+"gdalraster","srs_is_same","criterion ignore_axis_mapping",1
+"gdalraster","srs_is_same","ignore_axis_mapping",1
+"gdalraster","srs_is_same","ignore_coord_epoch",1
+"gdalraster","srs_to_projjson","indent_width",1
+"gdalraster","srs_to_projjson","multiline",1
+"gdalraster","srs_to_projjson","schema",1
+"gdalraster","srs_to_wkt","pretty",3
+"gdalraster","srs_to_wkt","gcs_only",2
+"gdalraster","transform_bounds","traditional_gis_order",3
+"gdalraster","transform_xy","pts srs_from srs_to",11
+"gdalraster","transform_xy","srs_from srs_to",1
+"gdalraster","vsi_curl_clear_cache","file_prefix partial",1
+"gdalraster","vsi_get_file_metadata","domain",5
+"gdalraster","vsi_get_fs_options","as_list",2
+"gdalraster","vsi_mkdir","recursive",1
+"gdalraster","vsi_read_dir","all_files",1
+"gdalraster","vsi_read_dir","all_files recursive",1
+"gdalraster","vsi_read_dir","recursive",1
+"gdalraster","vsi_rmdir","recursive",4
+"gdalraster","vsi_sync","options",1
+"gdalraster","vsi_sync","show_progress",1
+"gdalraster","warp","cl_arg t_srs",7
+"gdalraster","warp","t_srs",1
+"s2","as_s2_geography","check",2
+"s2","as_s2_geography","check oriented",2
+"s2","as_s2_geography","oriented",1
+"s2","expect_near","epsilon",7
+"s2","expect_wkt_equal","precision",13
+"s2","recycle_common","b",1
+"s2","s2_area","radius",30
+"s2","s2_as_binary","endian",1
+"s2","s2_as_binary","planar",1
+"s2","s2_as_text","precision",8
+"s2","s2_as_text","planar",3
+"s2","s2_buffer_cells","distance radius",1
+"s2","s2_cell_area","radius",1
+"s2","s2_cell_area_approx","radius",1
+"s2","s2_cell_common_ancestor_level_agg","na.rm",2
+"s2","s2_cell_distance","radius",1
+"s2","s2_cell_max_distance","radius",2
+"s2","s2_cell_vertex","k",1
+"s2","s2_centroid_agg","na.rm",2
+"s2","s2_closest_edges","k",2
+"s2","s2_closest_edges","k min_distance",2
+"s2","s2_closest_edges","k max_distance radius",1
+"s2","s2_convex_hull_agg","na.rm",2
+"s2","s2_coverage_union_agg","na.rm",3
+"s2","s2_coverage_union_agg","options",2
+"s2","s2_covering_cell_ids","interior",1
+"s2","s2_covering_cell_ids","max_cells",1
+"s2","s2_covering_cell_ids_agg","na.rm",2
+"s2","s2_covering_cell_ids_agg","interior",1
+"s2","s2_covering_cell_ids_agg","radius",1
+"s2","s2_distance","radius",3
+"s2","s2_distance_matrix","radius",2
+"s2","s2_dwithin","radius",5
+"s2","s2_geog_from_text","check oriented",2
+"s2","s2_geog_from_text","check",1
+"s2","s2_geog_from_text","oriented",1
+"s2","s2_geog_from_text","planar",1
+"s2","s2_geog_from_text","planar tessellate_tol_m",1
+"s2","s2_geog_from_wkb","oriented",3
+"s2","s2_geog_from_wkb","check oriented",2
+"s2","s2_geog_from_wkb","planar",1
+"s2","s2_geography_writer","tessellate_tol",4
+"s2","s2_geography_writer","projection",3
+"s2","s2_geography_writer","check",1
+"s2","s2_geography_writer","check oriented",1
+"s2","s2_geography_writer","check oriented projection",1
+"s2","s2_interpolate","radius",1
+"s2","s2_intersects","options",1
+"s2","s2_intersects_box","options",6
+"s2","s2_intersects_box","detail",1
+"s2","s2_length","radius",1
+"s2","s2_make_line","feature_id",2
+"s2","s2_make_polygon","check oriented ring_id",2
+"s2","s2_make_polygon","feature_id ring_id",2
+"s2","s2_make_polygon","oriented ring_id",1
+"s2","s2_max_distance","radius",3
+"s2","s2_max_distance_matrix","radius",2
+"s2","s2_options","model",45
+"s2","s2_options","snap",11
+"s2","s2_options","model snap",10
+"s2","s2_options","polyline_sibling_pairs polyline_type",4
+"s2","s2_options","polyline_type",4
+"s2","s2_options","dimensions",3
+"s2","s2_options","duplicate_edges",2
+"s2","s2_options","snap_radius",2
+"s2","s2_options","validate",2
+"s2","s2_options","duplicate_edges snap",1
+"s2","s2_options","simplify_edge_chains snap_radius",1
+"s2","s2_options","split_crossing_edges",1
+"s2","s2_perimeter","radius",1
+"s2","s2_plot","add",2
+"s2","s2_plot","centre",1
+"s2","s2_plot","plot_hemisphere",1
+"s2","s2_plot","simplify",1
+"s2","s2_prepared_dwithin","radius",5
+"s2","s2_project","radius",1
+"s2","s2_rebuild","options",10
+"s2","s2_rebuild_agg","na.rm",1
+"s2","s2_simplify","tolerance",2
+"s2","s2_union","options",2
+"s2","s2_union_agg","na.rm",2
+"s2","sort","decreasing",1
+"s2","wk_handle","s2_tessellate_tol",1
+"sf","[","dist op",1
+"sf","[","drop",1
+"sf","[","op",1
+"sf","aggregate","do_union",2
+"sf","aggregate","join",1
+"sf","c","xmax xmin ymax ymin",10
+"sf","c","csv",4
+"sf","c","pg",4
+"sf","c","couchdb",3
+"sf","c","AREA BIR74 BIR79 CNTY_ CNTY_ID CRESS_ID FIPS FIPSNO NAME NWBIR74 NWBIR79 PERIMETER SID74 SID79",2
+"sf","c","db2odbc",2
+"sf","c","dods",2
+"sf","c","e00",2
+"sf","c","geojson",2
+"sf","c","gft",2
+"sf","c","gml",2
+"sf","c","mssql",2
+"sf","c","mysql",2
+"sf","c","oci",2
+"sf","c","odbc",2
+"sf","c","sde",2
+"sf","c","BIR74",1
+"sf","c","BIR74 BIR79",1
+"sf","c","COMPRESS_OVERVIEW",1
+"sf","c","X1 X2",1
+"sf","c","bna",1
+"sf","c","gdb",1
+"sf","c","gmt",1
+"sf","c","gpkg",1
+"sf","c","gps",1
+"sf","c","gtm",1
+"sf","c","gxt",1
+"sf","c","jml",1
+"sf","c","kml",1
+"sf","c","map",1
+"sf","c","mdb",1
+"sf","c","missing unavailable wgs84",1
+"sf","c","mmax mmin",1
+"sf","c","nc",1
+"sf","c","nothing",1
+"sf","c","ods",1
+"sf","c","ones",1
+"sf","c","osm",1
+"sf","c","pbf",1
+"sf","c","shp",1
+"sf","c","sqlite",1
+"sf","c","vdv",1
+"sf","c","xls",1
+"sf","c","xlsx",1
+"sf","c","zmax zmin",1
+"sf","cbind","x y",15
+"sf","cbind","sf_column_name",1
+"sf","data.frame","name",8
+"sf","data.frame","a",5
+"sf","data.frame","x",5
+"sf","data.frame","lat lon",4
+"sf","data.frame","a b",3
+"sf","data.frame","chara date fact inte logi nume stringsAsFactors time x y",3
+"sf","data.frame","geometry id",3
+"sf","data.frame","b x",2
+"sf","data.frame","id",2
+"sf","data.frame","name write",2
+"sf","data.frame","a b c d row.names",1
+"sf","data.frame","a b c d x y",1
+"sf","data.frame","a b x",1
+"sf","data.frame","a geom",1
+"sf","data.frame","a row.names",1
+"sf","data.frame","a stringsAsFactors",1
+"sf","data.frame","a x y",1
+"sf","data.frame","attr geom",1
+"sf","data.frame","geometry",1
+"sf","data.frame","geometry stringsAsFactors x y",1
+"sf","data.frame","ops",1
+"sf","data.frame","w",1
+"sf","data.frame","x y",1
+"sf","data.frame","x y z",1
+"sf","data.frame","x1 x2",1
+"sf","dbWriteTable","append temporary",1
+"sf","factor","levels",3
+"sf","gdal_addo","clean",2
+"sf","gdal_addo","config_options read_only",1
+"sf","gdal_addo","read_only",1
+"sf","gdal_utils","destination options source util",2
+"sf","gdal_utils","options",2
+"sf","gdal_utils","quiet",2
+"sf","gdal_utils","quiet source",2
+"sf","gdal_utils","processing",1
+"sf","is_driver_can","operation",5
+"sf","list","multi single",2
+"sf","list","x",2
+"sf","list","Ashe_nb",1
+"sf","list","a b c",1
+"sf","list","epsg proj4string",1
+"sf","list","ff soil",1
+"sf","list","lines points polygons",1
+"sf","list","m",1
+"sf","list","multi multi_empty single",1
+"sf","list","soil",1
+"sf","map","fill plot",5
+"sf","map","fill",2
+"sf","map","fill interior plot",1
+"sf","map","fill plot xlim ylim",1
+"sf","map","plot xlim ylim",1
+"sf","matrix","byrow ncol",53
+"sf","matrix","ncol",30
+"sf","matrix","nrow",17
+"sf","matrix","byrow",7
+"sf","matrix","dimnames ncol",1
+"sf","matrix","ncol nrow",1
+"sf","merge","all",3
+"sf","merge","all.x",1
+"sf","plot","add col",47
+"sf","plot","col",35
+"sf","plot","add",25
+"sf","plot","add border",12
+"sf","plot","main reset",12
+"sf","plot","axes",11
+"sf","plot","border",7
+"sf","plot","add col pch",6
+"sf","plot","key.pos",5
+"sf","plot","add border col",4
+"sf","plot","add cex col pch",4
+"sf","plot","border col",4
+"sf","plot","graticule",4
+"sf","plot","key.length key.pos",4
+"sf","plot","logz main",4
+"sf","plot","axes border col",3
+"sf","plot","axes col",3
+"sf","plot","border col lwd",3
+"sf","plot","add col lwd",2
+"sf","plot","axes graticule",2
+"sf","plot","axes type xlab ylab",2
+"sf","plot","bg cex col lty lwd pch type",2
+"sf","plot","bgMap",2
+"sf","plot","border main",2
+"sf","plot","breaks",2
+"sf","plot","col lty lwd pch type",2
+"sf","plot","col main",2
+"sf","plot","reset",2
+"sf","plot","xlim",2
+"sf","plot","ylim",2
+"sf","plot","add border col lwd",1
+"sf","plot","add border lwd",1
+"sf","plot","add cex col",1
+"sf","plot","add col main",1
+"sf","plot","add pch",1
+"sf","plot","asp col",1
+"sf","plot","at breaks logz",1
+"sf","plot","axes graticule key.pos",1
+"sf","plot","axes graticule key.pos xaxs xlim yaxs ylim",1
+"sf","plot","axes graticule lon",1
+"sf","plot","axes key.length key.pos key.width",1
+"sf","plot","axes key.pos key.width pal",1
+"sf","plot","axes type",1
+"sf","plot","border cex col lwd",1
+"sf","plot","border col xlim",1
+"sf","plot","border col xlim ylim",1
+"sf","plot","breaks nbreaks pal",1
+"sf","plot","breaks pal",1
+"sf","plot","key.pos logz",1
+"sf","plot","log xlab ylab",1
+"sf","plot","logz",1
+"sf","plot","main",1
+"sf","plot","max.plot",1
+"sf","plot","nbreaks pal",1
+"sf","plot","pch",1
+"sf","plot","reset xlim",1
+"sf","plot","reset xlim ylim",1
+"sf","plot","xlim ylim",1
+"sf","points","col",4
+"sf","ppp","marks x y",1
+"sf","print","n",8
+"sf","read_sf","quiet",4
+"sf","read_sf","wkt_filter",2
+"sf","read_sf","check_ring_dir",1
+"sf","read_sf","crs fid_column_name quiet",1
+"sf","read_sf","fid_column_name",1
+"sf","read_sf","query",1
+"sf","rep","each",3
+"sf","sf.colors","alpha categorical",8
+"sf","sf.colors","categorical",1
+"sf","sf_proj_info","path",1
+"sf","sf_project","keep",2
+"sf","sf_project","pts",1
+"sf","st_as_binary","pureR",6
+"sf","st_as_binary","EWKB pureR",1
+"sf","st_as_grob","gp",12
+"sf","st_as_grob","gp pch",1
+"sf","st_as_s2","oriented",4
+"sf","st_as_sf","coords crs",16
+"sf","st_as_sf","coords",9
+"sf","st_as_sf","wkt",5
+"sf","st_as_sf","agr coords crs",3
+"sf","st_as_sf","fill",3
+"sf","st_as_sf","as_points",2
+"sf","st_as_sf","coords dim",2
+"sf","st_as_sf","as_points use_integer",1
+"sf","st_as_sf","coords x",1
+"sf","st_as_sf","crs",1
+"sf","st_as_sf","fill group",1
+"sf","st_as_sf","geom",1
+"sf","st_as_sf","group",1
+"sf","st_as_sf","remove wkt",1
+"sf","st_as_sf","sf_column_name",1
+"sf","st_as_sfc","crs",19
+"sf","st_as_sfc","EWKB",14
+"sf","st_as_sfc","EWKB pureR",5
+"sf","st_as_sfc","spatialite",5
+"sf","st_as_sfc","as_points",4
+"sf","st_as_sfc","as_points geotransform use_cpp",4
+"sf","st_as_sfc","GeoJSON",1
+"sf","st_as_sfc","GeoJSON crs",1
+"sf","st_as_sfc","pureR",1
+"sf","st_as_text","EWKT",5
+"sf","st_as_text","pretty",1
+"sf","st_bbox","crs",4
+"sf","st_break_antimeridian","lon_0",1
+"sf","st_buffer","dist",4
+"sf","st_buffer","dist nQuadSegs",4
+"sf","st_buffer","dist endCapStyle",3
+"sf","st_buffer","dist joinStyle",3
+"sf","st_buffer","dist joinStyle mitreLimit",3
+"sf","st_buffer","dist max_cells",2
+"sf","st_buffer","joinStyle",2
+"sf","st_buffer","endCapStyle",1
+"sf","st_buffer","joinStyle mitreLimit",1
+"sf","st_buffer","max_cells",1
+"sf","st_buffer","nQuadSegs",1
+"sf","st_centroid","of_largest_polygon",2
+"sf","st_contains","by_element",1
+"sf","st_contains","sparse",1
+"sf","st_coordinates","round",3
+"sf","st_covered_by","sparse",2
+"sf","st_covers","sparse",1
+"sf","st_crop","xmax xmin ymax ymin",1
+"sf","st_crosses","sparse",1
+"sf","st_crs","valid",4
+"sf","st_crs","parameters",2
+"sf","st_difference","by_element",1
+"sf","st_disjoint","sparse",1
+"sf","st_distance","by_element",6
+"sf","st_distance","par which",2
+"sf","st_distance","which",1
+"sf","st_equals","sparse",4
+"sf","st_equals","remove_self",2
+"sf","st_equals","retain_unique",2
+"sf","st_equals_exact","sparse",1
+"sf","st_filter",".predicate",1
+"sf","st_geometry_type","by_geometry",1
+"sf","st_geometrycollection","dim",6
+"sf","st_geometrycollection","x",6
+"sf","st_graticule","datum",1
+"sf","st_graticule","lon",1
+"sf","st_interpolate_aw","extensive",10
+"sf","st_interpolate_aw","extensive weights",8
+"sf","st_interpolate_aw","extensive include_non_intersected",1
+"sf","st_interpolate_aw","extensive include_non_intersected weights",1
+"sf","st_intersection","by_element",3
+"sf","st_intersects","sparse",7
+"sf","st_intersects","model",4
+"sf","st_intersects","by_element",3
+"sf","st_is_valid","reason",3
+"sf","st_is_valid","NA_on_exception",1
+"sf","st_is_within_distance","sparse",4
+"sf","st_is_within_distance","dist",1
+"sf","st_jitter","factor",2
+"sf","st_jitter","amount",1
+"sf","st_join","join",2
+"sf","st_join","largest",2
+"sf","st_join","left",2
+"sf","st_layers","do_count",2
+"sf","st_line_sample","density",8
+"sf","st_line_sample","n",2
+"sf","st_line_sample","density type",1
+"sf","st_line_sample","sample",1
+"sf","st_linestring","x",3
+"sf","st_linestring","dim",2
+"sf","st_m_range","crs",1
+"sf","st_make_grid","square what",5
+"sf","st_make_grid","what",5
+"sf","st_make_grid","n",4
+"sf","st_make_grid","flat_topped square what",3
+"sf","st_make_grid","cellsize n offset",1
+"sf","st_make_grid","cellsize offset square",1
+"sf","st_make_grid","cellsize square",1
+"sf","st_multilinestring","x",2
+"sf","st_multipoint","dim",8
+"sf","st_multipoint","x",2
+"sf","st_multipolygon","x",2
+"sf","st_nearest_points","pairwise",6
+"sf","st_normalize","domain",1
+"sf","st_overlaps","sparse",1
+"sf","st_point","dim",5
+"sf","st_point","x",2
+"sf","st_polygon","x",4
+"sf","st_read","quiet",51
+"sf","st_read","query",15
+"sf","st_read","quiet type",9
+"sf","st_read","crs quiet",6
+"sf","st_read","geometry_column query",3
+"sf","st_read","geometry_column quiet",3
+"sf","st_read","options quiet",3
+"sf","st_read","promote_to_multi quiet",3
+"sf","st_read","crs query quiet",2
+"sf","st_read","crs quiet stringsAsFactors",2
+"sf","st_read","int64_as_string quiet",2
+"sf","st_read","table",2
+"sf","st_read","agr",1
+"sf","st_read","agr crs quiet",1
+"sf","st_read","as_tibble query",1
+"sf","st_read","check_ring_dir quiet",1
+"sf","st_read","int64_as_string layer quiet use_stream",1
+"sf","st_read","int64_as_string options quiet stringsAsFactors",1
+"sf","st_read","layer quiet use_stream",1
+"sf","st_read","query quiet",1
+"sf","st_read","quiet use_stream",1
+"sf","st_read","random_arg",1
+"sf","st_read","table x y",1
+"sf","st_read","wkt_filter",1
+"sf","st_relate","pattern",8
+"sf","st_relate","by_element",1
+"sf","st_relate","by_element pattern",1
+"sf","st_relate","pattern sparse",1
+"sf","st_sample","type",6
+"sf","st_sample","exact",4
+"sf","st_sample","kappa mu scale type",2
+"sf","st_sample","size",2
+"sf","st_sample","exact size x",1
+"sf","st_sample","great_circles",1
+"sf","st_sample","kappa mu type",1
+"sf","st_sample","size x",1
+"sf","st_sf","a geom",60
+"sf","st_sf","a",16
+"sf","st_sf","a b",7
+"sf","st_sf","a crs geom",7
+"sf","st_sf","geom s",5
+"sf","st_sf","a geometry",3
+"sf","st_sf","geom",3
+"sf","st_sf","geometry",3
+"sf","st_sf","a agr",2
+"sf","st_sf","a b dt geometry tm",2
+"sf","st_sf","a b geom",2
+"sf","st_sf","agr geometry order",2
+"sf","st_sf","geom label",2
+"sf","st_sf","geom1 geom2 sf_column_name",2
+"sf","st_sf","id",2
+"sf","st_sf","x y",2
+"sf","st_sf","a agr b geom",1
+"sf","st_sf","a check_ring_dir geom",1
+"sf","st_sf","a crs geomc",1
+"sf","st_sf","a crs precision",1
+"sf","st_sf","b geom",1
+"sf","st_sf","bar foo sf_column_name y",1
+"sf","st_sf","count geom",1
+"sf","st_sf","crs demo geom",1
+"sf","st_sf","foo",1
+"sf","st_sf","foo geo2 sf_column_name x",1
+"sf","st_sf","foo geo2 sf_column_name y",1
+"sf","st_sf","foo marks",1
+"sf","st_sf","geo x y",1
+"sf","st_sf","geo y",1
+"sf","st_sf","geo1 geo2 sf_column_name x",1
+"sf","st_sf","geo1 geo2 sf_column_name y",1
+"sf","st_sf","geometry id",1
+"sf","st_sf","r",1
+"sf","st_sf","w z",1
+"sf","st_sf","x z",1
+"sf","st_sfc","crs",49
+"sf","st_sfc","precision",15
+"sf","st_sfc","crs precision",13
+"sf","st_sfc","check_ring_dir",5
+"sf","st_simplify","dTolerance",7
+"sf","st_simplify","preserveTopology",1
+"sf","st_snap","tolerance",1
+"sf","st_sym_difference","by_element",1
+"sf","st_touches","sparse",1
+"sf","st_transform","check",2
+"sf","st_transform","pipeline",1
+"sf","st_transform","pipeline reverse",1
+"sf","st_union","by_feature",3
+"sf","st_voronoi","point_order",2
+"sf","st_within","sparse",3
+"sf","st_write","overwrite",22
+"sf","st_write","quiet",16
+"sf","st_write","delete_layer",11
+"sf","st_write","append quiet",5
+"sf","st_write","append",4
+"sf","st_write","delete_layer layer",4
+"sf","st_write","layer_options",4
+"sf","st_write","append delete_layer",3
+"sf","st_write","binary",3
+"sf","st_write","driver",2
+"sf","st_write","driver quiet",2
+"sf","st_write","update",2
+"sf","st_write","delete_dsn",1
+"sf","st_write","delete_dsn layer",1
+"sf","st_write","delete_dsn layer_options",1
+"sf","st_write","driver layer quiet",1
+"sf","st_write","layer",1
+"sf","st_write","layer quiet",1
+"sf","st_write","quiet update",1
+"sf","st_z_range","crs",1
+"sf","st_zm","drop what",3
+"sf","st_zm","add",1
+"sf","text","cex labels pos srt",8
+"sf","text","col label",2
+"sf","text","labels",2
+"sf","text","cex labels",1
+"sf","transform","elev2 lead_zinc",1
+"sf","transform","x1_sq",1
+"sf","transform","x1_x2",1
+"sf","write_sf","append delete_layer",3
+"sf","write_sf","delete_layer",2
+"sf","write_sf","delete_layer layer",2
+"sf","write_sf","append",1
+"sf","write_sf","delete_dsn",1
+"sf","write_sf","delete_layer driver layer layer_options",1
+"sf","write_sf","fid_column_name",1
+"sf","write_sf","overwrite",1
+"stars","[","crop",2
+"stars","[","drop",2
+"stars","[","epsilon",1
+"stars","aggregate","exact",7
+"stars","aggregate","exact transform",7
+"stars","aggregate","exact weights",6
+"stars","aggregate","FUN by",4
+"stars","aggregate","na.rm",4
+"stars","aggregate","exact na.rm",2
+"stars","aggregate","exact na.rm weights",2
+"stars","aggregate","transform",2
+"stars","aggregate","weights",1
+"stars","all.equal","check.attributes",12
+"stars","array","dim",3
+"stars","array","data dim",1
+"stars","as.data.frame","add_max",14
+"stars","c","x y",7
+"stars","c","xmax xmin ymax ymin",7
+"stars","c","along",6
+"stars","c","X Y",3
+"stars","c","dummy",3
+"stars","c","a b",1
+"stars","c","along flip_x flip_xy flip_y orig",1
+"stars","c","county var year",1
+"stars","c","lat lon",1
+"stars","c","nwbr sidsr",1
+"stars","c","t x y",1
+"stars","contour","add",1
+"stars","cut","breaks",1
+"stars","data.frame","ID category",2
+"stars","data.frame","foo",1
+"stars","data.frame","hours",1
+"stars","data.frame","id lat lon stringsAsFactors",1
+"stars","data.frame","weekdays",1
+"stars","data.frame","z",1
+"stars","factor","levels",1
+"stars","geom_stars","data",6
+"stars","geom_stars","alpha data downsample",1
+"stars","geom_stars","data sf",1
+"stars","image","add col",5
+"stars","image","axes text_values",3
+"stars","image","axes",2
+"stars","image","add",1
+"stars","image","add nbreaks",1
+"stars","image","axes col",1
+"stars","image","col",1
+"stars","image","main",1
+"stars","image","rgb",1
+"stars","list","m",11
+"stars","list","times",3
+"stars","list","PM10",2
+"stars","list","a",2
+"stars","list","bands nBufXSize nBufYSize nXOff nXSize nYOff nYSize",2
+"stars","list","bar",2
+"stars","list","nBufXSize nBufYSize nXOff nXSize nYOff nYSize",2
+"stars","list","time",2
+"stars","list","x y",2
+"stars","list","Precipitation",1
+"stars","list","X",1
+"stars","list","a b",1
+"stars","list","bands nBufXSize nBufYSize nXOff nXSize nYOff nYSize resample",1
+"stars","list","bands nXOff nXSize nYOff nYSize",1
+"stars","list","county var year",1
+"stars","list","foo",1
+"stars","list","foo time",1
+"stars","list","nBufXSize nBufYSize nXOff nXsize nYOff nYSize",1
+"stars","list","polys x",1
+"stars","list","traffic",1
+"stars","list","w",1
+"stars","matrix","ncol nrow",5
+"stars","merge","name",2
+"stars","plot","add col",15
+"stars","plot","axes",11
+"stars","plot","reset",10
+"stars","plot","add",9
+"stars","plot","add border col",9
+"stars","plot","add border lwd",6
+"stars","plot","axes breaks text_color text_values",6
+"stars","plot","axes reset",6
+"stars","plot","axes text_color text_values",6
+"stars","plot","add axes border col",3
+"stars","plot","add cex col pch",3
+"stars","plot","border breaks reset",3
+"stars","plot","border col",3
+"stars","plot","add border",2
+"stars","plot","add border col lwd",2
+"stars","plot","add border col reset",2
+"stars","plot","as_points axes border breaks key.length logz reset",2
+"stars","plot","as_points axes border breaks reset",2
+"stars","plot","as_points axes breaks key.length logz pch reset",2
+"stars","plot","as_points axes breaks pch reset",2
+"stars","plot","axes breaks",2
+"stars","plot","axes nbreaks",2
+"stars","plot","border",2
+"stars","plot","extent key.pos reset",2
+"stars","plot","key.pos reset",2
+"stars","plot","add col pch",1
+"stars","plot","add col reset",1
+"stars","plot","asp",1
+"stars","plot","axes breaks reset",1
+"stars","plot","axes downsample hook mfrow",1
+"stars","plot","axes key.pos rgb",1
+"stars","plot","axes main reset text_values xlim ylim",1
+"stars","plot","border graticule",1
+"stars","plot","breaks",1
+"stars","plot","col hook",1
+"stars","plot","downsample hook",1
+"stars","plot","hook",1
+"stars","plot","hook mfrow",1
+"stars","plot","join_zlim",1
+"stars","plot","key.length key.pos lwd pal",1
+"stars","plot","key.pos",1
+"stars","plot","rgb",1
+"stars","predict","model",1
+"stars","read_ncdf","proxy",8
+"stars","read_ncdf","curvilinear",7
+"stars","read_ncdf","var",5
+"stars","read_ncdf","ncsub",4
+"stars","read_ncdf","curvilinear var",3
+"stars","read_ncdf","package",2
+"stars","read_ncdf","curvilinear ignore_bounds",1
+"stars","read_ncdf","curvilinear proxy",1
+"stars","read_ncdf","ncsub var",1
+"stars","read_ncdf","proxy var",1
+"stars","read_stars","proxy",23
+"stars","read_stars","along",8
+"stars","read_stars","RasterIO",7
+"stars","read_stars","options",4
+"stars","read_stars","quiet",3
+"stars","read_stars","curvilinear driver sub",2
+"stars","read_stars","proxy quiet",2
+"stars","read_stars","sub",2
+"stars","read_stars","RasterIO proxy",1
+"stars","read_stars","curvilinear sub",1
+"stars","read_stars","proxy sub",1
+"stars","seq","length.out",3
+"stars","st_apply","FUN MARGIN idx",2
+"stars","st_as_sf","as_points",4
+"stars","st_as_sf","as_points merge",4
+"stars","st_as_sf","coords crs",2
+"stars","st_as_sf","as_points long merge",1
+"stars","st_as_sf","long",1
+"stars","st_as_sf","merge",1
+"stars","st_as_sf","merge na.rm",1
+"stars","st_as_sfc","as_points",15
+"stars","st_as_sfc","as_points na.rm use_cpp",2
+"stars","st_as_sfc","as_points use_cpp",2
+"stars","st_as_sfc","crs",1
+"stars","st_as_stars","dimensions",17
+"stars","st_as_stars","dimension",8
+"stars","st_as_stars","dx",8
+"stars","st_as_stars","downsample",4
+"stars","st_as_stars","nx ny values",4
+"stars","st_as_stars","nx ny values xlim ylim",4
+"stars","st_as_stars","curvilinear",3
+"stars","st_as_stars","dims",3
+"stars","st_as_stars","dy",2
+"stars","st_as_stars","inside",2
+"stars","st_as_stars","proxy",2
+"stars","st_as_stars","sf_geometry",2
+"stars","st_as_stars","as_points nx ny",1
+"stars","st_as_stars","pop",1
+"stars","st_as_stars","proxy var",1
+"stars","st_as_stars","values",1
+"stars","st_bbox","crs",4
+"stars","st_contour","breaks contour_lines",1
+"stars","st_dimensions","x y",7
+"stars","st_dimensions",".raster cell_midpoints x y",4
+"stars","st_dimensions",".raster band x y",3
+"stars","st_dimensions","station time",2
+"stars","st_dimensions",".raster affine band x y",1
+"stars","st_dimensions",".raster band cell_midpoints point x y",1
+"stars","st_dimensions",".raster band cell_midpoints x y",1
+"stars","st_dimensions","a b band",1
+"stars","st_dimensions","band x y",1
+"stars","st_dimensions","cell_midpoints x y",1
+"stars","st_dimensions","day destination hour mode origin",1
+"stars","st_dimensions","lat lon",1
+"stars","st_downsample","offset",8
+"stars","st_downsample","FUN",5
+"stars","st_downsample","FUN offset",4
+"stars","st_extract","bilinear",2
+"stars","st_extract","exact",1
+"stars","st_extract","sfc_attribute",1
+"stars","st_extract","time_column",1
+"stars","st_get_dimension_values","where",3
+"stars","st_get_dimension_values","center",2
+"stars","st_get_dimension_values","max",1
+"stars","st_interpolate_aw","extensive",1
+"stars","st_rasterize","options",4
+"stars","st_rasterize","dx dy",1
+"stars","st_redimension","along",5
+"stars","st_res","all",2
+"stars","st_res","absolute",1
+"stars","st_rgb","probs stretch",2
+"stars","st_rgb","use_alpha",1
+"stars","st_sample","type",1
+"stars","st_set_dimensions","values",13
+"stars","st_set_dimensions","delta offset",4
+"stars","st_set_dimensions","names point values",4
+"stars","st_set_dimensions","names",3
+"stars","st_set_dimensions","names values",3
+"stars","st_set_dimensions","point",3
+"stars","st_set_dimensions","point values",2
+"stars","st_set_dimensions","names values which",1
+"stars","st_set_dimensions","xy",1
+"stars","st_sfc2xy","dims",1
+"stars","st_tile","overlap",1
+"stars","st_warp","no_data_value use_gdal",4
+"stars","st_warp","crs",2
+"stars","st_warp","debug no_data_value use_gdal",2
+"stars","st_warp","cellsize crs",1
+"stars","st_warp","cellsize crs use_gdal",1
+"stars","st_warp","crs threshold",1
+"stars","st_warp","crs use_gdal",1
+"stars","st_warp","use_gdal",1
+"stars","st_xy2sfc","as_points",3
+"stars","write_mdim","as_float",1
+"stars","write_stars","driver",2
+"stars","write_stars","dsn",1
+"terra","[","drop",10
+"terra","add_abline","col h lty v",1
+"terra","add_box","col lwd xpd",1
+"terra","add_legend","col legend pch",1
+"terra","add_mtext","adj col",2
+"terra","add_mtext","adj cex",1
+"terra","add_mtext","cex col line",1
+"terra","adjacent","cells directions",4
+"terra","adjacent","cells directions pairs",1
+"terra","adjacent","symmetrical",1
+"terra","aggregate","fact fun",4
+"terra","aggregate","na.rm",3
+"terra","aggregate","fact",1
+"terra","animate","alpha col pause",1
+"terra","animate","n",1
+"terra","animate","n pause",1
+"terra","app","fun",2
+"terra","app","cores",1
+"terra","app","cores ff fun",1
+"terra","app","cores fun",1
+"terra","approximate","rule",1
+"terra","approximate","rule z",1
+"terra","as.arrows","col unit",1
+"terra","as.contour","levels",1
+"terra","as.data.frame","xy",3
+"terra","as.lines","crs",1
+"terra","as.matrix","wide",4
+"terra","as.polygons","ext",1
+"terra","autocor","standardize",3
+"terra","autocor","global",1
+"terra","autocor","global w",1
+"terra","autocor","method",1
+"terra","autocor","method standardize",1
+"terra","barplot","breaks col digits horiz las",1
+"terra","barplot","digits las ylab",1
+"terra","bestMatch","labels",2
+"terra","boundaries","classes",2
+"terra","boundaries","inner",1
+"terra","boxplot","axes col horizontal",1
+"terra","boxplot","col las main notch ylab",1
+"terra","buffer","width",2
+"terra","cbind","hole object part",8
+"terra","cbind","object part",8
+"terra","cbind","x y",6
+"terra","cbind","hole",2
+"terra","cbind","lat lon",2
+"terra","cbind","ID cell",1
+"terra","cbind","p se",1
+"terra","cbind","pa",1
+"terra","cbind","x y z1 z2",1
+"terra","cellSize","unit",2
+"terra","cellSize","names unit",1
+"terra","cells","method",1
+"terra","cells","weights",1
+"terra","centroids","inside",5
+"terra","centroids","correct",1
+"terra","centroids","correct inside",1
+"terra","chunk","a",1
+"terra","clamp","lower upper",1
+"terra","classify","include.lowest right",5
+"terra","classify","others",3
+"terra","classify","include.lowest",2
+"terra","classify","right",2
+"terra","classify","brackets include.lowest",1
+"terra","click","n",1
+"terra","coltab","layer",1
+"terra","combineGeoms","boundary maxdist minover",1
+"terra","contour","add",1
+"terra","contour","filled nlevels",1
+"terra","costDist","nearest",4
+"terra","costDist","target",1
+"terra","cover","identity",1
+"terra","crop","extend",6
+"terra","crop","mask",2
+"terra","crosstab","useNA",2
+"terra","crosstab","long",1
+"terra","crosstab","long useNA",1
+"terra","crs","describe",5
+"terra","crs","describe proj",1
+"terra","crs","proj",1
+"terra","describe","meta",1
+"terra","direction","degrees",2
+"terra","disagg","fact",2
+"terra","disagg","method",1
+"terra","distance","exclude",1
+"terra","distance","names",1
+"terra","distance","pairwise",1
+"terra","distance","unit",1
+"terra","divide","as.raster n",1
+"terra","dots","cex col",1
+"terra","expanse","unit",3
+"terra","expanse","transform",2
+"terra","expanse","byValue",1
+"terra","expanse","byValue unit wide",1
+"terra","expanse","byValue wide zones",1
+"terra","expanse","transform unit",1
+"terra","extract","ID layer",24
+"terra","extract","ID",8
+"terra","extract","na.rm",4
+"terra","extract","ID cell",2
+"terra","extract","ID cell xy",1
+"terra","extract","ID cells method",1
+"terra","extract","ID cells weights",1
+"terra","extract","ID exact fun na.rm",1
+"terra","extract","ID fun na.rm",1
+"terra","extract","ID fun na.rm weights",1
+"terra","extract","ID method",1
+"terra","extract","ID xy",1
+"terra","extract","layer",1
+"terra","extract","raw",1
+"terra","extractRange","first last",2
+"terra","extractRange","first last lyr_fun",2
+"terra","extractRange","ID first last lyr_fun",1
+"terra","fillHoles","inverse",1
+"terra","fillHoles","nearest",1
+"terra","flip","direction",2
+"terra","flowDir","lambda",4
+"terra","flowDir","deviation_type lambda",2
+"terra","focal","na.rm",13
+"terra","focal","fun na.rm w",11
+"terra","focal","na.policy na.rm",2
+"terra","focal","cores fun w",1
+"terra","focal","fillvalue fun m w",1
+"terra","focal","fillvalue fun w",1
+"terra","focal","fillvalue na.rm",1
+"terra","focal","fun na.policy na.rm w wopt",1
+"terra","focal","fun w",1
+"terra","focal","w",1
+"terra","focal3D","na.rm",2
+"terra","focalCpp","fillvalue fun m w",2
+"terra","focalMat","d type",1
+"terra","focalPairs","na.rm w",1
+"terra","focalPairs","use w",1
+"terra","focalPairs","w",1
+"terra","freq","bylayer",3
+"terra","freq","digits",3
+"terra","freq","value",2
+"terra","freq","zones",1
+"terra","furdist","unit",2
+"terra","geom","wkt",2
+"terra","geom","hex",1
+"terra","geom","wkb",1
+"terra","getTileExtents","cores",5
+"terra","getTileExtents","buffer",2
+"terra","global","na.rm",8
+"terra","global","fun",1
+"terra","graticule","crs",3
+"terra","gridDist","nearest",2
+"terra","halo","cex",1
+"terra","halo","cex col font hc hw pos xpd",1
+"terra","halo","cex font hc hw",1
+"terra","halo","cex font hw pos xpd",1
+"terra","hull","type",3
+"terra","hull","by",1
+"terra","image","col",1
+"terra","init","fun",5
+"terra","init","wopt",1
+"terra","inset","background box col loc pbox scale",1
+"terra","inset","border box col pbox perimeter pper",1
+"terra","inset","box col e",1
+"terra","inset","col loc scale",1
+"terra","interpIDW","maxPoints power radius smooth",1
+"terra","interpNear","radius",1
+"terra","interpolate","debug.level",3
+"terra","interpolate","fun",2
+"terra","interpolate","crs debug.level fun index",1
+"terra","interpolate","debug.level index",1
+"terra","interpolate","xyOnly",1
+"terra","is.lonlat","global",1
+"terra","is.lonlat","perhaps warn",1
+"terra","k_means","centers",3
+"terra","k_means","centers maxcell",1
+"terra","lapp","usenames",3
+"terra","lapp","fun",2
+"terra","lapp","recycle",1
+"terra","lapp","z",1
+"terra","layerCor","w",1
+"terra","legend_cont","legend",2
+"terra","legend_cont","bg horiz legend",1
+"terra","legend_cont","bg legend",1
+"terra","legend_cont","col legend",1
+"terra","legend_cont","horiz legend title",1
+"terra","lines","col lwd",16
+"terra","lines","col",11
+"terra","lines","lwd",10
+"terra","lines","col lty lwd",2
+"terra","makeValid","buffer",1
+"terra","mask","maskvalue",1
+"terra","mean","filename",1
+"terra","mean","na.rm",1
+"terra","merge","algo first",2
+"terra","merge","all.x by.x by.y",1
+"terra","metags","layer",2
+"terra","metags","name",1
+"terra","mosaic","fun",3
+"terra","nearby","distance",2
+"terra","netw","directed",6
+"terra","netw","weights",6
+"terra","netw","crs",1
+"terra","netw","merge",1
+"terra","netw","snap",1
+"terra","north","type xy",2
+"terra","north","angle col d label lwd xy",1
+"terra","north","angle label type xy",1
+"terra","north","cex type",1
+"terra","north","cex type xy",1
+"terra","north","d",1
+"terra","not.na","falseNA",1
+"terra","panel","fun loc.main",1
+"terra","patches","directions zeroAsNA",6
+"terra","patches","directions values",5
+"terra","patches","directions",2
+"terra","patches","directions values zeroAsNA",2
+"terra","patches","zeroAsNA",2
+"terra","patches","allowGaps directions zeroAsNA",1
+"terra","patches","values",1
+"terra","pitfiller","lambda",2
+"terra","pitfiller","flowdir lambda pit x",1
+"terra","pitfinder","pits_on_boundary",3
+"terra","plet","tiles",3
+"terra","plet","alpha split",1
+"terra","plet","border tiles",1
+"terra","plet","col lwd",1
+"terra","plet","collapse",1
+"terra","plet","collapse shared",1
+"terra","plet","hover",1
+"terra","plet","main tiles",1
+"terra","plot","col",19
+"terra","plot","type",5
+"terra","plot","fun",4
+"terra","plot","border col lwd",3
+"terra","plot","main",3
+"terra","plot","axes legend",2
+"terra","plot","border col",2
+"terra","plot","border lwd",2
+"terra","plot","col density",2
+"terra","plot","col lwd",2
+"terra","plot","legend mar",2
+"terra","plot","mar range",2
+"terra","plot","plg",2
+"terra","plot","add alpha col",1
+"terra","plot","add col",1
+"terra","plot","add col plg",1
+"terra","plot","alpha legend",1
+"terra","plot","angle col density",1
+"terra","plot","axes col legend mar reset",1
+"terra","plot","border col lwd zebra",1
+"terra","plot","border lty lwd",1
+"terra","plot","box legend mar pax range",1
+"terra","plot","box main pax plg",1
+"terra","plot","box mar pax plg range",1
+"terra","plot","breaks",1
+"terra","plot","breaks main mar plg type",1
+"terra","plot","breaks mar plg type xlim",1
+"terra","plot","breaks plg type",1
+"terra","plot","breaks type",1
+"terra","plot","cex col pch",1
+"terra","plot","col legend",1
+"terra","plot","col legend mar",1
+"terra","plot","ext",1
+"terra","plot","ext pax",1
+"terra","plot","lwd mar plg",1
+"terra","plot","main mar plg",1
+"terra","plot","main type",1
+"terra","plot","mar nc",1
+"terra","plot","mar plg",1
+"terra","plot","mar plg type",1
+"terra","plot","pax plg",1
+"terra","plot","pax plg xlim",1
+"terra","plot","plg type xlim",1
+"terra","plotRGB","mar",1
+"terra","plotRGB","stretch",1
+"terra","points","cex col",5
+"terra","points","bg pch",2
+"terra","points","cex",2
+"terra","points","col",2
+"terra","points","alpha cex col field popup",1
+"terra","points","border cex clusterOptions col lty lwd popup",1
+"terra","points","cex col pch",1
+"terra","points","cex col popup",1
+"terra","points","cex legend",1
+"terra","polys","border col",1
+"terra","polys","border col density lwd",1
+"terra","polys","col lwd",1
+"terra","predict","fun",2
+"terra","predict","index",2
+"terra","predict","se.fit",2
+"terra","predict","Z",1
+"terra","predict","cores",1
+"terra","predict","cores cpkgs",1
+"terra","predict","cores cpkgs type",1
+"terra","predict","cores fun",1
+"terra","predict","type",1
+"terra","princomp","fix_sign",1
+"terra","proj_pipelines","grid_availability",2
+"terra","proj_pipelines","AOI",1
+"terra","project","pipe",9
+"terra","project","method res",1
+"terra","project","xscale yscale",1
+"terra","quantile","na.rm",1
+"terra","query","extent",1
+"terra","query","filter",1
+"terra","query","n start vars",1
+"terra","query","vars where",1
+"terra","rapp","fun",2
+"terra","rapp","allyrs fill",1
+"terra","rast","ncols nrows",58
+"terra","rast","ncols nrows vals",27
+"terra","rast","crs ncols nrows vals xmax xmin ymax ymin",11
+"terra","rast","ncols nrows xmax xmin ymax ymin",11
+"terra","rast","res vals xmax xmin ymax ymin",10
+"terra","rast","crs ncols nrows xmax xmin ymax ymin",9
+"terra","rast","crs ncols nrows",7
+"terra","rast","ncols nrows vals xmin",7
+"terra","rast","ncols nrows xmin",7
+"terra","rast","crs ncols nrows vals",6
+"terra","rast","ncol nrow",6
+"terra","rast","ncol nrow vals",6
+"terra","rast","ncols nlyr nrows vals",6
+"terra","rast","ncols nlyrs nrows",5
+"terra","rast","crs ncol nrow xmax xmin ymax ymin",4
+"terra","rast","ncol nrow xmax xmin ymax ymin",4
+"terra","rast","crs ncol nrow",3
+"terra","rast","extent",3
+"terra","rast","md",3
+"terra","rast","md subds",3
+"terra","rast","ncol nlyr nrow vals",3
+"terra","rast","ncols nrows vals xmax xmin",3
+"terra","rast","res",3
+"terra","rast","type",3
+"terra","rast","xmax xmin ymax ymin",3
+"terra","rast","crs ncols nrows vals xmin",2
+"terra","rast","names ncols nrows vals",2
+"terra","rast","nc nr",2
+"terra","rast","ncol nlyr nrow",2
+"terra","rast","ncols nl nrows",2
+"terra","rast","ncols nlyr nrows",2
+"terra","rast","ncols nrows vals xmax xmin ymax ymin",2
+"terra","rast","ncols nrows ymax ymin",2
+"terra","rast","crs",1
+"terra","rast","crs ext ncols nrows",1
+"terra","rast","crs extent resolution",1
+"terra","rast","crs ncol nrow vals xmax xmin ymax ymin",1
+"terra","rast","crs xmin",1
+"terra","rast","ext ncol nlyr nrow vals",1
+"terra","rast","ext ncols nrows",1
+"terra","rast","ext ncols nrows vals",1
+"terra","rast","extent ncol nlyr nrow",1
+"terra","rast","extent ncol nrow",1
+"terra","rast","extent ncols nrows",1
+"terra","rast","names ncol nrow",1
+"terra","rast","names ncols nlyrs nrows vals",1
+"terra","rast","names ncols nrows xmax xmin ymax ymin",1
+"terra","rast","names resolution",1
+"terra","rast","ncol nrow xmin",1
+"terra","rast","ncols nl nrows vals",1
+"terra","rast","ncols nl nrows xmax xmin",1
+"terra","rast","ncols nlyrs nrows vals",1
+"terra","rast","ncols nrows xmax xmin",1
+"terra","rast","ncols xmax xmin",1
+"terra","rast","nlyr",1
+"terra","rast","subds",1
+"terra","rasterize","fun",2
+"terra","rasterize","by cover",1
+"terra","rasterize","field",1
+"terra","rasterize","fun value",1
+"terra","rasterizeGeom","fun",2
+"terra","rasterizeWin","fun pars",2
+"terra","regress","formula",1
+"terra","relate","relation",19
+"terra","resample","method",1
+"terra","roll","n na.rm",3
+"terra","roll","circular",2
+"terra","roll","circular n",2
+"terra","sbar","below cex label type",2
+"terra","sbar","below cex divs",1
+"terra","sbar","cex divs ticks xy",1
+"terra","sbar","cex divs type",1
+"terra","sbar","cex divs type xy",1
+"terra","sbar","cex label",1
+"terra","sbar","cex label lwd",1
+"terra","scale_linear","max min",1
+"terra","segregate","keep other",1
+"terra","selectHighest","n",1
+"terra","shade","angle direction",1
+"terra","shift","dx dy",1
+"terra","shortestPath","from to",18
+"terra","simplifyGeom","makeValid",1
+"terra","simplifyGeom","tolerance",1
+"terra","snap","tol",1
+"terra","sort","order",1
+"terra","spatSample","cells method",5
+"terra","spatSample","cell",4
+"terra","spatSample","cells each method values",2
+"terra","spatSample","as.points",1
+"terra","spatSample","as.points each",1
+"terra","spatSample","as.points method",1
+"terra","spatSample","as.raster",1
+"terra","spatSample","as.raster method",1
+"terra","spatSample","cells exact method",1
+"terra","spatSample","cells ext method",1
+"terra","spatSample","cells method na.rm",1
+"terra","spatSample","cells method replace",1
+"terra","spatSample","cells method values xy",1
+"terra","spatSample","cells values xy",1
+"terra","spatSample","cells xy",1
+"terra","spatSample","lonlat",1
+"terra","spatSample","lonlat method",1
+"terra","spatSample","na.rm",1
+"terra","spatSample","replace xy",1
+"terra","spatSample","xy",1
+"terra","subset","NSE",2
+"terra","subst","from to",5
+"terra","subst","others",3
+"terra","tapp","fun",1
+"terra","tapp","fun index",1
+"terra","terraOptions","parallel threads",3
+"terra","terraOptions","memfrac tempdir",1
+"terra","terraOptions","print",1
+"terra","terraOptions","progress",1
+"terra","terrain","v",7
+"terra","terrain","unit",2
+"terra","terrain","unit v",2
+"terra","tessellate","n type",8
+"terra","tessellate","geo size",5
+"terra","tessellate","size",5
+"terra","tessellate","size type",4
+"terra","tessellate","align geo size type",2
+"terra","tessellate","flat_top size",2
+"terra","tessellate","geo size type",2
+"terra","tessellate","geo n type",1
+"terra","text","halo",4
+"terra","text","cex digits halo",2
+"terra","text","halo pos",2
+"terra","text","cex",1
+"terra","text","cex col halo",1
+"terra","text","cex col vfont",1
+"terra","text","cex halo",1
+"terra","text","col halo hc hw",1
+"terra","text","col halo jitter",1
+"terra","text","digits",1
+"terra","text","xpd",1
+"terra","thin","unit",1
+"terra","thresh","as.raster",1
+"terra","thresh","as.raster combine",1
+"terra","thresh","as.raster method",1
+"terra","tile_apply","tiles",10
+"terra","tile_apply","cores tiles",5
+"terra","tile_apply","buffer cores wopt",3
+"terra","tile_apply","cores",3
+"terra","tile_apply","cores k tiles",3
+"terra","tile_apply","overlap_fun tiles",2
+"terra","tile_apply","buffer",1
+"terra","tile_apply","buffer cores filename overwrite wopt",1
+"terra","tile_apply","buffer tiles",1
+"terra","tile_apply","cores filename overwrite tiles",1
+"terra","tile_apply","cores k tiles wopt",1
+"terra","tile_apply","cores tiles wopt",1
+"terra","tile_apply","filename overwrite tiles",1
+"terra","tile_apply","k tiles",1
+"terra","tile_apply","tiles wopt",1
+"terra","time","tstep",5
+"terra","unique","as.raster",1
+"terra","update","cells values",5
+"terra","update","cells layer values",2
+"terra","update","crs extent names",2
+"terra","update","names",1
+"terra","vect","crs",52
+"terra","vect","proxy",4
+"terra","vect","geom",3
+"terra","vect","layer",3
+"terra","vect","atts crs",2
+"terra","vect","crs type",2
+"terra","vect","type",2
+"terra","vect","extent",1
+"terra","vect","filter",1
+"terra","vect","query",1
+"terra","weighted.mean","w",2
+"terra","width","as.lines",1
+"terra","wrapCache","path",1
+"terra","writeCDF","longname overwrite unit varname",2
+"terra","writeCDF","filename overwrite",1
+"terra","writeCDF","overwrite",1
+"terra","writeNetwork","overwrite",2
+"terra","writeNetwork","filetype overwrite",1
+"terra","writeRaster","datatype",5
+"terra","writeRaster","overwrite",4
+"terra","writeRaster","datatype gdal overwrite",1
+"terra","writeRaster","gdal overwrite",1
+"terra","writeRaster","overwrite wopt",1
+"terra","writeVector","overwrite",5
+"terra","writeVector","insert layer",1
+"terra","writeVector","layer overwrite",1
+"terra","xapp","fun",1
+"terra","zonal","na.rm",5
+"terra","zonal","as.raster",1
+"terra","zonal","as.raster na.rm",1
+"terra","zonal","exact",1
+"terra","zonal","na.rm w",1
+"terra","zonal","w",1
+"tmap","opt_tm_text","remove_overlap",1
+"tmap","qtm","bbox",1
+"tmap","qtm","col",1
+"tmap","qtm","crs fill style",1
+"tmap","qtm","shape.crs style",1
+"tmap","qtm","size size.legend",1
+"tmap","tm_add_legend","bg.alpha bg.color col labels lty lwd type",1
+"tmap","tm_animate","frames",2
+"tmap","tm_borders","lwd",4
+"tmap","tm_borders","col lwd",2
+"tmap","tm_borders","alpha",1
+"tmap","tm_bubbles","size size.legend size.scale",2
+"tmap","tm_bubbles","size",1
+"tmap","tm_circles","col fill size",3
+"tmap","tm_circles","size size.scale",1
+"tmap","tm_compass","position",2
+"tmap","tm_crs","property",1
+"tmap","tm_facets","by",3
+"tmap","tm_fill","col convert2density style title",1
+"tmap","tm_fill","id title",1
+"tmap","tm_format","inner.margins",1
+"tmap","tm_graticules","labels.pos",1
+"tmap","tm_graticules","ticks",1
+"tmap","tm_grid","crs",1
+"tmap","tm_grid","crs labels.inside.frame",1
+"tmap","tm_grid","labels.inside.frame",1
+"tmap","tm_inset","height position width",2
+"tmap","tm_layout","panel.labels",3
+"tmap","tm_layout","frame",2
+"tmap","tm_layout","bg.color frame.lwd inner.margins outer.bg.color",1
+"tmap","tm_layout","inner.margins",1
+"tmap","tm_legend","frame",2
+"tmap","tm_legend","bg.color show title title.color",1
+"tmap","tm_legend","frame orientation position title",1
+"tmap","tm_lines","col col.scale lty lty.legend lwd",1
+"tmap","tm_lines","col col.scale lwd lwd.scale",1
+"tmap","tm_logo","height position",1
+"tmap","tm_polygons","fill fill.scale",3
+"tmap","tm_polygons","fill",2
+"tmap","tm_polygons","fill zindex",2
+"tmap","tm_polygons","fill.scale",2
+"tmap","tm_polygons","fill.scale fill_alpha.scale",2
+"tmap","tm_polygons","col col_alpha fill lty lwd",1
+"tmap","tm_polygons","col fill",1
+"tmap","tm_polygons","col fill fill.scale",1
+"tmap","tm_polygons","fill fill.legend fill.scale",1
+"tmap","tm_polygons","fill fill.legend fill.scale id",1
+"tmap","tm_polygons","fill.chart fill.scale",1
+"tmap","tm_polygons","fill.legend fill.scale",1
+"tmap","tm_polygons","zindex",1
+"tmap","tm_pos_in","pos.h pos.v",1
+"tmap","tm_pos_out","pos.v",1
+"tmap","tm_raster","col.scale",1
+"tmap","tm_rgb","col",4
+"tmap","tm_rgb","col.scale",2
+"tmap","tm_scale","values",3
+"tmap","tm_scale_asis","value.neutral values.scale",1
+"tmap","tm_scale_categorical","values",5
+"tmap","tm_scale_continuous","values",2
+"tmap","tm_scale_continuous","values.scale",2
+"tmap","tm_scale_continuous","labels limits outliers.trunc ticks values.scale",1
+"tmap","tm_scale_continuous","midpoint values",1
+"tmap","tm_scale_continuous_pseudo_log","values",1
+"tmap","tm_scale_intervals","midpoint values",2
+"tmap","tm_scale_intervals","label.format",1
+"tmap","tm_scale_intervals","n style values",1
+"tmap","tm_scale_intervals","values",1
+"tmap","tm_scale_rgb","probs stretch",1
+"tmap","tm_scale_rgb","stretch",1
+"tmap","tm_scalebar","position",1
+"tmap","tm_shape","crs",4
+"tmap","tm_shape","bbox",2
+"tmap","tm_shape","id",2
+"tmap","tm_shape","bb crs",1
+"tmap","tm_shape","crs filter",1
+"tmap","tm_symbols","size size.free size.legend",2
+"tmap","tm_symbols","col fill lwd shape shape.scale size",1
+"tmap","tm_text","angle col col.legend col.scale size size.legend text",1
+"tmap","tm_text","col col.legend col.scale size size.legend size.scale",1
+"tmap","tm_text","options",1
+"tmap","tm_text","ymod",1
+"tmap","tm_title","frame position",1
+"tmap","tm_title_out","position",1
+"tmap","tm_vars","multivariate",5
+"tmap","tm_vars","dimvalues multivariate",1
+"tmap","tmapOutput","height",2
+"tmap","tmap_animation","filename",2
+"tmap","tmap_arrange","nrow",1
+"tmap","tmap_leaflet","show",1
+"tmap","tmap_options","bg.color compass.type frame.color frame.lwd legend.bg.color legend.position outer.bg.color",1
+"tmap","tmap_save","asp height width",2
+"tmap","tmap_save","height",1
+"tmap","tmap_save","height scale",1
+"vapour","gdal_raster_data","options target_res",1
+"vapour","gdal_raster_data","target_crs target_dim target_ext",1
+"vapour","gdal_raster_data","target_crs target_res",1
+"vapour","gdal_raster_data","target_res",1
+"vapour","gdal_raster_dsn","out_dsn",1
+"vapour","vapour_create","dimension extent",1
+"vapour","vapour_create","dimension extent projection",1
+"vapour","vapour_geom_summary","layer",4
+"vapour","vapour_geom_summary","limit_n",4
+"vapour","vapour_geom_summary","limit_n skip_n",4
+"vapour","vapour_geom_summary","extent",1
+"vapour","vapour_geom_summary","extent sql",1
+"vapour","vapour_geom_summary","skip_n",1
+"vapour","vapour_layer_info","count",4
+"vapour","vapour_layer_info","extent sql",1
+"vapour","vapour_read_attributes","limit_n skip_n",3
+"vapour","vapour_read_attributes","extent",2
+"vapour","vapour_read_attributes","layer",2
+"vapour","vapour_read_attributes","extent sql",1
+"vapour","vapour_read_attributes","limit_n",1
+"vapour","vapour_read_extent","limit_n skip_n",2
+"vapour","vapour_read_extent","extent",1
+"vapour","vapour_read_extent","extent sql",1
+"vapour","vapour_read_extent","layer",1
+"vapour","vapour_read_extent","limit_n",1
+"vapour","vapour_read_fields","sql",9
+"vapour","vapour_read_geometry","limit_n skip_n",3
+"vapour","vapour_read_geometry","limit_n",1
+"vapour","vapour_read_geometry_ia","ia",6
+"vapour","vapour_read_geometry_ij","ij",8
+"vapour","vapour_read_geometry_text","textformat",11
+"vapour","vapour_read_geometry_text","extent",3
+"vapour","vapour_read_geometry_text","extent sql",3
+"vapour","vapour_read_geometry_text","limit_n skip_n",2
+"vapour","vapour_read_geometry_text","sql",2
+"vapour","vapour_read_geometry_text","limit_n",1
+"vapour","vapour_read_names","limit_n skip_n",5
+"vapour","vapour_read_names","sql",2
+"vapour","vapour_read_names","limit_n",1
+"vapour","vapour_read_names","limit_n skip_n sql",1
+"vapour","vapour_read_names","skip_n",1
+"vapour","vapour_read_raster","window",15
+"vapour","vapour_read_raster","band native",4
+"vapour","vapour_read_raster","resample window",3
+"vapour","vapour_read_raster","band_output_type window",2
+"vapour","vapour_read_raster","native",2
+"vapour","vapour_read_raster_block","band dimension",5
+"vapour","vapour_read_raster_chr","window",2
+"vapour","vapour_read_raster_dbl","window",2
+"vapour","vapour_read_raster_dbl","native",1
+"vapour","vapour_read_raster_hex","window",1
+"vapour","vapour_read_raster_int","window",3
+"vapour","vapour_read_raster_raw","window",3
+"vapour","vapour_read_type","limit_n skip_n",1
+"vapour","vapour_report_fields","sql",1
+"vapour","vapour_vrt","bands geolocation",2
+"vapour","vapour_vrt","bands",1
+"vapour","vapour_warp_raster","bands dimension extent",5
+"vapour","vapour_warp_raster","dimension extent projection",3
+"vapour","vapour_warp_raster","dimension extent projection source_projection",3
+"vapour","vapour_warp_raster","band_output_type dimension extent",2
+"vapour","vapour_warp_raster","dimension extent projection source_wkt",2
+"vapour","vapour_warp_raster","band dimension extent projection source_projection",1
+"vapour","vapour_warp_raster","band_output_type bands dimension extent",1
+"vapour","vapour_warp_raster","bands dimension extent projection warp_options",1
+"vapour","vapour_warp_raster","dimension extent",1
+"vapour","vapour_warp_raster","dimension extent source_projection",1
+"vapour","vapour_warp_raster","dimension extent transformation_options",1
+"vapour","vapour_warp_raster","extent",1
+"vapour","vapour_warp_raster_chr","dimension extent",1
+"vapour","vapour_warp_raster_dbl","dimension extent",2
+"vapour","vapour_warp_raster_dbl","dimension extent projection transformation_options",2
+"vapour","vapour_warp_raster_hex","dimension extent",1
+"vapour","vapour_warp_raster_int","dimension extent",2
+"vapour","vapour_warp_raster_raw","dimension extent",2
+"vapour","vapour_warp_raster_raw","bands dimension extent projection",1
+"vapour","vapour_write_raster_block","band data dimension offset overwrite",5
+"vapour","vapour_write_raster_block","band data dimension offset",2
+"vapour","vector_vrt","projection",1
+"vapour","vector_vrt","sql",1

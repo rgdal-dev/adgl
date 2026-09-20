@@ -1,0 +1,33 @@
+id,area,expectation,seen_in,adgl,note
+read-whole,raster,Read a whole raster into memory,terra::rast+values; gdalraster::read_ds; vapour_read_raster,have,collect()
+read-window-world,raster,Read a rectangle given in map coordinates,stars::read_stars(RasterIO); terra::crop,have,query(extent = )
+read-window-pixel,raster,Read a rectangle given in pixel coordinates,vapour_read_raster(window) 15 calls; GDALRaster$read,gap,"adgl windows in map coordinates only, and a pixel window is what you have when the source has no geotransform"
+read-reduced,raster,Read at a reduced size and let GDAL serve an overview,stars::read_stars(RasterIO); vapour_read_raster(window out dims),have,query(dim = )
+read-bands,raster,Choose which bands to read,vapour_read_raster(bands); gdalraster::read_ds(bands); terra [[ ]],have,query(bands = )
+read-type,raster,Choose the R type the values arrive in,vapour_read_raster(band_output_type); gdalraster::read_ds(as_raw),have,collect(type = )
+proxy,raster,Hold a raster lazily and only read what is drawn,stars::read_stars(proxy) 23 calls; terra::vect(proxy),have,as_grd() and plot()
+warp,raster,Reproject a grid,terra::project; stars::st_warp; gdalraster::warp; vapour_warp_raster,have,warp()
+warp-grid,raster,Pin the reprojected grid by size or resolution or extent,vapour_warp_raster(dimension extent); stars::st_warp(cellsize),have,warp(dim = resolution = extent = )
+warp-unbounded,raster,Warp a whole source into a projection the whole source does not fit in,terra::project; stars::st_warp,bug,"a global source into EPSG:3031 gives a target extent 8e23 m across - silently with dim = and as a GDAL error with resolution = ; the fix needs OSRGetAreaOfUse in GDAL7"
+warp-pipeline,raster,Give a PROJ pipeline instead of a target CRS,terra::project(pipe) 9 calls; sf::st_transform(pipeline reverse),gap,"a pipeline is the escape hatch when the default transformation is wrong; PROJ::proj_trans_create takes one"
+warp-options,raster,Pass warp and transform options through to GDAL,vapour_warp_raster(warp_options); gdalraster::warp(cl_arg),gap,"adgl has options = for open and for creation but nothing for the warper"
+extract-points,raster,Read values at points rather than over a window,terra::extract 72 calls; gdalraster::pixel_extract 32 calls,gap,"the most-used raster verb in terra's own examples after rast() itself"
+write-datatype,raster,Choose the data type of the written file,terra::writeRaster(datatype),gap,write_to() takes the source's type
+write-overwrite,raster,Overwrite a file that is already there,terra::writeRaster(overwrite) 4 calls; sf::st_write(overwrite) 22 calls,gap,"write_to() neither refuses nor overwrites deliberately, it just calls GDAL"
+write-options,raster,Creation options,terra::writeRaster(gdal); sf::st_write(layer_options),have,write_to(options = )
+vrt,raster,Build a VRT rather than a materialised file,gdalraster::buildVRT; vapour_vrt,gap,already on the README's list
+subdatasets,raster,Reach a subdataset of a container format,stars::read_stars(sub); stars::read_ncdf(var); vapour_sds_names,gap,"src() errors with no bands and no layers and does not mention subdatasets"
+colour-table,raster,Read a colour table or palette,gdalraster::plot_raster(col_tbl),gap,an engine gap in GDAL7 as well
+read-layer,vector,Read a layer,sf::st_read 205 calls; terra::vect 208 calls,have,src() then collect()
+sql,vector,Run an SQL SELECT against the source,sf::st_read(query) 15 calls; vapour_read_fields(sql) 9 calls,gap,"adgl has where = only, so a join or an aggregate or a computed column is out of reach"
+where,vector,Filter features by an attribute expression,sf::st_read(query); OGR where,have,query(where = )
+spatial-filter,vector,Filter features by a rectangle,sf::st_read(wkt_filter); vapour_read_extent(extent); gdalraster::ogr_reproject(spat_bbox),have,query(extent = )
+fields,vector,Read only some attribute columns,vapour_read_fields; sf::st_read,have,"query(fields = ), though the narrowing happens in R"
+limit-skip,vector,Take the first n features or skip the first n,vapour_read_geometry(limit_n skip_n),gap,"limit is there, skip is not, and paging needs both"
+layer-choice,vector,Choose the layer by name or by position,sf::st_read(layer); terra::vect(layer),have,src(layer = )
+transform-features,vector,Reproject the features themselves,sf::st_transform 88 calls; gdalraster::ogr_reproject,have,query(crs = )
+geometry-only,vector,Read geometry without attributes or attributes without geometry,vapour_read_geometry; vapour_read_attributes,gap,"fields = drops attributes but the geometry always comes back"
+geometry-type,vector,Control the geometry type coming out,sf::st_read(promote_to_multi type geometry_column),gap,"a layer mixing POLYGON and MULTIPOLYGON is the common case this answers"
+write-append,vector,Append to a layer or replace it,sf::st_write(append delete_layer overwrite) 40 calls,gap,write_to() always creates
+feature-count,vector,Ask how many features there are without reading them,sf::st_layers(do_count); vapour_layer_info,have,src() reports it and report() says when it is unknown
+layer-extent,vector,Ask for the layer extent without reading features,vapour_read_extent; sf::st_bbox,have,src() reports it
