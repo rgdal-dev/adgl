@@ -42,11 +42,14 @@ document rather than grown by accretion.
   `resolution`, one number for square pixels or two; and `extent`, the window
   the output covers, which is the one argument here given in the target CRS.
   The warper's order statistics, `min`, `max`, `med`, `q1` and `q3`, are
-  accepted as resampling methods as well. A `resolution` that cannot fit the
-  target extent is refused with the arithmetic and the cause, rather than
-  left to GDAL's bare "too large output raster size": some projections have
-  no finite position for part of a global source, so the extent GDAL would
-  choose is astronomical and no pixel size addresses it.
+  accepted as resampling methods as well. When nothing pins the target
+  window, the extent GDAL chooses is measured once the warp has run, by
+  inverting its corners and comparing the distance it claims against the
+  distance it covers on the ground. A whole-globe source into a polar
+  projection comes back 8e23 m across with all four corners at the same pole;
+  that is now a warning with `dim` and an error with `resolution`, instead of
+  a silent answer and GDAL's bare "too large output raster size". Where GDAL
+  clamps for itself nothing is said.
 
 * `write_to()` sends a plan to any format GDAL can write, taking the driver
   from the extension. A warped plan compiles into GDAL's own pipeline and

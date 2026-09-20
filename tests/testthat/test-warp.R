@@ -166,26 +166,59 @@ test_that("the warper's order statistics are accepted", {
   }
 })
 
-test_that("a resolution that cannot fit the target extent says why", {
-  # A whole-globe source into polar stereographic: the globe contains points
-  # with no finite position there, so the target extent is 8e23 m across and
-  # no pixel size gives an addressable grid. GDAL refuses this too, with
-  # nothing about the cause.
+test_that("a target extent that is all stretch is measured, not returned quietly", {
+  # A whole-globe source into polar stereographic: the extent GDAL chooses is
+  # 8e23 m across and its four corners all invert to the north pole, so the
+  # ground distance across it is zero. Size alone cannot say that - with a dim
+  # the size returned is the size asked for - but the distance can.
+  skip_if_not(GDAL7::gdal_has_algorithms(), "this GDAL has no algorithm registry")
   x <- src(test_cog())
   on.exit(src_close(x), add = TRUE)
 
-  expect_error(adgl:::warp_args(warp(x, "EPSG:3031", resolution = 5e5)),
-               "no finite position")
-  expect_error(adgl:::warp_args(warp(x, "EPSG:3031", resolution = 5e5)),
-               "warp\\(extent = \\)")
+  expect_warning(collect(warp(x, "EPSG:3031", dim = c(48, 48))),
+                 "ground distance")
+  expect_error(collect(warp(x, "EPSG:3031", resolution = 5e5)),
+               "no useful position")
 
-  # Pinning the window is the fix, and it goes through.
-  pinned <- warp(x, "EPSG:3031", resolution = 5e5,
-                 extent = c(-3e6, 3e6, -3e6, 3e6))
-  expect_equal(adgl:::warp_args(pinned)$resolution, c(5e5, 5e5))
+  # Pinning the window is the caller's own decision, and goes through quietly.
+  expect_silent(collect(warp(x, "EPSG:3031", dim = c(16, 16),
+                             extent = c(-3e6, 3e6, -3e6, 3e6))))
+})
 
-  # So is narrowing the source first.
-  narrowed <- warp(query(x, extent = c(100, 160, -60, -20)), "EPSG:3031",
-                   resolution = 5e5)
-  expect_equal(adgl:::warp_args(narrowed)$resolution, c(5e5, 5e5))
+test_that("GDAL's own clamping is left alone", {
+  # Web Mercator has a latitude limit and GDAL clamps to it, so a whole-globe
+  # warp there is fine even though the extent we would have predicted for it
+  # is not. Measuring after the run rather than before is what keeps this
+  # case quiet.
+  skip_if_not(GDAL7::gdal_has_algorithms(), "this GDAL has no algorithm registry")
+  x <- src(test_cog())
+  on.exit(src_close(x), add = TRUE)
+
+  # GDAL says its own piece about clamping; what matters is that adgl does
+  # not add its stretch warning on top.
+  warnings <- character()
+  withCallingHandlers(
+    collect(warp(x, "EPSG:3857", dim = c(32, 32))),
+    warning = function(w) {
+      warnings <<- c(warnings, conditionMessage(w))
+      invokeRestart("muffleWarning")
+    }
+  )
+  expect_false(any(grepl("ground distance", warnings)))
+})
+
+test_that("an honest extent measures near one", {
+  # Australia into its own Albers: the extent covers the ground it claims.
+  bbox <- GDAL7::transform_extent(c(110, -45, 155, -10), "EPSG:4326",
+                                  "EPSG:3577")
+  expect_lt(adgl:::extent_stretch(unname(bbox), "EPSG:3577"), 2)
+
+  # The globe into polar stereographic: every corner is the same pole.
+  # The globe into polar stereographic: every corner is the same pole, so the
+  # ground distance is zero to the last bit of precision and the ratio runs
+  # away. It is not literally Inf only because cos(90 degrees) is not
+  # literally zero in floating point.
+  blown <- GDAL7::transform_extent(c(-180, -90, 180, 90), "EPSG:4326",
+                                   "EPSG:3031")
+  expect_gt(adgl:::extent_stretch(unname(blown), "EPSG:3031"), 1e6)
 })

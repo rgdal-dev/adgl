@@ -57,7 +57,7 @@ S7::method(write_to, raster_source) <- function(x, dsn, ..., driver = NULL,
     if (!is.null(options)) {
       args[["creation-option"]] <- options
     }
-    GDAL7::gdal_run("raster reproject", args, progress = FALSE)
+    run_warp(x, args)
     return(invisible(dsn))
   }
 

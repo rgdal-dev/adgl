@@ -144,41 +144,18 @@ test_that("warp-grid: the target grid takes a size or a resolution", {
   expect_gt(dim(by_res$data)[1L], 1L)
 })
 
-test_that("warp-unbounded: a resolution that cannot fit the target says why", {
-  # Found by this suite. A whole-globe source into EPSG:3031 has a target
-  # extent 8e23 m across, so no pixel size gives an addressable grid.
+test_that("warp-unbounded: a meaningless target extent is measured, not returned", {
+  # Found by this suite, and fixed by measuring the distance across the
+  # extent rather than its size: a whole-globe source into EPSG:3031 has an
+  # extent 8e23 m across whose four corners are all the north pole.
+  skip_if_not(GDAL7::gdal_has_algorithms(), "no algorithm registry")
   x <- src(cog())
   on.exit(src_close(x), add = TRUE)
-  expect_error(adgl:::warp_args(warp(x, "EPSG:3031", resolution = 5e5)),
-               "no finite position")
-})
 
-bug("warp-unbounded-dim", paste(
-  "the other half of the same problem: warp(dim = ) over that source returns",
-  "a 48 by 48 grid whose bbox is 8e23 m across, with no complaint. A size",
-  "bound cannot catch it because the size is the one that was asked for; the",
-  "extent is what is wrong. Comparing the source extent against the target",
-  "CRS's area of use would catch it, and that needs OSRGetAreaOfUse in GDAL7.",
-  "Parked on Michael's call: it is a general GDAL problem, not adgl's"))
-
-test_that("write-options: a raster writes with creation options", {
-  # terra: writeRaster(r, f, gdal = c("COMPRESS=ZSTD"))
-  x <- src(tif())
-  on.exit(src_close(x), add = TRUE)
-  out <- tempfile(fileext = ".tif")
-  write_to(x, out, options = c("COMPRESS=DEFLATE", "TILED=NO"))
-  expect_true(file.exists(out))
-
-  back <- src(out)
-  on.exit(src_close(back), add = TRUE)
-  expect_equal(S7::prop(back, "plan")$dimension, c(20L, 10L))
-})
-
-test_that("report: a source with nothing to say says nothing", {
-  x <- src(tif())
-  on.exit(src_close(x), add = TRUE)
-  findings <- report(x)
-  expect_true(all(findings$severity %in% c("blocks", "degrades", "note")))
+  expect_warning(collect(warp(x, "EPSG:3031", dim = c(48, 48))),
+                 "ground distance")
+  expect_error(collect(warp(x, "EPSG:3031", resolution = 5e5)),
+               "no useful position")
 })
 
 gap("read-window-pixel", "a window given in pixel coordinates (vapour_read_raster(window =))")

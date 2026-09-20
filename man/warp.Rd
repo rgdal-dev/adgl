@@ -55,6 +55,16 @@ interior singularity: the walk alone can come back hundreds of kilometres
 too narrow around the antipode of an azimuthal projection, and an extent
 that is too small clips data silently.
 
+When nothing pins the target window, the extent GDAL chooses is measured
+once the warp has run, by inverting its corners and comparing the distance
+it claims against the distance it covers on the ground. A whole-globe
+source into a polar projection comes back with an extent 8e23 m across
+whose four corners are all the same pole, which is a picture of a
+singularity rather than of the data. That is a warning with \code{dim} and an
+error with \code{resolution}, where GDAL cannot build the grid at all. Where
+GDAL clamps for itself, as it does for Web Mercator's latitude limit,
+there is nothing to say and nothing is said.
+
 Nothing is read here. The reprojection is recorded in the plan and happens
 when a terminal verb asks for the result, so \code{warp()} composes with
 \code{\link[=query]{query()}} in either order.

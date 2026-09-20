@@ -24,6 +24,16 @@ NULL
 #' too narrow around the antipode of an azimuthal projection, and an extent
 #' that is too small clips data silently.
 #'
+#' When nothing pins the target window, the extent GDAL chooses is measured
+#' once the warp has run, by inverting its corners and comparing the distance
+#' it claims against the distance it covers on the ground. A whole-globe
+#' source into a polar projection comes back with an extent 8e23 m across
+#' whose four corners are all the same pole, which is a picture of a
+#' singularity rather than of the data. That is a warning with `dim` and an
+#' error with `resolution`, where GDAL cannot build the grid at all. Where
+#' GDAL clamps for itself, as it does for Web Mercator's latitude limit,
+#' there is nothing to say and nothing is said.
+#'
 #' Nothing is read here. The reprojection is recorded in the plan and happens
 #' when a terminal verb asks for the result, so `warp()` composes with
 #' [query()] in either order.
@@ -223,46 +233,130 @@ warp_args <- function(x) {
     args$size <- as.integer(warp$dim)
   }
   if (!is.null(warp$resolution)) {
-    check_resolution_fits(plan, from, warp, args$bbox)
     args$resolution <- as.double(warp$resolution)
   }
   args
 }
 
-# A resolution and an extent together decide a size, and some projections put
-# part of a source at infinity: a whole-globe source into EPSG:3031 has a
-# target extent 8e23 m across, so any sane pixel size gives a raster GDAL
-# cannot address. GDAL refuses it too, with "Too large output raster size" and
-# nothing about why, so the arithmetic is done here to say what happened and
-# what to do instead. The bound is GDAL's own: a dimension is an int.
-check_resolution_fits <- function(plan, from, warp, bbox) {
-  target <- if (!is.null(bbox)) {
-    bbox
+# Whether a target extent means anything.
+#
+# Michael's flag, and it is the definite one: an extent is only a picture of
+# the data if the distance it claims matches the distance it covers on the
+# ground. Invert its corners and measure. A whole-globe source into EPSG:3031
+# gives an extent 8e23 m across whose four corners all invert to the north
+# pole - zero ground distance - so it is a picture of a singularity, not of
+# the source. Size alone cannot say that: with dim = the size returned is the
+# size asked for, and only the distance gives it away.
+#
+# The ratio is near 1 for a projection used over its own domain, about 3 for
+# world Mercator clipped at its usual latitude, and unbounded as a source
+# reaches a singularity. Ten is the line.
+MAX_STRETCH <- 10
+
+# Great-circle distance on a sphere of the WGS84 semi-major axis. A red flag
+# needs an order of magnitude, not a geodesic to the millimetre.
+ground_distance <- function(lon, lat) {
+  r <- 6378137
+  p <- pi / 180
+  d <- sin((lat[2L] - lat[1L]) * p / 2)^2 +
+    cos(lat[1L] * p) * cos(lat[2L] * p) * sin((lon[2L] - lon[1L]) * p / 2)^2
+  2 * r * asin(pmin(1, sqrt(d)))
+}
+
+# How many times larger the extent is than the ground it covers: 1 for an
+# honest extent, Inf when its corners are all the same place. NA when the
+# question cannot be asked, which is a target CRS that will not invert to
+# longitude and latitude at all.
+extent_stretch <- function(bbox, crs) {
+  corners <- tryCatch(
+    PROJ::proj_trans(
+      wk::xy(bbox[c(1L, 3L, 1L, 3L)], bbox[c(2L, 4L, 4L, 2L)], crs = crs),
+      "EPSG:4326"
+    ),
+    error = function(e) NULL
+  )
+  if (is.null(corners)) {
+    return(NA_real_)
+  }
+  lon <- unclass(corners)$x
+  lat <- unclass(corners)$y
+  if (anyNA(lon) || anyNA(lat) || !all(is.finite(c(lon, lat)))) {
+    return(Inf)
+  }
+
+  diagonal <- sqrt((bbox[3L] - bbox[1L])^2 + (bbox[4L] - bbox[2L])^2)
+  ground <- max(ground_distance(lon[1:2], lat[1:2]),
+                ground_distance(lon[3:4], lat[3:4]))
+  if (ground == 0) Inf else diagonal / ground
+}
+
+# What the extent looks like once GDAL has chosen it.
+#
+# The check has to come after the run, not before it, because GDAL clamps
+# where it knows how to: a global source into Web Mercator comes back at the
+# usual latitude limit, and the extent we would have predicted for it is not
+# the one GDAL uses. Polar stereographic has no such limit, so there the
+# prediction and the result agree, and both are nonsense.
+warn_on_stretch <- function(extent, crs) {
+  stretch <- extent_stretch(unname(extent_to_bbox(extent)), crs)
+  if (is.na(stretch) || stretch <= MAX_STRETCH) {
+    return(invisible(NULL))
+  }
+  warning(stretch_message(extent, crs, stretch), call. = FALSE)
+  invisible(NULL)
+}
+
+stretch_message <- function(extent, crs, stretch) {
+  times <- if (is.finite(stretch)) {
+    paste0(format(stretch, digits = 3), " times")
   } else {
-    suppressWarnings(tryCatch(
-      GDAL7::transform_extent(unname(extent_to_bbox(plan$extent)), from,
-                              warp$crs),
-      error = function(e) NULL
-    ))
+    "immeasurably more than"
   }
+  paste0(
+    "the target extent is ", format(extent[["xmax"]] - extent[["xmin"]],
+                                    digits = 3),
+    " across, ", times, " the ground distance it covers, because part of ",
+    "this source has no useful position in ", crs_label(crs), ".\n",
+    "  Pin the output with warp(extent = ), or narrow the source with ",
+    "query(extent = ) first."
+  )
+}
+
+# Run the pipeline, and when GDAL refuses because the output would be too
+# large to address, say why rather than passing on "Too large output raster
+# size" with nothing attached. The predicted extent is good enough for the
+# diagnosis: GDAL only fails this way when it did not clamp, which is exactly
+# when the prediction and its own choice agree.
+run_warp <- function(x, args) {
+  tryCatch(
+    GDAL7::gdal_run("raster reproject", args, progress = FALSE),
+    error = function(e) {
+      stop(diagnose_warp_failure(x, conditionMessage(e)), call. = FALSE)
+    }
+  )
+}
+
+diagnose_warp_failure <- function(x, message) {
+  plan <- S7::prop(x, "plan")
+  warp <- plan$warp
+  if (is.null(warp) || !is.null(warp$extent)) {
+    return(message)
+  }
+  from <- S7::prop(x, "dataset")@crs
+  target <- suppressWarnings(tryCatch(
+    GDAL7::transform_extent(unname(extent_to_bbox(plan$extent)), from,
+                            warp$crs),
+    error = function(e) NULL
+  ))
   if (is.null(target) || !all(is.finite(target))) {
-    return(invisible(NULL))
+    return(message)
   }
-
-  size <- c((target[3L] - target[1L]) / warp$resolution[1L],
-            (target[4L] - target[2L]) / warp$resolution[2L])
-  if (all(size <= .Machine$integer.max)) {
-    return(invisible(NULL))
+  stretch <- extent_stretch(unname(target), warp$crs)
+  if (is.na(stretch) || stretch <= MAX_STRETCH) {
+    return(message)
   }
-
-  stop("this resolution asks for a grid ", format(size[1L], digits = 3),
-       " by ", format(size[2L], digits = 3), " pixels, which cannot be ",
-       "addressed.\n",
-       "  The target extent is ", format(target[3L] - target[1L], digits = 3),
-       " across, because part of this source has no finite position in ",
-       crs_label(warp$crs), ".\n",
-       "  Pin the output with warp(extent = ), or narrow the source with ",
-       "query(extent = ) first.", call. = FALSE)
+  paste0(message, "\n  ", stretch_message(bbox_to_extent(target), warp$crs,
+                                          stretch))
 }
 
 # A warped plan is realised by running the pipeline into a MEM dataset and
@@ -271,9 +365,13 @@ check_resolution_fits <- function(plan, from, warp, bbox) {
 warped_source <- function(x) {
   require_algorithms("warp")
   args <- c(warp_args(x), list(output = "", "output-format" = "MEM"))
-  ds <- GDAL7::gdal_run("raster reproject", args, progress = FALSE)
+  ds <- run_warp(x, args)
 
   out <- new_raster_source(paste0("<warped ", S7::prop(x, "dsn"), ">"), ds)
+  if (is.null(S7::prop(x, "plan")$warp$extent)) {
+    warn_on_stretch(S7::prop(out, "plan")$source_extent,
+                    S7::prop(x, "plan")$warp$crs)
+  }
   plan <- S7::prop(out, "plan")
   plan$bands <- S7::prop(x, "plan")$bands
   plan$resample <- S7::prop(x, "plan")$resample
