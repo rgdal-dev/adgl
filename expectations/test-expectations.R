@@ -144,12 +144,22 @@ test_that("warp-grid: the target grid takes a size or a resolution", {
   expect_gt(dim(by_res$data)[1L], 1L)
 })
 
-bug("warp-unbounded", paste(
-  "warping a whole global source into a projection the whole globe does not",
-  "fit in (EPSG:3031) gives a target extent 8e23 m across. With dim = it",
-  "returns that silently; with resolution = GDAL refuses with 'too large",
-  "output raster size'. The fix is to compare the source extent against the",
-  "target CRS's area of use, which needs OSRGetAreaOfUse in GDAL7"))
+test_that("warp-unbounded: a resolution that cannot fit the target says why", {
+  # Found by this suite. A whole-globe source into EPSG:3031 has a target
+  # extent 8e23 m across, so no pixel size gives an addressable grid.
+  x <- src(cog())
+  on.exit(src_close(x), add = TRUE)
+  expect_error(adgl:::warp_args(warp(x, "EPSG:3031", resolution = 5e5)),
+               "no finite position")
+})
+
+bug("warp-unbounded-dim", paste(
+  "the other half of the same problem: warp(dim = ) over that source returns",
+  "a 48 by 48 grid whose bbox is 8e23 m across, with no complaint. A size",
+  "bound cannot catch it because the size is the one that was asked for; the",
+  "extent is what is wrong. Comparing the source extent against the target",
+  "CRS's area of use would catch it, and that needs OSRGetAreaOfUse in GDAL7.",
+  "Parked on Michael's call: it is a general GDAL problem, not adgl's"))
 
 test_that("write-options: a raster writes with creation options", {
   # terra: writeRaster(r, f, gdal = c("COMPRESS=ZSTD"))

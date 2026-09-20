@@ -165,3 +165,27 @@ test_that("the warper's order statistics are accepted", {
                           "plan")$warp$resample, method)
   }
 })
+
+test_that("a resolution that cannot fit the target extent says why", {
+  # A whole-globe source into polar stereographic: the globe contains points
+  # with no finite position there, so the target extent is 8e23 m across and
+  # no pixel size gives an addressable grid. GDAL refuses this too, with
+  # nothing about the cause.
+  x <- src(test_cog())
+  on.exit(src_close(x), add = TRUE)
+
+  expect_error(adgl:::warp_args(warp(x, "EPSG:3031", resolution = 5e5)),
+               "no finite position")
+  expect_error(adgl:::warp_args(warp(x, "EPSG:3031", resolution = 5e5)),
+               "warp\\(extent = \\)")
+
+  # Pinning the window is the fix, and it goes through.
+  pinned <- warp(x, "EPSG:3031", resolution = 5e5,
+                 extent = c(-3e6, 3e6, -3e6, 3e6))
+  expect_equal(adgl:::warp_args(pinned)$resolution, c(5e5, 5e5))
+
+  # So is narrowing the source first.
+  narrowed <- warp(query(x, extent = c(100, 160, -60, -20)), "EPSG:3031",
+                   resolution = 5e5)
+  expect_equal(adgl:::warp_args(narrowed)$resolution, c(5e5, 5e5))
+})

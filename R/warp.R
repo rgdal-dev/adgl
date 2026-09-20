@@ -223,9 +223,46 @@ warp_args <- function(x) {
     args$size <- as.integer(warp$dim)
   }
   if (!is.null(warp$resolution)) {
+    check_resolution_fits(plan, from, warp, args$bbox)
     args$resolution <- as.double(warp$resolution)
   }
   args
+}
+
+# A resolution and an extent together decide a size, and some projections put
+# part of a source at infinity: a whole-globe source into EPSG:3031 has a
+# target extent 8e23 m across, so any sane pixel size gives a raster GDAL
+# cannot address. GDAL refuses it too, with "Too large output raster size" and
+# nothing about why, so the arithmetic is done here to say what happened and
+# what to do instead. The bound is GDAL's own: a dimension is an int.
+check_resolution_fits <- function(plan, from, warp, bbox) {
+  target <- if (!is.null(bbox)) {
+    bbox
+  } else {
+    suppressWarnings(tryCatch(
+      GDAL7::transform_extent(unname(extent_to_bbox(plan$extent)), from,
+                              warp$crs),
+      error = function(e) NULL
+    ))
+  }
+  if (is.null(target) || !all(is.finite(target))) {
+    return(invisible(NULL))
+  }
+
+  size <- c((target[3L] - target[1L]) / warp$resolution[1L],
+            (target[4L] - target[2L]) / warp$resolution[2L])
+  if (all(size <= .Machine$integer.max)) {
+    return(invisible(NULL))
+  }
+
+  stop("this resolution asks for a grid ", format(size[1L], digits = 3),
+       " by ", format(size[2L], digits = 3), " pixels, which cannot be ",
+       "addressed.\n",
+       "  The target extent is ", format(target[3L] - target[1L], digits = 3),
+       " across, because part of this source has no finite position in ",
+       crs_label(warp$crs), ".\n",
+       "  Pin the output with warp(extent = ), or narrow the source with ",
+       "query(extent = ) first.", call. = FALSE)
 }
 
 # A warped plan is realised by running the pipeline into a MEM dataset and
