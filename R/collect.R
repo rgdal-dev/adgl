@@ -94,14 +94,7 @@ S7::method(collect, raster_source) <- function(x, ..., as = c("grd", "gis"),
   ds <- S7::prop(x, "dataset")
   out_dim <- plan$out_dimension %||% plan$dimension
 
-  values <- GDAL7::read_raster(
-    ds,
-    window = raster_window(plan),
-    out_size = out_dim,
-    resample = plan$resample,
-    bands = plan$bands,
-    type = type
-  )
+  values <- read_plan(ds, plan, out_dim, type)
 
   if (mask) {
     values <- mask_values(values, band_nodata(ds, plan$bands))
@@ -160,6 +153,74 @@ S7::method(collect, vector_source) <- function(x, ...) {
 is_wkb_column <- function(column) {
   is.list(column) && length(column) > 0L &&
     all(vapply(column, function(e) is.raw(e) || is.null(e), logical(1)))
+}
+
+# One read of whatever the plan says, padded when the plan leaves the source.
+#
+# A padded window cannot go to GDAL as it stands, because RasterIO takes an
+# integer pixel offset and refuses one outside the raster. So the window is
+# clipped to the source, read, and placed back into a full-size array of NA.
+# query() aligned the whole padded rectangle to the source's own pixel edges,
+# so the clipping is by whole source pixels; only the scaling to an out_size
+# smaller than the window can land between two, and that is rounded.
+read_plan <- function(ds, plan, out_dim, type = "double") {
+  window <- raster_window(plan)
+  if (!isTRUE(plan$pad)) {
+    return(GDAL7::read_raster(ds, window = window, out_size = out_dim,
+                              resample = plan$resample, bands = plan$bands,
+                              type = type))
+  }
+  if (!identical(type, "double")) {
+    stop("pad = TRUE needs type = \"double\", and this read is type = \"",
+         type, "\".\n",
+         "  The part of the window outside the source is not a value, and ",
+         "neither a raw nor an integer\n  has one to say so with.",
+         call. = FALSE)
+  }
+
+  inner <- clip_window(window, plan$source_dimension)
+  out <- lapply(plan$bands, function(i) {
+    matrix(NA_real_, nrow = out_dim[1L], ncol = out_dim[2L])
+  })
+  if (is.null(inner)) {
+    return(lapply(out, as.vector))
+  }
+
+  block <- scale_window(window, inner, out_dim)
+  values <- GDAL7::read_raster(ds, window = inner, out_size = block$size,
+                               resample = plan$resample, bands = plan$bands,
+                               type = type)
+  cols <- block$offset[1L] + seq_len(block$size[1L])
+  rows <- block$offset[2L] + seq_len(block$size[2L])
+  for (i in seq_along(values)) {
+    out[[i]][cols, rows] <- values[[i]]
+  }
+  lapply(out, as.vector)
+}
+
+# The part of a window that is really in the raster, or NULL when none is.
+clip_window <- function(window, source_dimension) {
+  x0 <- max(0, window[1L])
+  y0 <- max(0, window[2L])
+  x1 <- min(source_dimension[1L], window[1L] + window[3L])
+  y1 <- min(source_dimension[2L], window[2L] + window[4L])
+  if (x1 <= x0 || y1 <= y0) {
+    return(NULL)
+  }
+  c(x0, y0, x1 - x0, y1 - y0)
+}
+
+# Where the clipped window sits in the output grid, and how big it is there.
+# Both are whole output pixels, so a read that is also being resampled can put
+# the seam up to one output pixel out; a read at source resolution is exact.
+scale_window <- function(window, inner, out_dim) {
+  sx <- out_dim[1L] / window[3L]
+  sy <- out_dim[2L] / window[4L]
+  offset <- c(round((inner[1L] - window[1L]) * sx),
+              round((inner[2L] - window[2L]) * sy))
+  size <- c(max(1, round(inner[3L] * sx)), max(1, round(inner[4L] * sy)))
+  size <- pmin(size, out_dim - offset)
+  list(offset = offset, size = size)
 }
 
 # The plan's extent is already snapped to whole source pixels by query(), so

@@ -19,10 +19,15 @@ Three arguments shape the target grid and any one of them is enough.
 gives it a window; leave all three out and GDAL chooses a grid that roughly
 preserves the source resolution.
 
-\code{dim} takes a zero in either position, which is the useful part: \code{c(1024, 0)} asks for a grid 1024 pixels wide and lets GDAL work out the height from
-the target extent's own aspect ratio, which you would otherwise have to
-compute in a projection you have not seen yet. \code{c(0, 1024)} is the same the
-other way round.
+\code{dim} takes a zero, or an \code{NA}, in either position, which is the useful
+part: \code{c(1024, 0)} asks for a grid 1024 pixels wide and lets GDAL work out
+the height from the target extent's own aspect ratio, which you would
+otherwise have to compute in a projection you have not seen yet. \code{c(0, 1024)} is the same the other way round. The two spellings mean one thing,
+"work this side out rather than taking it from me", which is what \code{NA} also
+means in \code{\link[=query]{query()}}'s \code{extent}. \code{0} is GDAL's own spelling in \code{--size} and is
+free here because no dimension is ever 0; it is not free in an extent,
+where 0 is a perfectly good coordinate, which is why the sentinel differs
+between the two and the meaning does not.
 
 \code{extent} is the one argument here that is given in the \emph{target} CRS, since
 it is the window the output covers. That makes it an alternative to

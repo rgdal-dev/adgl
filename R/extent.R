@@ -45,18 +45,45 @@ bbox_to_extent <- function(bbox) {
 # Validate a user-supplied extent. Degenerate in either direction is refused
 # rather than clamped, because an empty window is always a mistake upstream
 # and a silent empty read is the hardest kind to find.
-check_extent <- function(extent, what = "extent") {
+#
+# `partial` allows a position to be left unsaid, which resolve_partial_extent()
+# then fills from the extent being narrowed. Any non-finite value says it:
+# `NA` reads best, and `-Inf` and `Inf` are accepted because a bound one does
+# not have is exactly what they mean.
+check_extent <- function(extent, what = "extent", partial = FALSE) {
   extent <- as.double(unname(extent))
-  if (length(extent) != 4L || anyNA(extent)) {
+  if (length(extent) != 4L || (!partial && anyNA(extent))) {
     stop("`", what, "` must be 4 non-missing numbers: xmin, xmax, ymin, ymax",
          call. = FALSE)
   }
+  extent <- stats::setNames(extent, c("xmin", "xmax", "ymin", "ymax"))
+  if (partial) {
+    extent[!is.finite(extent)] <- NA_real_
+    return(extent)
+  }
+  check_extent_area(extent, what)
+}
+
+check_extent_area <- function(extent, what = "extent") {
   if (extent[1L] >= extent[2L] || extent[3L] >= extent[4L]) {
     stop("`", what, "` has no area: it reads xmin ", extent[1L], ", xmax ",
          extent[2L], ", ymin ", extent[3L], ", ymax ", extent[4L],
          call. = FALSE)
   }
-  stats::setNames(extent, c("xmin", "xmax", "ymin", "ymax"))
+  extent
+}
+
+# An edge left unsaid is the edge the thing being narrowed already has, which
+# for a first query() is the source's own bound. So c(NA, 150, NA, NA) is
+# everything west of 150 and nothing else has to be looked up.
+resolve_partial_extent <- function(extent, against, what = "extent") {
+  if (all(is.na(extent))) {
+    stop("`", what, "` says nothing: every position is unspecified.\n",
+         "  Leave the argument out to keep the whole extent.", call. = FALSE)
+  }
+  missing <- is.na(extent)
+  extent[missing] <- as.double(unname(against))[missing]
+  check_extent_area(extent, what)
 }
 
 # The intersection of two extents, or NULL when they do not overlap.

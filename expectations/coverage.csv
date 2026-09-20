@@ -33,7 +33,7 @@ write-append,vector,Append to a layer or replace it,sf::st_write(append delete_l
 feature-count,vector,Ask how many features there are without reading them,sf::st_layers(do_count); vapour_layer_info,have,src() reports it and report() says when it is unknown
 layer-extent,vector,Ask for the layer extent without reading features,vapour_read_extent; sf::st_bbox,have,src() reports it
 nodata-mask,raster,Return a nodata value as missing rather than as data,rasterio src.read(masked) 37 calls - its most-used argument; terra and stars mask by default,have,"collect() and as_grd() mask by default; the decision pivots on type, since only a double has a missing value to put there"
-boundless,raster,Read a window that runs past the edge and pad it,rasterio src.read(boundless) 18 calls; terra::crop(extend) 6 calls,gap,"two corpora ask for the same thing independently; query(extent = ) intersects instead"
+boundless,raster,Read a window that runs past the edge and pad it,rasterio src.read(boundless) 18 calls; terra::crop(extend) 6 calls,have,"query(pad = TRUE); the padding is whole source pixels so it does not move the grid, and it needs type double"
 read-masks,raster,Read the mask itself rather than the values,rasterio src.read_masks,gap,"the per-pixel validity, which is not the same question as the values"
 overview-level,raster,Choose an overview level explicitly,rasterio.open(overview_level),have,"src(options = ""OVERVIEW_LEVEL=2"") - GDAL's own open option, which is why src() takes them"
 block-windows,raster,Iterate the source's own blocks or tiles,rasterio src.block_windows; windows.Window.from_slices,elsewhere,grout owns tiling

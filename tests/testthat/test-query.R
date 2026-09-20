@@ -106,3 +106,67 @@ test_that("resample is checked against the methods GDAL has", {
   expect_error(query(x, resample = "nearset"), "one of")
   expect_error(query(x, dim = c(0, 2)), "positive whole numbers")
 })
+
+test_that("a position left unsaid in an extent means the bound already there", {
+  x <- src(test_tif())
+  on.exit(src_close(x), add = TRUE)
+
+  # test.tif is the whole globe in 18-degree pixels, so the western half is
+  # everything up to 0 and the other three bounds are the source's own.
+  west <- S7::prop(query(x, extent = c(NA, 0, NA, NA)), "plan")
+  expect_equal(unname(west$extent), c(-180, 0, -90, 90))
+  expect_equal(west$dimension, c(10L, 10L))
+
+  # An infinity says the same thing, because a bound you do not have is what
+  # it means.
+  expect_equal(
+    S7::prop(query(x, extent = c(-Inf, 0, -Inf, Inf)), "plan")$extent,
+    west$extent
+  )
+
+  # It resolves against the plan rather than the source, so it composes.
+  narrowed <- query(query(x, extent = c(-100, 100, -50, 50)),
+                    extent = c(NA, 0, NA, NA))
+  expect_equal(unname(S7::prop(narrowed, "plan")$extent), c(-108, 0, -54, 54))
+
+  expect_error(query(x, extent = c(NA, NA, NA, NA)), "says nothing")
+  expect_error(query(x, extent = c(NA, 0, NA, NA), crs = "EPSG:3857"),
+               "cannot be given in another one")
+})
+
+test_that("snap says where the rectangle lands on the source's pixel edges", {
+  x <- src(test_tif())
+  on.exit(src_close(x), add = TRUE)
+
+  out <- S7::prop(query(x, extent = c(-100, 0, 0, 80), snap = "out"), "plan")
+  inward <- S7::prop(query(x, extent = c(-100, 0, 0, 80), snap = "in"), "plan")
+
+  expect_equal(unname(out$extent), c(-108, 0, 0, 90))
+  expect_equal(unname(inward$extent), c(-90, 0, 0, 72))
+  expect_true(all(inward$dimension <= out$dimension))
+  expect_error(query(x, extent = c(-100, 0, 0, 80), snap = "outward"),
+               "\"out\" \\(the default\\)")
+})
+
+test_that("pad lets a window leave the source and refuses what it cannot do", {
+  x <- src(test_tif())
+  on.exit(src_close(x), add = TRUE)
+
+  # Two pixels past the north-west corner in each direction.
+  p <- S7::prop(query(x, extent = c(-216, -144, 54, 126), pad = TRUE), "plan")
+  expect_equal(unname(p$extent), c(-216, -144, 54, 126))
+  expect_equal(p$dimension, c(4L, 4L))
+  expect_true(p$pad)
+
+  # Without it the same rectangle is intersected with the source, and one
+  # that misses entirely is an error that says how to ask for it.
+  expect_equal(
+    unname(S7::prop(query(x, extent = c(-216, -144, 54, 126)), "plan")$extent),
+    c(-180, -144, 54, 90)
+  )
+  expect_error(query(x, extent = c(400, 500, 200, 300)), "does not overlap")
+  expect_error(query(x, extent = c(400, 500, 200, 300), pad = TRUE), NA)
+
+  expect_error(query(x, extent = c(-216, -144, 54, 126), pad = "yes"),
+               "TRUE or FALSE")
+})

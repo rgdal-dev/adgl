@@ -40,9 +40,29 @@ decision in it. For a raster it does not, because reprojecting a grid
 resamples: that is \code{\link[=warp]{warp()}}, a separate verb so the method stays a choice
 you make rather than one you inherit.
 
-A raster \code{extent} snaps outward to whole source pixels, so a query with no
-\code{dim} reads the source's own values rather than a resampling of them, and
-the extent the result carries is the one its pixels really have.
+A raster \code{extent} snaps to whole source pixels, outward by default, so a
+query with no \code{dim} reads the source's own values rather than a resampling
+of them, and the extent the result carries is the one its pixels really
+have. \code{snap = "in"} shrinks instead, and \code{"near"} goes to the nearest edge.
+What none of them will do is land the window between two pixels: GDAL reads
+at an integer pixel offset, and moving a grid off its own edges is a
+resampling, which is \code{\link[=warp]{warp()}}'s job. So \code{query()} moves the window to the
+data and \code{warp()} moves the data to the window.
+
+A position in \code{extent} may be left unsaid, as \code{NA} or as an infinity, and
+it then means the bound the plan already has: \code{c(NA, 150, NA, NA)} is
+everything west of 150 without having to look the other three up. Because
+that bound is in the source's own CRS, an unsaid position cannot be
+combined with \code{crs}.
+
+\code{pad} says whether the rectangle may leave the source. By default it may
+not, and an \code{extent} is intersected with what the plan already covers, so a
+read can never run past the edge. With \code{pad = TRUE} the rectangle is kept
+whole and the part outside comes back as \code{NA}, which is what rasterio calls
+a boundless read and terra calls \code{extend}. The padding is in whole source
+pixels, so it does not move the grid; it needs \code{type = "double"}, for the
+same reason masking does, and it cannot be combined with \code{\link[=warp]{warp()}}, because
+the pad is put on after the read and the warper never sees it.
 }
 \section{Arguments}{
 
@@ -51,7 +71,8 @@ All of these are passed by name.
 
 \describe{
 \item{\code{extent}}{\code{c(xmin, xmax, ymin, ymax)}, the rectangle to restrict
-to.}
+to. A position may be \code{NA} or infinite, meaning the bound the plan
+already has.}
 \item{\code{crs}}{Anything GDAL and PROJ understand. An \code{extent} beside it
 is read in this CRS. For a vector source it is also the CRS the
 features come back in; for a raster it is not, and \code{\link[=warp]{warp()}} is.}
@@ -63,6 +84,10 @@ extent lets GDAL serve it from an overview.}
 \item{\code{resample}}{Raster only. One of \code{"nearest"} (the default),
 \code{"bilinear"}, \code{"cubic"}, \code{"cubicspline"}, \code{"lanczos"}, \code{"average"},
 \code{"mode"}, \code{"gauss"} or \code{"rms"}.}
+\item{\code{snap}}{Raster only. Where \code{extent} lands on the source's pixel
+edges: \code{"out"} (the default), \code{"near"} or \code{"in"}.}
+\item{\code{pad}}{Raster only. Allow \code{extent} to leave the source and fill
+the outside with \code{NA}. \code{FALSE} by default.}
 \item{\code{where}}{Vector only. An SQL \code{WHERE} clause. GDAL does not
 validate it when it is set, so a bad clause shows up as a warning at
 read time rather than an error here.}

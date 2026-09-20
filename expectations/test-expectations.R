@@ -221,7 +221,26 @@ test_that("nodata-mask: a nodata value comes back as missing, not as data", {
   expect_equal(sum(collect(x, mask = FALSE)$data == -32768), 2L)
 })
 
-gap("boundless", "a window that runs past the edge, padded (rasterio src.read(boundless =), terra::crop(extend =))")
+test_that("boundless: a window that runs past the edge comes back padded", {
+  # rasterio: src.read(window = w, boundless = True) ; terra: crop(r, e,
+  # extend = TRUE). Both keep the window's own shape and fill the outside.
+  x <- src(tif())
+  on.exit(src_close(x), add = TRUE)
+
+  # test.tif is the globe in 18-degree pixels, so this is two pixels past the
+  # north-west corner in each direction.
+  g <- collect(query(x, extent = c(-216, -144, 54, 126), pad = TRUE))
+  expect_equal(dim(g$data)[1:2], c(4L, 4L))
+  expect_equal(sum(!is.na(g$data[, , 1])), 4L)
+  expect_equal(as.vector(unlist(unclass(g$bbox))), c(-216, 54, -144, 126))
+
+  # The default is still to intersect, which is what every R package does.
+  expect_equal(
+    dim(collect(query(x, extent = c(-216, -144, 54, 126)))$data)[1:2],
+    c(2L, 2L)
+  )
+})
+
 gap("read-masks", "the mask itself rather than the values (rasterio src.read_masks)")
 
 # -- vector ----------------------------------------------------------------

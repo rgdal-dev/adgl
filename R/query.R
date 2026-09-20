@@ -27,9 +27,29 @@ NULL
 #' resamples: that is [warp()], a separate verb so the method stays a choice
 #' you make rather than one you inherit.
 #'
-#' A raster `extent` snaps outward to whole source pixels, so a query with no
-#' `dim` reads the source's own values rather than a resampling of them, and
-#' the extent the result carries is the one its pixels really have.
+#' A raster `extent` snaps to whole source pixels, outward by default, so a
+#' query with no `dim` reads the source's own values rather than a resampling
+#' of them, and the extent the result carries is the one its pixels really
+#' have. `snap = "in"` shrinks instead, and `"near"` goes to the nearest edge.
+#' What none of them will do is land the window between two pixels: GDAL reads
+#' at an integer pixel offset, and moving a grid off its own edges is a
+#' resampling, which is [warp()]'s job. So `query()` moves the window to the
+#' data and `warp()` moves the data to the window.
+#'
+#' A position in `extent` may be left unsaid, as `NA` or as an infinity, and
+#' it then means the bound the plan already has: `c(NA, 150, NA, NA)` is
+#' everything west of 150 without having to look the other three up. Because
+#' that bound is in the source's own CRS, an unsaid position cannot be
+#' combined with `crs`.
+#'
+#' `pad` says whether the rectangle may leave the source. By default it may
+#' not, and an `extent` is intersected with what the plan already covers, so a
+#' read can never run past the edge. With `pad = TRUE` the rectangle is kept
+#' whole and the part outside comes back as `NA`, which is what rasterio calls
+#' a boundless read and terra calls `extend`. The padding is in whole source
+#' pixels, so it does not move the grid; it needs `type = "double"`, for the
+#' same reason masking does, and it cannot be combined with [warp()], because
+#' the pad is put on after the read and the warper never sees it.
 #'
 #' @param x A source from [src()].
 #' @param ... The named arguments below.
@@ -40,7 +60,8 @@ NULL
 #'
 #' \describe{
 #'   \item{`extent`}{`c(xmin, xmax, ymin, ymax)`, the rectangle to restrict
-#'     to.}
+#'     to. A position may be `NA` or infinite, meaning the bound the plan
+#'     already has.}
 #'   \item{`crs`}{Anything GDAL and PROJ understand. An `extent` beside it
 #'     is read in this CRS. For a vector source it is also the CRS the
 #'     features come back in; for a raster it is not, and [warp()] is.}
@@ -52,6 +73,10 @@ NULL
 #'   \item{`resample`}{Raster only. One of `"nearest"` (the default),
 #'     `"bilinear"`, `"cubic"`, `"cubicspline"`, `"lanczos"`, `"average"`,
 #'     `"mode"`, `"gauss"` or `"rms"`.}
+#'   \item{`snap`}{Raster only. Where `extent` lands on the source's pixel
+#'     edges: `"out"` (the default), `"near"` or `"in"`.}
+#'   \item{`pad`}{Raster only. Allow `extent` to leave the source and fill
+#'     the outside with `NA`. `FALSE` by default.}
 #'   \item{`where`}{Vector only. An SQL `WHERE` clause. GDAL does not
 #'     validate it when it is set, so a bad clause shows up as a warning at
 #'     read time rather than an error here.}
@@ -73,29 +98,56 @@ query <- S7::new_generic("query", "x", function(x, ...) {
 
 S7::method(query, raster_source) <- function(x, ..., extent = NULL,
                                              crs = NULL, bands = NULL,
-                                             dim = NULL, resample = NULL) {
+                                             dim = NULL, resample = NULL,
+                                             snap = "out", pad = FALSE) {
   reject_dots(..., kind = "raster")
   plan <- S7::prop(x, "plan")
+  snap <- check_snap(snap)
+  pad <- check_pad(pad)
 
   if (!is.null(extent)) {
-    extent <- check_extent(extent)
-    if (!is.null(crs)) {
+    extent <- check_extent(extent, "extent", partial = TRUE)
+    if (anyNA(extent)) {
+      if (!is.null(crs)) {
+        stop("an unspecified position in `extent` means the bound this plan ",
+             "already has, which is in the source's own CRS, so it cannot be ",
+             "given in another one.\n  Write the edge out, or drop `crs`.",
+             call. = FALSE)
+      }
+      extent <- resolve_partial_extent(extent, plan$extent)
+    } else if (!is.null(crs)) {
       extent <- transform_query_extent(extent, crs, S7::prop(x, "dataset")@crs)
     }
-    narrowed <- intersect_extents(plan$extent, extent)
-    if (is.null(narrowed)) {
-      stop("that extent does not overlap the source, whose extent is ",
-           format_extent(plan$source_extent), call. = FALSE)
+
+    # Without pad the rectangle is intersected with what the plan already
+    # covers, so a read can never leave the source. With it the rectangle is
+    # kept whole and the part outside is filled in on the way out.
+    if (!pad) {
+      extent <- intersect_extents(plan$extent, extent) %||%
+        stop("that extent does not overlap the source, whose extent is ",
+             format_extent(plan$source_extent), ".\n",
+             "  query(pad = TRUE) is how you ask for a window that leaves ",
+             "the source.", call. = FALSE)
     }
-    cropped <- vaster::vcrop(
-      unname(narrowed),
+
+    # vcrop aligns to the source's own pixel edges and extrapolates past them
+    # quite happily, which is what makes padding whole source pixels rather
+    # than a fraction of one.
+    cropped <- suppressMessages(vaster::vcrop(
+      unname(extent),
       dimension = plan$source_dimension,
       extent = unname(plan$source_extent),
-      snap = "out"
-    )
+      snap = snap
+    ))
+    if (any(cropped$dimension < 1L)) {
+      stop("snap = \"", snap, "\" leaves nothing: that rectangle does not ",
+           "contain a whole source pixel.\n  Use the default snap = \"out\".",
+           call. = FALSE)
+    }
     plan$extent <- stats::setNames(cropped$extent,
                                    c("xmin", "xmax", "ymin", "ymax"))
     plan$dimension <- cropped$dimension
+    plan$pad <- pad || isTRUE(plan$pad)
   } else if (!is.null(crs)) {
     stop("`crs` says what `extent` is given in, so it needs an `extent`.\n",
          "  To reproject the raster itself, use warp().", call. = FALSE)
@@ -128,8 +180,22 @@ S7::method(query, vector_source) <- function(x, ..., extent = NULL,
   plan <- S7::prop(x, "plan")
 
   if (!is.null(extent)) {
-    extent <- check_extent(extent)
-    if (!is.null(crs)) {
+    extent <- check_extent(extent, "extent", partial = TRUE)
+    if (anyNA(extent)) {
+      if (!is.null(crs)) {
+        stop("an unspecified position in `extent` means the bound this plan ",
+             "already has, which is in the layer's own CRS, so it cannot be ",
+             "given in another one.\n  Write the edge out, or drop `crs`.",
+             call. = FALSE)
+      }
+      against <- plan$extent %||% S7::prop(x, "info")$source_extent
+      if (is.null(against)) {
+        stop("this layer does not report an extent, so an unspecified ",
+             "position in `extent` has nothing to resolve to.\n",
+             "  Write all four out.", call. = FALSE)
+      }
+      extent <- resolve_partial_extent(extent, against)
+    } else if (!is.null(crs)) {
       extent <- transform_query_extent(extent, crs, S7::prop(x, "info")$crs)
     }
     plan$extent <- if (is.null(plan$extent)) {
@@ -205,7 +271,10 @@ reject_dots <- function(..., kind) {
                    "generalisation, which is a different operation with ",
                    "different failure modes"),
       resample = "there is nothing to resample in a feature",
-      bands = "the vector analogue is `fields`")
+      bands = "the vector analogue is `fields`",
+      snap = "there is no pixel grid to land a rectangle on",
+      pad = paste0("a feature read returns what is there; there is no grid ",
+                   "to fill out"))
   }
   hit <- intersect(named, names(other))
   if (length(hit) > 0L) {
@@ -214,6 +283,22 @@ reject_dots <- function(..., kind) {
   }
   stop("unused argument", if (length(dots) > 1L) "s" else "", ": ",
        paste(named[nzchar(named)], collapse = ", "), call. = FALSE)
+}
+
+check_snap <- function(snap) {
+  if (!is.character(snap) || length(snap) != 1L || is.na(snap) ||
+      !snap %in% c("out", "near", "in")) {
+    stop("`snap` is where the rectangle lands on the source's pixel edges: ",
+         "\"out\" (the default), \"near\" or \"in\"", call. = FALSE)
+  }
+  snap
+}
+
+check_pad <- function(pad) {
+  if (!is.logical(pad) || length(pad) != 1L || is.na(pad)) {
+    stop("`pad` must be TRUE or FALSE", call. = FALSE)
+  }
+  pad
 }
 
 transform_query_extent <- function(extent, from, to) {

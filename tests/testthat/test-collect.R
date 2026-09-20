@@ -205,3 +205,48 @@ test_that("a layer with no CRS has nothing to reproject from", {
   on.exit(src_close(v), add = TRUE)
   expect_error(query(v, crs = "EPSG:3857"), "nothing to reproject from")
 })
+
+test_that("a padded read puts the source where it belongs and NA elsewhere", {
+  x <- src(test_tif())
+  on.exit(src_close(x), add = TRUE)
+
+  # Two 18-degree pixels past the north-west corner in each direction, so the
+  # source occupies the bottom-right quarter of a 4 by 4 grid.
+  g <- collect(query(x, extent = c(-216, -144, 54, 126), pad = TRUE))
+  expect_equal(dim(g$data), c(4L, 4L, 2L))
+  expect_true(all(is.na(g$data[1:2, , ])))
+  expect_true(all(is.na(g$data[, 1:2, ])))
+  expect_false(anyNA(g$data[3:4, 3:4, ]))
+
+  # The bbox is the whole rectangle asked for, not the part that exists.
+  expect_equal(as.vector(unlist(unclass(g$bbox))), c(-216, 54, -144, 126))
+
+  # A window with nothing in it at all is legal once pad says so.
+  outside <- collect(query(x, extent = c(400, 500, 200, 300), pad = TRUE))
+  expect_true(all(is.na(outside$data)))
+
+  # And the gis path pads the same way.
+  expect_equal(sum(!is.na(collect(query(x, extent = c(-216, -144, 54, 126),
+                                        pad = TRUE), as = "gis"))), 8L)
+})
+
+test_that("padding needs a type that has a missing value", {
+  x <- src(test_tif())
+  on.exit(src_close(x), add = TRUE)
+  p <- query(x, extent = c(-216, -144, 54, 126), pad = TRUE)
+  expect_error(collect(p, type = "integer"), "pad = TRUE needs")
+  expect_error(collect(p, type = "raw"), "pad = TRUE needs")
+})
+
+test_that("a padded read survives being resampled to a different size", {
+  x <- src(test_tif())
+  on.exit(src_close(x), add = TRUE)
+
+  g <- collect(query(x, extent = c(-216, -144, 54, 126), pad = TRUE,
+                     dim = c(8, 8)))
+  expect_equal(dim(g$data), c(8L, 8L, 2L))
+  # The source is a quarter of the rectangle, so a quarter of the output.
+  expect_equal(sum(!is.na(g$data[, , 1])), 16L)
+  expect_true(all(is.na(g$data[1:4, , 1])))
+  expect_false(anyNA(g$data[5:8, 5:8, 1]))
+})

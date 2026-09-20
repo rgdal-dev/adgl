@@ -70,13 +70,7 @@ S7::method(write_to, raster_source) <- function(x, dsn, ..., driver = NULL,
 
   out_dim <- plan$out_dimension %||% plan$dimension
   ds <- S7::prop(x, "dataset")
-  values <- GDAL7::read_raster(
-    ds,
-    window = raster_window(plan),
-    out_size = out_dim,
-    resample = plan$resample,
-    bands = plan$bands
-  )
+  values <- read_plan(ds, plan, out_dim)
 
   # Through MEM rather than straight to the driver, so that a copy-only
   # driver such as COG or PNG works by the same path as a creatable one.

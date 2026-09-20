@@ -48,11 +48,16 @@ NULL
 #' gives it a window; leave all three out and GDAL chooses a grid that roughly
 #' preserves the source resolution.
 #'
-#' `dim` takes a zero in either position, which is the useful part: `c(1024,
-#' 0)` asks for a grid 1024 pixels wide and lets GDAL work out the height from
-#' the target extent's own aspect ratio, which you would otherwise have to
-#' compute in a projection you have not seen yet. `c(0, 1024)` is the same the
-#' other way round.
+#' `dim` takes a zero, or an `NA`, in either position, which is the useful
+#' part: `c(1024, 0)` asks for a grid 1024 pixels wide and lets GDAL work out
+#' the height from the target extent's own aspect ratio, which you would
+#' otherwise have to compute in a projection you have not seen yet. `c(0,
+#' 1024)` is the same the other way round. The two spellings mean one thing,
+#' "work this side out rather than taking it from me", which is what `NA` also
+#' means in [query()]'s `extent`. `0` is GDAL's own spelling in `--size` and is
+#' free here because no dimension is ever 0; it is not free in an extent,
+#' where 0 is a perfectly good coordinate, which is why the sentinel differs
+#' between the two and the meaning does not.
 #'
 #' `extent` is the one argument here that is given in the *target* CRS, since
 #' it is the window the output covers. That makes it an alternative to
@@ -108,6 +113,12 @@ S7::method(warp, raster_source) <- function(x, crs, ..., resample = "nearest",
          "fixed the size of this read.\n  Give one or the other.",
          call. = FALSE)
   }
+  if (isTRUE(plan$pad)) {
+    stop("a padded plan cannot be warped: the pad is put on in R, after the ",
+         "read, and the warper reads from GDAL and never sees it.\n",
+         "  Warp first and pad the result, or drop query(pad = TRUE).",
+         call. = FALSE)
+  }
   if (!is.null(extent) && !whole_source(plan)) {
     stop("`extent` here is the window the output covers, in the CRS being ",
          "warped to, so it replaces the rectangle query(extent = ) set ",
@@ -144,15 +155,20 @@ check_warp_dim <- function(dim) {
   if (is.null(dim)) {
     return(NULL)
   }
+  # NA and 0 say the same thing here, that this side is to be worked out
+  # rather than given. 0 is GDAL's own spelling, in --size, and a dimension
+  # cannot be 0 anyway so the value is free; NA is what query(extent = ) uses
+  # for the same idea, where 0 is a perfectly good coordinate and cannot be.
   dim <- as.integer(dim)
-  if (length(dim) != 2L || anyNA(dim) || any(dim < 0L)) {
+  dim[is.na(dim)] <- 0L
+  if (length(dim) != 2L || any(dim < 0L)) {
     stop("`dim` must be two whole numbers, nx and ny, neither negative.\n",
-         "  One of them may be 0, which asks GDAL to derive it from the ",
-         "other and the target extent.", call. = FALSE)
+         "  One of them may be 0 or NA, which asks GDAL to derive it from ",
+         "the other and the target extent.", call. = FALSE)
   }
   if (all(dim == 0L)) {
-    stop("`dim` cannot be 0 in both positions; `dim = NULL` is how you ask ",
-         "GDAL to choose the whole size.", call. = FALSE)
+    stop("`dim` cannot be unspecified in both positions; `dim = NULL` is how ",
+         "you ask GDAL to choose the whole size.", call. = FALSE)
   }
   dim
 }

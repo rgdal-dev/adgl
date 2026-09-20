@@ -55,6 +55,30 @@ document rather than grown by accretion.
   from the extension. A warped plan compiles into GDAL's own pipeline and
   never enters R.
 
+* Three things decide what a rectangle means against a raster, and they are
+  independent rather than modes. A position in `query(extent = )` may be left
+  unsaid, as `NA` or as an infinity, and then means the bound the plan already
+  has, so `c(NA, 150, NA, NA)` is everything west of 150. `snap` says where
+  the rectangle lands on the source's own pixel edges, `"out"` as before,
+  `"near"` or `"in"`. And `pad = TRUE` lets the rectangle leave the source,
+  filling the outside with `NA` rather than intersecting; that is rasterio's
+  `boundless` and terra's `extend`, it pads by whole source pixels so the grid
+  does not move, it needs `type = "double"` for the same reason masking does,
+  and it cannot be combined with `warp()`, whose warper reads from GDAL and
+  never sees the pad. The lazy grid pads as well, so a padded plot is one
+  windowed read like any other.
+
+  The fourth case belongs to `warp()` rather than to an argument. Landing a
+  window between two pixels is a resampling, because GDAL reads at an integer
+  pixel offset, and `warp(extent = )` already honours a rectangle exactly. So
+  `query()` moves the window to the data and `warp()` moves the data to the
+  window.
+
+* `warp(dim = )` accepts `NA` as well as `0` for the side GDAL should work
+  out. They mean one thing; `0` is GDAL's own spelling in `--size` and is free
+  there because no dimension is ever 0, while an extent needs `NA` because 0
+  is a perfectly good coordinate.
+
 * A band's nodata value is a fill rather than a measurement, so `collect()`
   and `as_grd()` return it as `NA` by default, which is what terra and stars
   do and what rasterio calls `masked`. The decision pivots on `type`, because

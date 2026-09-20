@@ -91,3 +91,22 @@ test_that("the lazy grid masks nodata too, so a plot does not draw the fill", {
   expect_equal(as.vector(as_grd(x, mask = FALSE)$data[1L, 1:2, 1L]),
                c(-32768, -32768))
 })
+
+test_that("the lazy grid pads too, and each crop is still one windowed read", {
+  x <- src(test_tif())
+  on.exit(src_close(x), add = TRUE)
+
+  g <- as_grd(query(x, extent = c(-216, -144, 54, 126), pad = TRUE))
+  expect_equal(dim(g$data), c(4L, 4L, 2L))
+
+  # `[` on the proxy keeps all three dimensions, as wk's contract asks.
+  whole <- g$data[1:4, 1:4, 1L]
+  expect_equal(dim(whole), c(4L, 4L, 1L))
+  expect_true(all(is.na(whole[1:2, , 1L])))
+  expect_false(anyNA(whole[3:4, 3:4, 1L]))
+
+  # A crop wholly inside the source reads normally, and one wholly outside it
+  # never reaches GDAL at all.
+  expect_false(anyNA(wk::grd_subset(g, i = 3:4, j = 3:4)$data))
+  expect_true(all(is.na(wk::grd_subset(g, i = 1:2, j = 1:2)$data)))
+})

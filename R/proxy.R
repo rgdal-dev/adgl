@@ -125,6 +125,16 @@ as.array.adgl_proxy <- function(x, ...) {
     stop("band index out of range", call. = FALSE)
   }
 
+  # A padded plan reaches past the source, and RasterIO refuses a window that
+  # does. Censoring those indices to NA is all it takes, because wk's own rule
+  # for an out-of-range index is already NA and the machinery below fills only
+  # the positions that survive.
+  if (isTRUE(plan$pad)) {
+    window <- raster_window(plan)
+    i <- censor_outside(i, -window[2L], plan$source_dimension[2L])
+    j <- censor_outside(j, -window[1L], plan$source_dimension[1L])
+  }
+
   out <- array(NA_real_, dim = c(length(i), length(j), length(k)))
   keep_i <- which(!is.na(i))
   keep_j <- which(!is.na(j))
@@ -190,6 +200,15 @@ proxy_read <- function(source, i, j, bands) {
     m <- matrix(v, nrow = span_x, ncol = span_y)
     as.vector(m[j - min(j) + 1L, i - min(i) + 1L, drop = FALSE])
   })
+}
+
+# An index into the padded grid, with the ones that land outside the source
+# turned into NA. `inset` is where the source starts within the padded grid,
+# in padded pixels, and `n` is how many source pixels there are.
+censor_outside <- function(index, inset, n) {
+  outside <- !is.na(index) & (index <= inset | index > inset + n)
+  index[outside] <- NA_integer_
+  index
 }
 
 is_regular <- function(index) {
