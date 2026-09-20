@@ -1,0 +1,167 @@
+# adgl
+
+Query, filter, read and transform raster and vector sources through GDAL,
+behind one small set of verbs.
+
+A source is opened once and held as a *plan* rather than as data. Narrowing
+the plan costs nothing. Three verbs end it: `collect()` to memory, `write_to()`
+to a file in any format GDAL can write, and `plot()` to a device. A fourth,
+`report()`, is the one that makes this package different from the others: it
+says what a source's own metadata is missing, what that will cost the read,
+and the exact text that would fix it, and it never applies that fix.
+
+## Installation
+
+```r
+# install.packages("pak")
+pak::pak("rgdal-dev/adgl")
+```
+
+adgl is built on [GDAL7](https://github.com/rgdal-dev/GDAL7), which compiles
+against GDAL 3.10 or newer.
+
+## The whole API
+
+`src()` to open, `query()` and `warp()` to narrow, `report()` to ask what is
+missing, and `collect()`, `write_to()` or `plot()` to finish. Plus `as_grd()`
+for a lazy grid and `gis_attr()` for the interchange shape.
+
+```r
+library(adgl)
+
+x <- src(system.file("extdata/overviews.tif", package = "GDAL7"))
+x
+#> raster source GTiff  512 x 256 x 1
+#>   extent -180, 180, -90, 90
+#>   crs    EPSG:4326
+#>   nothing missing
+```
+
+Nothing has been read. Narrowing still reads nothing:
+
+```r
+g <- collect(query(x, extent = c(100, 160, -60, -20), dim = c(8, 4)))
+str(g)
+#> List of 2
+#>  $ data: num [1:4, 1:8] 1048 1112 1176 1224 1060 ...
+#>  $ bbox: wk_rct[1:1] [99.8 -60.5 160 -19.7]
+#>  - attr(*, "class")= chr [1:2] "wk_grd_rct" "wk_grd"
+```
+
+The result is a `wk` grid, so `plot()`, `grd_crop()` and the rest of wk's grid
+vocabulary work on it. The extent it carries is the one its pixels really
+have: an extent query snaps outward to whole source pixels, so a query with no
+`dim` returns the source's own values rather than a resampling of them.
+
+`dim` is where the efficiency lives. Asking for a small `dim` over a large
+extent lets GDAL serve the read from whichever overview fits, so a view of a
+huge remote source costs the bytes of that overview level.
+
+### Lazy plotting
+
+`plot()` on a raster source is lazy in resolution, not just in extent. The
+plan becomes a grid whose data is a proxy, and `wk`'s own plotting reads the
+device, works out a step, and asks for about as many pixels as the device has.
+Drawing a 30000 by 30000 source costs an 800 by 600 read.
+
+```r
+plot(x)                      # reads about the device, not the file
+as_grd(x)                    # the same grid, to hand to wk yourself
+```
+
+### Vector
+
+```r
+v <- src(system.file("extdata/test.gpkg", package = "GDAL7"))
+v
+#> vector source places  5 features  Point
+#>   extent 115.8605, 151.2093, -42.8826, -12.4634
+#>   crs    WGS 84
+#>   nothing missing
+
+collect(query(v, where = "population > 1e6", fields = "name"))
+#> # A tibble: 3 x 2
+#>   name      geom
+#>   <chr>     <wk_wkb>
+#> 1 Melbourne <POINT (144.9631 -37.8136)>
+#> 2 Sydney    <POINT (151.2093 -33.8688)>
+#> 3 Perth     <POINT (115.8605 -31.9523)>
+```
+
+A tibble with a `wk` WKB column, keeping whatever name GDAL gave the geometry.
+wk finds a geometry column by asking rather than by name, so `wk_bbox()`,
+`wk_plot()` and the chunked handlers all work on the result unchanged.
+
+### What the source does not tell you
+
+```r
+b <- src("no-georeferencing.tif")
+b
+#> raster source GTiff  4 x 4 x 1
+#>   extent 0, 4, 0, 4
+#>   crs    none
+#>   3 findings: no_geotransform, no_crs, no_nodata  (see report(x))
+
+report(b)[, c("check", "severity", "fix_kind")]
+#> # A tibble: 3 x 3
+#>   check           severity fix_kind
+#>   <chr>           <chr>    <chr>
+#> 1 no_geotransform blocks   gdal_cli
+#> 2 no_crs          degrades gdal_cli
+#> 3 no_nodata       degrades gdal_cli
+
+report(b)$fix[1]
+#> "gdal_translate -a_ullr <xmin> <ymax> <xmax> <ymin> -a_srs <crs> ..."
+```
+
+Nothing in adgl ever runs that text. A `blocks` finding stops `collect()`,
+`write_to()` and `as_grd()` rather than returning an answer that looks fine
+and is not, and a `degrades` finding is said once and then stays out of the
+way. The package will never quietly wrap a georeference-less file in a VRT
+that supplies a geotransform, a CRS or a nodata value, because hiding that is
+hiding the thing you most need to know.
+
+### Reprojection
+
+`warp()` is the raster verb, separate from `query()` because reprojecting a
+grid resamples and the method is a choice you should make:
+
+```r
+x |>
+  query(extent = c(100, 160, -60, -20)) |>
+  warp("EPSG:3031", resample = "bilinear") |>
+  write_to("polar.tif", options = c("COMPRESS=ZSTD", "TILED=YES"))
+```
+
+A warped plan compiles into GDAL's own pipeline and never enters R. Its target
+extent comes from `GDAL7::transform_extent()`, which unions GDAL's boundary
+walk with an interior mesh, because the walk alone can come back hundreds of
+kilometres too narrow around a projection's interior singularities and an
+extent that is too small clips data silently.
+
+`query(crs = )` is a different thing and does not warp: it says what CRS your
+query rectangle is given in, transforms those four numbers onto the source,
+and reads the source's own grid.
+
+## What is not here, and where it lives instead
+
+adgl is small on purpose. Grid arithmetic is
+[vaster](https://github.com/hypertidy/vaster), tiling is
+[grout](https://github.com/hypertidy/grout), geometry and the grid class are
+[wk](https://github.com/paleolimbot/wk), image drawing is
+[ximage](https://github.com/hypertidy/ximage), and every call that touches the
+library is [GDAL7](https://github.com/rgdal-dev/GDAL7). What is left is the
+plan object, the `query()` algebra, the deficiency report, the terminals and
+the interop edge.
+
+## Still to come
+
+* Reprojecting vector features. `query(crs = )` transforms the query
+  rectangle; transforming the geometry itself needs a call GDAL7 does not
+  expose yet.
+* Field and row narrowing are applied in R rather than in GDAL, because the
+  Arrow stream GDAL7 exposes has no column projection and no row limit. It
+  saves memory rather than I/O today.
+* `as_vrt()`, and `as_sf()` / `as_terra()` / `as_stars()` behind Suggests.
+* Multidimensional sources, which fit neither in-memory form; read them with
+  `GDAL7::read_mdarray()` for now.
