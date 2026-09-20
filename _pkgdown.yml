@@ -1,0 +1,48 @@
+url: https://rgdal-dev.github.io/adgl/
+
+template:
+  bootstrap: 5
+
+reference:
+- title: Open a source
+  desc: >
+    A source is opened once and probed once, then held as a plan rather than
+    as data. Nothing is read until a terminal verb asks for it.
+  contents:
+  - src
+  - src_close
+  - raster_source
+
+- title: Shape a plan
+  desc: >
+    These read nothing and cost nothing. query() narrows what will be read,
+    warp() says the grid is to be reprojected, and report() says what the
+    source's own metadata is missing, what that will cost, and the text that
+    would fix it.
+  contents:
+  - query
+  - warp
+  - report
+
+- title: Read
+  desc: >
+    Where the reading happens. collect() returns the values, write_to() sends
+    them to a file, plot() draws them, and as_grd() hands back a grid that
+    reads on demand, one windowed GDAL read per subset.
+  contents:
+  - collect
+  - as_grd
+  - adgl-plot
+  - write_to
+
+- title: At the edge
+  desc: >
+    Conversions a caller mixing adgl with wk, vaster or ximage needs, kept
+    exported because the alternative is everyone rewriting them.
+  contents:
+  - extent_to_bbox
+  - gis_attr
+
+- title: The package
+  contents:
+  - adgl-package

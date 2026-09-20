@@ -11,6 +11,8 @@ Description: Query, filter, read and transform raster and vector sources
     text that would fix it, and it never applies that fix on the caller's
     behalf.
 License: MIT + file LICENSE
+URL: https://github.com/rgdal-dev/adgl, https://rgdal-dev.github.io/adgl/
+BugReports: https://github.com/rgdal-dev/adgl/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
@@ -29,6 +31,7 @@ Suggests:
 Remotes:
     rgdal-dev/GDAL7
 Config/testthat/edition: 3
+Config/Needs/website: pkgdown
 Collate: 
     'adgl-package.R'
     'src.R'

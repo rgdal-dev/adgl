@@ -4,3 +4,6 @@
 ^\.github$
 ^data-raw$
 ^expectations$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
