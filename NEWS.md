@@ -36,7 +36,13 @@ document rather than grown by accretion.
 * `warp()` reprojects a raster, separately from `query()` because resampling
   is a choice the caller should make. Its target extent comes from the union
   of GDAL's boundary walk and an interior mesh, so it does not clip around a
-  projection's interior singularities.
+  projection's interior singularities. Three arguments shape the output grid
+  and any one of them is enough: `dim`, which takes a zero in either position
+  and lets GDAL derive that side from the target extent's own aspect ratio;
+  `resolution`, one number for square pixels or two; and `extent`, the window
+  the output covers, which is the one argument here given in the target CRS.
+  The warper's order statistics, `min`, `max`, `med`, `q1` and `q3`, are
+  accepted as resampling methods as well.
 
 * `write_to()` sends a plan to any format GDAL can write, taking the driver
   from the extension. A warped plan compiles into GDAL's own pipeline and

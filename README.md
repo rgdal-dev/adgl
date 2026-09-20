@@ -151,6 +151,21 @@ walk with an interior mesh, because the walk alone can come back hundreds of
 kilometres too narrow around a projection's interior singularities and an
 extent that is too small clips data silently.
 
+Three arguments shape the output grid, and any one of them is enough:
+
+```r
+warp(x, "EPSG:3031", dim = c(2048, 0))        # 2048 wide, GDAL picks the height
+warp(x, "EPSG:3031", resolution = 5000)       # 5 km pixels
+warp(x, "EPSG:3031", extent = c(-3e6, 3e6, -3e6, 3e6))
+```
+
+The zero in `dim` is the useful part: you know how wide you want the output,
+and working out how tall that makes it means computing an extent in a
+projection you have not looked at yet, which is exactly the arithmetic GDAL
+has already done. `extent` is the one argument here given in the *target* CRS,
+since it is the window the output covers, which makes it an alternative to
+`query(extent = )` rather than a companion to it.
+
 On a raster `query(crs = )` is a different thing and does not warp: it says
 what CRS your query rectangle is given in, transforms those four numbers onto
 the source, and reads the source's own grid.

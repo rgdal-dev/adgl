@@ -189,8 +189,20 @@ S7::method(print, raster_source) <- function(x, ...) {
     cat("  reads  ", out[1L], " x ", out[2L], " by ", plan$resample, "\n", sep = "")
   }
   if (!is.null(plan$warp)) {
-    cat("  warp   to ", crs_label(plan$warp$crs), " by ", plan$warp$resample,
-        "\n", sep = "")
+    w <- plan$warp
+    cat("  warp   to ", crs_label(w$crs), " by ", w$resample, "\n", sep = "")
+    if (!is.null(w$extent)) {
+      cat("  onto   ", format_extent(w$extent), "\n", sep = "")
+    }
+    if (!is.null(w$resolution)) {
+      cat("  at     ",
+          paste(format(w$resolution, digits = 7, trim = TRUE), collapse = " x "),
+          " per pixel\n", sep = "")
+    }
+    if (!is.null(w$dim) && any(w$dim == 0L)) {
+      cat("  size   ", w$dim[1L], " x ", w$dim[2L],
+          " (0 is GDAL's to fill in)\n", sep = "")
+    }
   }
   print_findings(S7::prop(x, "findings"))
   invisible(x)

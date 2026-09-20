@@ -2,8 +2,8 @@
 
 S3method("[",adgl_proxy)
 S3method(as.array,adgl_proxy)
+S3method(base::print,adgl_proxy)
 S3method(dim,adgl_proxy)
-S3method(print,adgl_proxy)
 export(as_grd)
 export(bbox_to_extent)
 export(collect)

@@ -86,7 +86,12 @@ dim.adgl_proxy <- function(x) {
   unclass(x)$dim
 }
 
-#' @export
+# Registered against base::print by name rather than with a plain @export:
+# this package gives S7 a print method for its own classes, which puts an S7
+# generic called `print` in the namespace, and a bare S3method() directive
+# would then register against that one instead of base's. The proxy would
+# print as a raw list from anywhere outside the package.
+#' @exportS3Method base::print
 print.adgl_proxy <- function(x, ...) {
   d <- dim(x)
   cat("<adgl_proxy ", d[1L], " x ", d[2L], " x ", d[3L], ", unread>\n", sep = "")

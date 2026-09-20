@@ -12,7 +12,22 @@ warp(x, crs, ...)
 \item{crs}{The target CRS: anything GDAL understands, such as
 \code{"EPSG:3031"}, a PROJ string, or WKT.}
 
-\item{...}{The named arguments below.}
+\item{...}{The named arguments below.
+
+Three arguments shape the target grid and any one of them is enough.
+\code{dim} gives it a size, \code{resolution} gives it a pixel size, and \code{extent}
+gives it a window; leave all three out and GDAL chooses a grid that roughly
+preserves the source resolution.
+
+\code{dim} takes a zero in either position, which is the useful part: \code{c(1024, 0)} asks for a grid 1024 pixels wide and lets GDAL work out the height from
+the target extent's own aspect ratio, which you would otherwise have to
+compute in a projection you have not seen yet. \code{c(0, 1024)} is the same the
+other way round.
+
+\code{extent} is the one argument here that is given in the \emph{target} CRS, since
+it is the window the output covers. That makes it an alternative to
+\code{\link[=query]{query()}}\verb{(extent = )} rather than a companion to it, and asking for both
+is an error rather than a silent choice between them.}
 }
 \value{
 \code{x} with a reprojection added to its plan.
@@ -50,10 +65,14 @@ when a terminal verb asks for the result, so \code{warp()} composes with
 \describe{
 \item{\code{resample}}{One of \code{"nearest"} (the default), \code{"bilinear"},
 \code{"cubic"}, \code{"cubicspline"}, \code{"lanczos"}, \code{"average"}, \code{"mode"},
-\code{"rms"} or \code{"sum"}.}
-\item{\code{dim}}{\code{c(nx, ny)}, the size of the warped grid. When it is
-\code{NULL}, GDAL picks a size that roughly preserves the source
-resolution.}
+\code{"rms"}, \code{"sum"}, \code{"min"}, \code{"max"}, \code{"med"}, \code{"q1"} or \code{"q3"}.}
+\item{\code{dim}}{\code{c(nx, ny)}, the size of the warped grid, with a zero in
+either position meaning "derive this one from the other".}
+\item{\code{resolution}}{The target pixel size in the units of the target
+CRS: one number for square pixels, or \code{c(xres, yres)}. Cannot be given
+beside \code{dim}.}
+\item{\code{extent}}{\code{c(xmin, xmax, ymin, ymax)} in the target CRS, the
+window the output covers.}
 }
 }
 
@@ -62,4 +81,7 @@ x <- src(system.file("extdata/test.tif", package = "GDAL7"))
 w <- warp(query(x, extent = c(-170, 170, -80, 80)), "EPSG:3857",
           resample = "bilinear")
 w
+
+# 400 pixels wide, and however tall that turns out to be.
+warp(x, "EPSG:3857", dim = c(400, 0))
 }
