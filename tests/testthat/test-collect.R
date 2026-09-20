@@ -108,13 +108,56 @@ test_that("a vector extent given in another CRS lands on the same features", {
   ))
   expect_equal(nrow(in_longlat), nrow(in_mercator))
 
-  # And it is the query rectangle that moved, not the result.
-  expect_equal(wk::wk_crs(in_mercator[[ncol(in_mercator)]]),
-               wk::wk_crs(in_longlat[[ncol(in_longlat)]]))
+  # On a vector, crs is also the CRS the features come back in, which is the
+  # one place the argument means more than it does on a raster.
+  expect_match(wk::wk_crs(in_mercator[[ncol(in_mercator)]]), "3857",
+               fixed = TRUE)
+  expect_false(grepl("3857", wk::wk_crs(in_longlat[[ncol(in_longlat)]]),
+                     fixed = TRUE))
 })
 
-test_that("crs on its own has no extent to interpret", {
+test_that("query(crs =) reprojects the features on the way out", {
   v <- src(test_gpkg())
   on.exit(src_close(v), add = TRUE)
-  expect_error(query(v, crs = "EPSG:3857"), "needs an `extent`")
+
+  longlat <- collect(v)
+  mercator <- collect(query(v, crs = "EPSG:3857"))
+  geom <- function(d) d[[which(vapply(d, inherits, logical(1), "wk_wkb"))]]
+
+  expect_equal(nrow(mercator), nrow(longlat))
+  expect_s3_class(geom(mercator), "wk_wkb")
+  expect_match(wk::wk_crs(geom(mercator)), "3857", fixed = TRUE)
+
+  # Metres, not degrees: the coordinates moved, not just the label.
+  before <- as.data.frame(wk::wk_coords(geom(longlat)))
+  after <- as.data.frame(wk::wk_coords(geom(mercator)))
+  expect_gt(max(abs(after$x)), 1e6)
+  expect_lt(max(abs(before$x)), 360)
+
+  # And the transform is the one PROJ would do on its own.
+  expect_equal(after$x, as.data.frame(
+    wk::wk_coords(PROJ::proj_trans(geom(longlat), "EPSG:3857")))$x)
+})
+
+test_that("an extent beside crs is read in that crs, and both apply", {
+  v <- src(test_gpkg())
+  on.exit(src_close(v), add = TRUE)
+
+  d <- collect(query(
+    v, extent = c(12244000, 17255000, -5621000, -1118000), crs = "EPSG:3857"
+  ))
+  expect_gt(nrow(d), 0L)
+  geom <- d[[which(vapply(d, inherits, logical(1), "wk_wkb"))]]
+  expect_match(wk::wk_crs(geom), "3857", fixed = TRUE)
+})
+
+test_that("a layer with no CRS has nothing to reproject from", {
+  path <- tempfile(fileext = ".gpkg")
+  on.exit(unlink(path), add = TRUE)
+  GDAL7::write_vector(
+    GDAL7::read_vector(test_gpkg()), path, layer = "places", crs = NULL
+  )
+  v <- src(path)
+  on.exit(src_close(v), add = TRUE)
+  expect_error(query(v, crs = "EPSG:3857"), "nothing to reproject from")
 })

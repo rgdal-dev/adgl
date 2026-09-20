@@ -112,6 +112,9 @@ S7::method(write_to, vector_source) <- function(x, dsn, ..., driver = NULL,
   d <- collect(x)
   geom <- which(vapply(d, function(column) inherits(column, "wk_wkb"),
                        logical(1)))
+  # The CRS to declare is whatever the collected geometry is actually in,
+  # which is the target when query(crs = ) reprojected it.
+  crs <- crs_or_null(plan$crs %||% info$crs)
   if (length(geom) == 1L) {
     d[[geom]] <- unclass(d[[geom]])
   }
@@ -120,7 +123,7 @@ S7::method(write_to, vector_source) <- function(x, dsn, ..., driver = NULL,
     as.data.frame(d), dsn,
     layer = layer,
     driver = driver,
-    crs = crs_or_null(info$crs),
+    crs = crs,
     geometry_type = info$geometry_type,
     layer_options = options
   )

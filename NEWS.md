@@ -24,7 +24,9 @@ document rather than grown by accretion.
 
 * `collect()` reads, into a `wk` grid by default or into the flat `gis` shape
   that `ximage` draws directly, and into `double`, `integer` or `raw`. A
-  vector collect is a tibble with a `wk` WKB column carrying its CRS.
+  vector collect is a tibble with a `wk` WKB column carrying its CRS, and
+  `query(crs = )` reprojects those coordinates on the way out through
+  `PROJ::proj_trans()`, which is one pass over the geometry.
 
 * `as_grd()` returns a grid whose data is a proxy, so `plot()` and every other
   `wk` grid verb becomes a windowed GDAL read at the size actually asked for.

@@ -44,7 +44,10 @@ a raw read stays a raw array.
 For a vector, the result is a tibble whose geometry column is \code{\link[wk:wkb]{wk::wkb()}}
 with its CRS set. The column keeps whatever name GDAL gave it, because wk
 finds a geometry column by asking rather than by name, so \code{wk_bbox()},
-\code{wk_plot()} and the chunked handlers all work on the result unchanged.
+\code{wk_plot()} and the chunked handlers all work on the result unchanged. When
+the plan carries a \code{crs} from \code{\link[=query]{query()}}, the coordinates are transformed
+with \code{\link[PROJ:proj_trans]{PROJ::proj_trans()}} on the way out, which is one pass over the
+geometry and nothing else.
 }
 \section{Arguments}{
 

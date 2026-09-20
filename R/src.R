@@ -147,7 +147,8 @@ new_vector_source <- function(dsn, ds, layer) {
       extent = NULL,
       where = NULL,
       fields = NULL,
-      limit = NULL
+      limit = NULL,
+      crs = NULL
     ),
     findings = NULL
   )
@@ -216,6 +217,9 @@ S7::method(print, vector_source) <- function(x, ...) {
   }
   if (!is.null(plan$fields)) {
     cat("  fields ", paste(plan$fields, collapse = ", "), "\n", sep = "")
+  }
+  if (!is.null(plan$crs)) {
+    cat("  reads  in ", crs_label(plan$crs), "\n", sep = "")
   }
   print_findings(S7::prop(x, "findings"))
   invisible(x)

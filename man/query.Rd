@@ -30,13 +30,15 @@ raster meaning, so \code{dim} and \code{resample} are raster-only and \code{wher
 than a silent no-op, because a spatial query that quietly ignored half of
 what you asked for is worse than one that stops.
 
-\code{crs} says what \code{extent} is given in, not what to return, and it means that
-for both kinds. The rectangle is transformed onto the source's own CRS to
-pick what to read, which is four numbers moving and no data touched.
-Reprojecting a raster is \code{\link[=warp]{warp()}}, a separate verb because resampling is a
-choice you should make rather than inherit. Reprojecting a vector result is
-not here yet: it needs a geometry transform GDAL7 does not expose, so for
-now write the features out and reopen them.
+\code{crs} is the one argument that means something different for each kind, and
+the difference is the point rather than an inconsistency. For both, an
+\code{extent} given beside it is read in that CRS and transformed onto the
+source to pick what to read, which is four numbers moving and no data
+touched. For a vector it additionally sets the CRS the features come back
+in, because transforming coordinates is cheap, local and has no resampling
+decision in it. For a raster it does not, because reprojecting a grid
+resamples: that is \code{\link[=warp]{warp()}}, a separate verb so the method stays a choice
+you make rather than one you inherit.
 
 A raster \code{extent} snaps outward to whole source pixels, so a query with no
 \code{dim} reads the source's own values rather than a resampling of them, and
@@ -50,8 +52,9 @@ All of these are passed by name.
 \describe{
 \item{\code{extent}}{\code{c(xmin, xmax, ymin, ymax)}, the rectangle to restrict
 to.}
-\item{\code{crs}}{The CRS \code{extent} is given in, if not the source's own;
-anything GDAL understands. It never changes the CRS of the result.}
+\item{\code{crs}}{Anything GDAL and PROJ understand. An \code{extent} beside it
+is read in this CRS. For a vector source it is also the CRS the
+features come back in; for a raster it is not, and \code{\link[=warp]{warp()}} is.}
 \item{\code{bands}}{Raster only. Which bands, one-based, or by band
 description.}
 \item{\code{dim}}{Raster only. \code{c(nx, ny)}, the size to read the window at.

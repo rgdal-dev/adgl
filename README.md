@@ -92,6 +92,18 @@ A tibble with a `wk` WKB column, keeping whatever name GDAL gave the geometry.
 wk finds a geometry column by asking rather than by name, so `wk_bbox()`,
 `wk_plot()` and the chunked handlers all work on the result unchanged.
 
+`crs` is the one argument that means something different for each kind. On a
+vector it also sets the CRS the features come back in, because transforming
+coordinates is cheap and has no resampling decision in it:
+
+```r
+collect(query(v, crs = "EPSG:3857"))
+```
+
+That is one pass over the geometry through `PROJ::proj_trans()`. On a raster
+`crs` only says what your query rectangle is given in, and reprojecting the
+grid itself is `warp()`.
+
 ### What the source does not tell you
 
 ```r
@@ -139,9 +151,9 @@ walk with an interior mesh, because the walk alone can come back hundreds of
 kilometres too narrow around a projection's interior singularities and an
 extent that is too small clips data silently.
 
-`query(crs = )` is a different thing and does not warp: it says what CRS your
-query rectangle is given in, transforms those four numbers onto the source,
-and reads the source's own grid.
+On a raster `query(crs = )` is a different thing and does not warp: it says
+what CRS your query rectangle is given in, transforms those four numbers onto
+the source, and reads the source's own grid.
 
 ## What is not here, and where it lives instead
 
@@ -149,16 +161,15 @@ adgl is small on purpose. Grid arithmetic is
 [vaster](https://github.com/hypertidy/vaster), tiling is
 [grout](https://github.com/hypertidy/grout), geometry and the grid class are
 [wk](https://github.com/paleolimbot/wk), image drawing is
-[ximage](https://github.com/hypertidy/ximage), and every call that touches the
-library is [GDAL7](https://github.com/rgdal-dev/GDAL7). What is left is the
+[ximage](https://github.com/hypertidy/ximage), coordinate transformation of
+geometry is [PROJ](https://github.com/hypertidy/PROJ), and every call that
+touches the GDAL library is [GDAL7](https://github.com/rgdal-dev/GDAL7). What
+is left is the
 plan object, the `query()` algebra, the deficiency report, the terminals and
 the interop edge.
 
 ## Still to come
 
-* Reprojecting vector features. `query(crs = )` transforms the query
-  rectangle; transforming the geometry itself needs a call GDAL7 does not
-  expose yet.
 * Field and row narrowing are applied in R rather than in GDAL, because the
   Arrow stream GDAL7 exposes has no column projection and no row limit. It
   saves memory rather than I/O today.

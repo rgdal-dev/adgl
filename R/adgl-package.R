@@ -1,5 +1,6 @@
 #' @keywords internal
 #'
+#' @importFrom PROJ proj_trans
 #' @importFrom vaster vcrop
 #' @importFrom ximage ximage
 "_PACKAGE"

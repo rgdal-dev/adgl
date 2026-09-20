@@ -18,10 +18,11 @@ Depends:
     R (>= 4.1.0)
 Imports:
     GDAL7,
+    PROJ (>= 0.7.0),
     S7,
     tibble,
     vaster,
-    wk,
+    wk (>= 0.9.2),
     ximage
 Suggests:
     testthat (>= 3.0.0)

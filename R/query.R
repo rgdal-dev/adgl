@@ -17,13 +17,15 @@ NULL
 #' than a silent no-op, because a spatial query that quietly ignored half of
 #' what you asked for is worse than one that stops.
 #'
-#' `crs` says what `extent` is given in, not what to return, and it means that
-#' for both kinds. The rectangle is transformed onto the source's own CRS to
-#' pick what to read, which is four numbers moving and no data touched.
-#' Reprojecting a raster is [warp()], a separate verb because resampling is a
-#' choice you should make rather than inherit. Reprojecting a vector result is
-#' not here yet: it needs a geometry transform GDAL7 does not expose, so for
-#' now write the features out and reopen them.
+#' `crs` is the one argument that means something different for each kind, and
+#' the difference is the point rather than an inconsistency. For both, an
+#' `extent` given beside it is read in that CRS and transformed onto the
+#' source to pick what to read, which is four numbers moving and no data
+#' touched. For a vector it additionally sets the CRS the features come back
+#' in, because transforming coordinates is cheap, local and has no resampling
+#' decision in it. For a raster it does not, because reprojecting a grid
+#' resamples: that is [warp()], a separate verb so the method stays a choice
+#' you make rather than one you inherit.
 #'
 #' A raster `extent` snaps outward to whole source pixels, so a query with no
 #' `dim` reads the source's own values rather than a resampling of them, and
@@ -39,8 +41,9 @@ NULL
 #' \describe{
 #'   \item{`extent`}{`c(xmin, xmax, ymin, ymax)`, the rectangle to restrict
 #'     to.}
-#'   \item{`crs`}{The CRS `extent` is given in, if not the source's own;
-#'     anything GDAL understands. It never changes the CRS of the result.}
+#'   \item{`crs`}{Anything GDAL and PROJ understand. An `extent` beside it
+#'     is read in this CRS. For a vector source it is also the CRS the
+#'     features come back in; for a raster it is not, and [warp()] is.}
 #'   \item{`bands`}{Raster only. Which bands, one-based, or by band
 #'     description.}
 #'   \item{`dim`}{Raster only. `c(nx, ny)`, the size to read the window at.
@@ -138,10 +141,15 @@ S7::method(query, vector_source) <- function(x, ..., extent = NULL,
     }
   }
 
-  if (!is.null(crs) && is.null(extent)) {
-    stop("`crs` says what `extent` is given in, so it needs an `extent`.\n",
-         "  Reprojecting the features themselves is not available yet.",
-         call. = FALSE)
+  if (!is.null(crs)) {
+    if (!is.character(crs) || length(crs) != 1L || is.na(crs)) {
+      stop("`crs` must be a single, non-missing string", call. = FALSE)
+    }
+    if (!has_crs(S7::prop(x, "info")$crs)) {
+      stop("the layer declares no CRS, so there is nothing to reproject from ",
+           "(see report(x))", call. = FALSE)
+    }
+    plan$crs <- crs
   }
 
   if (!is.null(where)) {

@@ -29,7 +29,10 @@ NULL
 #' For a vector, the result is a tibble whose geometry column is [wk::wkb()]
 #' with its CRS set. The column keeps whatever name GDAL gave it, because wk
 #' finds a geometry column by asking rather than by name, so `wk_bbox()`,
-#' `wk_plot()` and the chunked handlers all work on the result unchanged.
+#' `wk_plot()` and the chunked handlers all work on the result unchanged. When
+#' the plan carries a `crs` from [query()], the coordinates are transformed
+#' with [PROJ::proj_trans()] on the way out, which is one pass over the
+#' geometry and nothing else.
 #'
 #' @param x A source from [src()], usually after [query()].
 #' @param ... The named arguments below.
@@ -102,10 +105,14 @@ S7::method(collect, vector_source) <- function(x, ...) {
     bbox = if (is.null(plan$extent)) NULL else unname(extent_to_bbox(plan$extent))
   )
 
-  crs <- info$crs
   geom <- which(vapply(d, is_wkb_column, logical(1)))
   if (length(geom) == 1L) {
-    d[[geom]] <- wk::wkb(unclass(d[[geom]]), crs = crs_or_null(crs))
+    d[[geom]] <- wk::wkb(unclass(d[[geom]]), crs = crs_or_null(info$crs))
+    if (!is.null(plan$crs)) {
+      d[[geom]] <- PROJ::proj_trans(d[[geom]], plan$crs)
+    }
+  } else if (!is.null(plan$crs)) {
+    stop("there is no single geometry column to reproject", call. = FALSE)
   }
 
   # Field and limit narrowing happen here rather than in GDAL, because the
