@@ -17,6 +17,15 @@ document rather than grown by accretion.
   Separately, a vector read now clears the filters an earlier read left on
   the layer, which could narrow a later read that asked for no filter.
 
+* `collect(as = "arrow")` hands back a vector plan as an unread Arrow stream
+  (a `nanoarrow_array_stream`) for arrow, duckdb, geoarrow or anything else
+  that takes one, with the CRS in the geometry column's GeoArrow metadata.
+  To make that possible the whole plan is now carried out in GDAL: `fields`
+  become fields the driver is told not to read, which saves I/O and not only
+  memory, and `limit` stops the read rather than trimming it. `fields` now
+  keeps `fid` alongside the geometry. `query(crs = )` is still done in R, so
+  a stream of a reprojected plan is an error.
+
 * A vector read returns the feature id as `fid` and the geometry as `geom`
   whatever the driver called them, so a shapefile's `OGC_FID` and
   `wkb_geometry` come back under the same names as a GeoPackage's. The names

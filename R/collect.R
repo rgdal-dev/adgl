@@ -42,12 +42,21 @@ NULL
 #' it is why `resample = "nearest"` is the default.
 #'
 #' For a vector, the result is a tibble whose geometry column is [wk::wkb()]
-#' with its CRS set. The column keeps whatever name GDAL gave it, because wk
-#' finds a geometry column by asking rather than by name, so `wk_bbox()`,
-#' `wk_plot()` and the chunked handlers all work on the result unchanged. When
-#' the plan carries a `crs` from [query()], the coordinates are transformed
-#' with [PROJ::proj_trans()] on the way out, which is one pass over the
-#' geometry and nothing else.
+#' with its CRS set. The id is always `fid` and the geometry always `geom`,
+#' whatever the driver called them. When the plan carries a `crs` from
+#' [query()], the coordinates are transformed with [PROJ::proj_trans()] on
+#' the way out, which is one pass over the geometry and nothing else.
+#'
+#' The whole vector plan is carried out in GDAL: the filters, the fields,
+#' which the driver is told not to read at all, the names, and the limit,
+#' which stops the read rather than trimming it. So `as = "arrow"` can hand
+#' back the Arrow stream itself, unread, as a `nanoarrow_array_stream` for
+#' arrow, duckdb, geoarrow or anything else that takes one, with the CRS in
+#' the geometry column's GeoArrow metadata. The one part of a plan that is
+#' not in GDAL is `query(crs = )`, so a stream of a reprojected plan is an
+#' error rather than a stream in the wrong CRS. A layer allows one stream at a
+#' time: read it through, or release it with [GDAL7::release_arrow_stream()],
+#' before reading the source again.
 #'
 #' @param x A source from [src()], usually after [query()].
 #' @param ... The named arguments below.
@@ -55,7 +64,8 @@ NULL
 #' @section Arguments:
 #'
 #' \describe{
-#'   \item{`as`}{Raster only. `"grd"` (the default) or `"gis"`.}
+#'   \item{`as`}{For a raster, `"grd"` (the default) or `"gis"`. For a
+#'     vector, `"tibble"` (the default) or `"arrow"`.}
 #'   \item{`type`}{Raster only. `"double"` (the default), `"integer"` or
 #'     `"raw"`.}
 #'   \item{`mask`}{Raster only. Return each band's nodata value as `NA`.
@@ -108,23 +118,26 @@ S7::method(collect, raster_source) <- function(x, ..., as = c("grd", "gis"),
   }
 }
 
-S7::method(collect, vector_source) <- function(x, ...) {
+S7::method(collect, vector_source) <- function(x, ..., as = c("tibble", "arrow")) {
   rlang_check_empty(...)
+  as <- match.arg(as)
   plan <- S7::prop(x, "plan")
   info <- S7::prop(x, "info")
 
-  # Both filters are set every time, cleared when the plan has none, because
-  # GDAL keeps a filter on the layer object and hands back the same object for
-  # the same layer: a filter left over from an earlier read would narrow this
-  # one without the plan saying so.
-  lyr <- plan_layer(S7::prop(x, "dataset"), plan)
-  GDAL7::set_filter(
-    lyr,
-    where = plan$where %||% character(0),
-    bbox = if (is.null(plan$extent)) numeric(0) else unname(extent_to_bbox(plan$extent))
-  )
-  d <- GDAL7::read_vector(lyr)
-  d <- standard_names(d, lyr@fid_column, lyr@geometry_column)
+  if (identical(as, "arrow")) {
+    if (!is.null(plan$crs)) {
+      stop("query(crs = ) reprojects in R, through PROJ, after the read, so ",
+           "there is no stream of it to hand back.\n",
+           "  collect() the tibble, or drop crs and reproject the stream ",
+           "downstream.", call. = FALSE)
+    }
+    # GeoArrow's encoding carries the CRS in the geometry column's own
+    # metadata, which is how a consumer downstream (geoarrow, duckdb, sf)
+    # knows what the coordinates are in.
+    return(plan_stream(x, options = "GEOMETRY_METADATA_ENCODING=GEOARROW"))
+  }
+
+  d <- read_stream(plan_stream(x))
 
   geom <- which(names(d) == "geom")
   if (length(geom) == 1L) {
@@ -136,36 +149,70 @@ S7::method(collect, vector_source) <- function(x, ...) {
     stop("there is no single geometry column to reproject", call. = FALSE)
   }
 
-  # Field and limit narrowing happen here rather than in GDAL, because the
-  # Arrow stream GDAL7 exposes has no column projection and no row limit. It
-  # saves memory rather than I/O, and this is the honest place to say so.
+  tibble::as_tibble(d)
+}
+
+# The whole vector plan as one Arrow stream, and every part of it done in
+# GDAL: the filters, the fields (as fields the driver is told not to read),
+# the fid and geom names, and the limit, which stops the read rather than
+# trimming it afterwards. collect() converts this stream; collect(as =
+# "arrow") hands it back as it is.
+#
+# Filters and ignored fields are set every time, cleared when the plan has
+# none, because GDAL keeps both on the layer object and hands back the same
+# object for the same layer: one left over from an earlier read would narrow
+# this one without the plan saying so.
+plan_stream <- function(x, options = NULL) {
+  plan <- S7::prop(x, "plan")
+  lyr <- plan_layer(S7::prop(x, "dataset"), plan)
+  GDAL7::set_filter(
+    lyr,
+    where = plan$where %||% character(0),
+    bbox = if (is.null(plan$extent)) numeric(0) else unname(extent_to_bbox(plan$extent))
+  )
+
+  fields <- lyr@field_names
   if (!is.null(plan$fields)) {
-    keep <- union(names(d)[geom], plan$fields)
-    missing <- setdiff(plan$fields, names(d))
+    missing <- setdiff(plan$fields, fields)
     if (length(missing) > 0L) {
       stop("no field named '", missing[1L], "'.\n  The fields are: ",
-           paste(setdiff(names(d), names(d)[geom]), collapse = ", "),
-           call. = FALSE)
+           paste(fields, collapse = ", "), call. = FALSE)
     }
-    d <- d[, intersect(names(d), keep), drop = FALSE]
+    fields <- intersect(fields, plan$fields)
   }
-  if (!is.null(plan$limit) && nrow(d) > plan$limit) {
-    d <- d[seq_len(plan$limit), , drop = FALSE]
-  }
+  rename <- standard_names(fields, lyr@fid_column, lyr@geometry_column)
+  lyr@ignored_fields <- setdiff(lyr@field_names, fields)
 
-  tibble::as_tibble(d)
+  GDAL7::arrow_stream(lyr, options = options, rename = rename, limit = plan$limit)
+}
+
+# nanoarrow warns that it does not recognise GDAL's ogc.wkb extension type and
+# hands back the storage type, which is the WKB wanted here. The stream goes
+# back to its layer as soon as it is read, since a layer allows one at a time.
+read_stream <- function(stream) {
+  force(stream)
+  on.exit(GDAL7::release_arrow_stream(stream), add = TRUE)
+  withCallingHandlers(
+    nanoarrow::convert_array_stream(stream),
+    warning = function(w) {
+      if (grepl("ogc.wkb", conditionMessage(w), fixed = TRUE)) {
+        invokeRestart("muffleWarning")
+      }
+    }
+  )
 }
 
 # The id and the geometry come back as `fid` and `geom` whatever the driver
 # called them, which is fid and geom in a GeoPackage but OGC_FID and
 # wkb_geometry in a shapefile, GeoJSON or any SQL result. GDAL says which
-# columns they are, so this renames and never guesses. An attribute that
-# already has one of those names would be shadowed, so that stops instead.
-standard_names <- function(d, fid_column, geometry_column) {
+# columns they are, so this renames and never guesses. An attribute being
+# read that already has one of those names would be shadowed, so that stops
+# instead. The result is the rename for GDAL7::arrow_stream(), c(new = "old").
+standard_names <- function(fields, fid_column, geometry_column) {
   from <- c(fid = fid_column, geom = geometry_column)
-  from <- from[!is.na(from) & from %in% names(d)]
+  from <- from[!is.na(from)]
   renaming <- from[names(from) != from]
-  clash <- names(renaming)[names(renaming) %in% setdiff(names(d), from)]
+  clash <- names(renaming)[names(renaming) %in% fields]
   if (length(clash) > 0L) {
     stop("this source has an attribute called '", clash[1L], "', which is ",
          "the name adgl gives the ",
@@ -175,8 +222,7 @@ standard_names <- function(d, fid_column, geometry_column) {
          "  SELECT ", clash[1L], " AS ", clash[1L], "_attr, <other columns> ",
          "FROM <layer>", call. = FALSE)
   }
-  names(d)[match(renaming, names(d))] <- names(renaming)
-  d
+  renaming
 }
 
 # One read of whatever the plan says, padded when the plan leaves the source.

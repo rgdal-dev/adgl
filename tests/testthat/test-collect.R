@@ -281,3 +281,40 @@ test_that("an attribute that already has the standard name stops the read", {
   on.exit(src_close(x), add = TRUE)
   expect_error(collect(x), "attribute called 'geom'")
 })
+
+test_that("as = \"arrow\" hands back the plan as an unread stream", {
+  v <- src(test_gpkg())
+  on.exit(src_close(v), add = TRUE)
+  plan <- query(v, where = "population > 1e6", fields = "name", limit = 2)
+
+  stream <- collect(plan, as = "arrow")
+  expect_s3_class(stream, "nanoarrow_array_stream")
+  schema <- nanoarrow::infer_nanoarrow_schema(stream)
+  expect_identical(names(schema$children), c("fid", "name", "geom"))
+  # The CRS travels with the geometry, in GeoArrow's own metadata.
+  expect_match(schema$children$geom$metadata[["ARROW:extension:name"]], "geoarrow.wkb")
+  expect_match(schema$children$geom$metadata[["ARROW:extension:metadata"]], "crs")
+
+  d <- suppressWarnings(nanoarrow::convert_array_stream(stream))
+  GDAL7::release_arrow_stream(stream)
+  expect_equal(nrow(d), 2L)
+  expect_equal(d$name, collect(plan)$name)
+})
+
+test_that("a stream of a reprojected plan is refused, since that part is in R", {
+  v <- src(test_gpkg())
+  on.exit(src_close(v), add = TRUE)
+  expect_error(collect(query(v, crs = "EPSG:3857"), as = "arrow"), "PROJ")
+})
+
+test_that("fields and limit are done in GDAL, and do not stick to the layer", {
+  v <- src(test_gpkg())
+  on.exit(src_close(v), add = TRUE)
+  expect_equal(names(collect(query(v, fields = "name", limit = 1))),
+               c("fid", "name", "geom"))
+  lyr <- GDAL7::get_layer(S7::prop(v, "dataset"), 1)
+  expect_setequal(lyr@ignored_fields, c("population", "elevation"))
+  full <- collect(v)
+  expect_equal(nrow(full), 5L)
+  expect_true(all(c("population", "elevation") %in% names(full)))
+})

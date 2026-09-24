@@ -20,6 +20,7 @@ Depends:
     R (>= 4.1.0)
 Imports:
     GDAL7,
+    nanoarrow,
     PROJ (>= 0.7.0),
     S7,
     tibble,
