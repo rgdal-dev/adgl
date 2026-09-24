@@ -39,8 +39,8 @@ overview-level,raster,Choose an overview level explicitly,rasterio.open(overview
 block-windows,raster,Iterate the source's own blocks or tiles,rasterio src.block_windows; windows.Window.from_slices,elsewhere,grout owns tiling
 create-from-nothing,raster,Create a raster from a dtype and a transform with no source,rasterio.open(driver dtype count width height crs transform) 25 calls,wont,adgl is IO over sources; GDAL7::gdal_create() is the answer and stays there
 arrow-out,vector,Hand back the Arrow stream rather than a materialised table,"geopandas to_arrow; pyogrio use_arrow 172, its single most-used argument",gap,"adgl reads through nanoarrow and then builds a tibble, so the stream is already there and is thrown away"
-fid,vector,"Read the feature id, and read by it","pyogrio fid_as_index 9, fids 6",gap,"the id arrives under a driver-dependent name - fid from GPKG, OGC_FID from shapefile and GeoJSON - and adgl neither normalises it, documents it, nor lets you select by it"
-geometry-name,vector,Know or choose the geometry column's name,pyogrio geometry_name 32,gap,"same root cause as fid: geom from GPKG, wkb_geometry from shapefile, and write_to() cannot name it"
+fid,vector,"Read the feature id, and read by it","pyogrio fid_as_index 9, fids 6",have,"always named fid, from GDAL's own FID column name; read by it with query(where = ""fid IN (...)""), which GDAL's SQL takes on every driver"
+geometry-name,vector,Know or choose the geometry column's name,pyogrio geometry_name 32,have,"always named geom on read; write_to(geometry_name = , fid_name = ) names both where the format stores them"
 datetime,vector,Datetimes and time zones survive the read,"pyogrio datetime_as_string 9, mixed_offsets_as_utc 8",gap,"adgl hands back whatever nanoarrow makes of GDAL's Arrow stream, never checked against a source with a zoned datetime field"
 force-2d,vector,Drop Z and M from geometries on read,pyogrio force_2d 4,gap,"small, and wk can do it after the fact"
 encoding,vector,Tell GDAL what encoding a source is in,pyogrio encoding 28,have,"src(options = ""ENCODING=..."") is how GDAL itself takes it, so the open option covers it without a new argument"

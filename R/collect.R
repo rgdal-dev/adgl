@@ -124,8 +124,9 @@ S7::method(collect, vector_source) <- function(x, ...) {
     bbox = if (is.null(plan$extent)) numeric(0) else unname(extent_to_bbox(plan$extent))
   )
   d <- GDAL7::read_vector(lyr)
+  d <- standard_names(d, lyr@fid_column, lyr@geometry_column)
 
-  geom <- which(vapply(d, is_wkb_column, logical(1)))
+  geom <- which(names(d) == "geom")
   if (length(geom) == 1L) {
     d[[geom]] <- wk::wkb(unclass(d[[geom]]), crs = crs_or_null(info$crs))
     if (!is.null(plan$crs)) {
@@ -155,9 +156,27 @@ S7::method(collect, vector_source) <- function(x, ...) {
   tibble::as_tibble(d)
 }
 
-is_wkb_column <- function(column) {
-  is.list(column) && length(column) > 0L &&
-    all(vapply(column, function(e) is.raw(e) || is.null(e), logical(1)))
+# The id and the geometry come back as `fid` and `geom` whatever the driver
+# called them, which is fid and geom in a GeoPackage but OGC_FID and
+# wkb_geometry in a shapefile, GeoJSON or any SQL result. GDAL says which
+# columns they are, so this renames and never guesses. An attribute that
+# already has one of those names would be shadowed, so that stops instead.
+standard_names <- function(d, fid_column, geometry_column) {
+  from <- c(fid = fid_column, geom = geometry_column)
+  from <- from[!is.na(from) & from %in% names(d)]
+  renaming <- from[names(from) != from]
+  clash <- names(renaming)[names(renaming) %in% setdiff(names(d), from)]
+  if (length(clash) > 0L) {
+    stop("this source has an attribute called '", clash[1L], "', which is ",
+         "the name adgl gives the ",
+         if (clash[1L] == "fid") "feature id" else "geometry",
+         " (here '", renaming[[clash[1L]]], "').\n",
+         "  Select it under another name with sql = , as in\n",
+         "  SELECT ", clash[1L], " AS ", clash[1L], "_attr, <other columns> ",
+         "FROM <layer>", call. = FALSE)
+  }
+  names(d)[match(renaming, names(d))] <- names(renaming)
+  d
 }
 
 # One read of whatever the plan says, padded when the plan leaves the source.

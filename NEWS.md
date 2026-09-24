@@ -17,6 +17,15 @@ document rather than grown by accretion.
   Separately, a vector read now clears the filters an earlier read left on
   the layer, which could narrow a later read that asked for no filter.
 
+* A vector read returns the feature id as `fid` and the geometry as `geom`
+  whatever the driver called them, so a shapefile's `OGC_FID` and
+  `wkb_geometry` come back under the same names as a GeoPackage's. The names
+  come from GDAL rather than being guessed, the source prints the renaming,
+  and an attribute that already has one of the names is an error saying how
+  to select it under another. `where` still uses GDAL's SQL, in which `fid`
+  is the id on every driver. `write_to(geometry_name = , fid_name = )` names
+  both in the written layer, where the format stores them as columns.
+
 * `query()` narrows a plan and reads nothing. `extent` and `crs` mean the same
   thing for both kinds of source; `bands`, `dim` and `resample` are raster
   only and `where`, `fields` and `limit` are vector only, and passing one to

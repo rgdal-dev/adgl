@@ -201,6 +201,8 @@ new_vector_source <- function(dsn, ds, layer, sql = NULL, dialect = NULL) {
       name = lyr@name,
       geometry_type = lyr@geometry_type,
       crs = lyr@crs,
+      fid_column = lyr@fid_column,
+      geometry_column = lyr@geometry_column,
       source_extent = extent,
       feature_count = GDAL7::feature_count(lyr, force = FALSE),
       fast_spatial_filter = isTRUE(GDAL7::test_capability(lyr, "FastSpatialFilter"))
@@ -295,6 +297,12 @@ S7::method(print, vector_source) <- function(x, ...) {
     cat("  extent ", format_extent(info$source_extent), "\n", sep = "")
   }
   cat("  crs    ", crs_label(info$crs), "\n", sep = "")
+  renamed <- c(fid = info$fid_column, geom = info$geometry_column)
+  renamed <- renamed[!is.na(renamed) & names(renamed) != renamed]
+  if (length(renamed) > 0L) {
+    cat("  names  ",
+        paste(names(renamed), "from", renamed, collapse = ", "), "\n", sep = "")
+  }
   if (!is.null(plan$sql)) {
     cat("  sql    ", plan$sql,
         if (!is.null(plan$dialect)) paste0("  (", plan$dialect, ")"),
