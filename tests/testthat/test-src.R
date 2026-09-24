@@ -72,3 +72,75 @@ test_that("a projected CRS is labelled by its own authority code", {
   expect_equal(adgl:::crs_label("EPSG:3857"), "EPSG:3857")
   expect_equal(adgl:::crs_label(""), "none")
 })
+
+test_that("sql = plans over the statement's result instead of a layer", {
+  v <- src(test_gpkg(),
+           sql = "SELECT name, population / 1e6 AS millions, geom FROM places")
+  on.exit(src_close(v), add = TRUE)
+  expect_s3_class(v, "adgl::vector_source")
+
+  d <- collect(v)
+  expect_equal(nrow(d), 5L)
+  expect_true(all(c("name", "millions") %in% names(d)))
+  expect_false("population" %in% names(d))
+  expect_equal(sum(vapply(d, inherits, logical(1), "wk_wkb")), 1L)
+})
+
+test_that("query() narrows an SQL source the way it narrows a layer", {
+  v <- src(test_gpkg(), sql = "SELECT * FROM places WHERE population > 1e6")
+  on.exit(src_close(v), add = TRUE)
+  all <- collect(v)
+  expect_equal(nrow(all), 3L)
+
+  expect_equal(nrow(collect(query(v, where = "name = 'Sydney'"))), 1L)
+  expect_equal(nrow(collect(query(v, limit = 2))), 2L)
+  expect_equal(names(collect(query(v, fields = "name")))[1], "name")
+  expect_lt(nrow(collect(query(v, extent = c(140, 155, -45, -30)))), 3L)
+
+  # The result set is run afresh at each read, so nothing an earlier read
+  # narrowed carries into this one.
+  expect_equal(nrow(collect(v)), 3L)
+})
+
+test_that("the SQLite dialect is available against any source", {
+  v <- src(test_gpkg(), dialect = "SQLITE",
+           sql = "SELECT count(*) AS n FROM places")
+  on.exit(src_close(v), add = TRUE)
+  d <- collect(v)
+  expect_equal(nrow(d), 1L)
+  expect_equal(as.numeric(d$n), 5)
+  out <- utils::capture.output(print(v))
+  expect_true(any(grepl("SQLITE", out)))
+})
+
+test_that("sql and layer cannot both be given, and a bad statement stops", {
+  expect_error(src(test_gpkg(), layer = 1, sql = "SELECT * FROM places"),
+               "give one")
+  expect_error(src(test_gpkg(), dialect = "SQLITE"), "there is no `sql`")
+  expect_error(src(test_gpkg(), sql = c("a", "b")), "single")
+  expect_error(suppressWarnings(src(test_gpkg(), sql = "SELECT * FROM nowhere")))
+})
+
+test_that("a result with no geometry says so rather than ignoring a rectangle", {
+  # The geometry is a column like any other in SQL, so leaving it out of the
+  # select list is easy, and GDAL's answer to a spatial filter on the result
+  # is a warning and every row.
+  v <- src(test_gpkg(), sql = "SELECT name FROM places")
+  on.exit(src_close(v), add = TRUE)
+  expect_equal(S7::prop(v, "info")$geometry_type, "None")
+  expect_equal(nrow(collect(v)), 5L)
+  expect_error(query(v, extent = c(140, 155, -45, -30)), "select the geometry")
+  expect_error(query(v, crs = "EPSG:3857"), "needs a geometry")
+  expect_false("no_crs" %in% report(v)$check)
+})
+
+test_that("a read does not inherit a filter left on the layer by the last one", {
+  # GDAL keeps a filter on the layer object and returns the same object for
+  # the same layer, so the order of these two reads used to matter.
+  v <- src(test_gpkg())
+  on.exit(src_close(v), add = TRUE)
+  some <- collect(query(v, where = "population > 1e6",
+                        extent = c(140, 155, -45, -30)))
+  expect_equal(nrow(collect(v)), 5L)
+  expect_lt(nrow(some), 5L)
+})

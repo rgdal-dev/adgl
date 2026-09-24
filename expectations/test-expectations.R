@@ -345,7 +345,25 @@ test_that("write-options: a layer writes with creation options", {
   expect_equal(nrow(collect(back)), nrow(collect(v)))
 })
 
-gap("sql", "an SQL SELECT against the source (sf::st_read(query =), vapour_read_fields(sql =))")
+test_that("sql: an SQL SELECT is the source, and query() narrows it", {
+  # sf: st_read(f, query = "SELECT name FROM places WHERE population > 1e6")
+  # pyogrio: read_dataframe(f, sql = , sql_dialect = "SQLITE", where = , bbox = )
+  v <- src(gpkg(), sql = "SELECT name, population, geom FROM places WHERE population > 1e6")
+  on.exit(src_close(v), add = TRUE)
+  d <- collect(v)
+  expect_equal(nrow(d), 3L)
+  expect_true(all(c("name", "population") %in% names(d)))
+  expect_false("elevation" %in% names(d))
+  # The id comes back as OGC_FID here, though the same table read as a layer
+  # calls it fid: one more face of the fid row below.
+  expect_equal(nrow(collect(query(v, extent = c(140, 155, -45, -30)))), 2L)
+
+  agg <- src(gpkg(), dialect = "SQLITE",
+             sql = "SELECT count(*) AS n, max(population) AS biggest FROM places")
+  on.exit(src_close(agg), add = TRUE)
+  expect_equal(as.numeric(collect(agg)$n), 5)
+})
+
 gap("limit-skip-offset", "skipping the first n features (vapour_read_geometry(skip_n =))")
 gap("geometry-only", "geometry without attributes, or attributes without geometry")
 gap("geometry-type", "geometry type control (sf::st_read(promote_to_multi =, type =))")

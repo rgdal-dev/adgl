@@ -197,7 +197,8 @@ vector_findings <- function(x) {
   dsn <- S7::prop(x, "dsn")
   out <- list()
 
-  if (!has_crs(info$crs)) {
+  # A table with no geometry has no coordinates for a CRS to describe.
+  if (!identical(info$geometry_type, "None") && !has_crs(info$crs)) {
     out[[length(out) + 1L]] <- finding(
       "no_crs", "degrades",
       "the layer declares no coordinate reference system",
@@ -207,7 +208,12 @@ vector_findings <- function(x) {
     )
   }
 
-  if (!info$fast_spatial_filter) {
+  # A result set is not a table: it has no index of its own to build, and no
+  # count to know before it is run, so the two findings about those, and the
+  # remedies they give, are about a layer this source does not have.
+  from_sql <- !is.null(S7::prop(x, "plan")$sql)
+
+  if (!from_sql && !info$fast_spatial_filter) {
     out[[length(out) + 1L]] <- finding(
       "slow_spatial_filter", "degrades",
       "the layer has no spatial index",
@@ -219,7 +225,7 @@ vector_findings <- function(x) {
   }
 
   n <- info$feature_count
-  if (is.na(n) || n < 0) {
+  if (!from_sql && (is.na(n) || n < 0)) {
     out[[length(out) + 1L]] <- finding(
       "unknown_feature_count", "note",
       "the driver cannot report a feature count without a full scan",

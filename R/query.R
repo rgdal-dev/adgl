@@ -179,6 +179,18 @@ S7::method(query, vector_source) <- function(x, ..., extent = NULL,
   reject_dots(..., kind = "vector")
   plan <- S7::prop(x, "plan")
 
+  # GDAL answers a spatial filter on a layer with no geometry by warning and
+  # reading everything, which is the silent half-answer query() refuses.
+  if (identical(S7::prop(x, "info")$geometry_type, "None")) {
+    given <- c(extent = !is.null(extent), crs = !is.null(crs))
+    if (any(given)) {
+      stop("`", names(given)[given][1L], "` needs a geometry, and this ",
+           "source has none.\n",
+           "  From sql = , select the geometry column as well.",
+           call. = FALSE)
+    }
+  }
+
   if (!is.null(extent)) {
     extent <- check_extent(extent, "extent", partial = TRUE)
     if (anyNA(extent)) {

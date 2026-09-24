@@ -4,7 +4,14 @@
 \alias{src}
 \title{A lazy spatial source}
 \usage{
-src(dsn, options = NULL, drivers = NULL, layer = 1L)
+src(
+  dsn,
+  options = NULL,
+  drivers = NULL,
+  layer = 1L,
+  sql = NULL,
+  dialect = NULL
+)
 }
 \arguments{
 \item{dsn}{A GDAL connection string: a path, or a \verb{/vsicurl/...},
@@ -18,6 +25,16 @@ source, or \code{NULL} to place no restriction.}
 
 \item{layer}{For a vector source, the layer to plan over: a name, or a
 one-based position. Ignored for a raster.}
+
+\item{sql}{An SQL \code{SELECT} whose result is the layer to plan over, in place
+of \code{layer}. The statement is run once here, to learn the result's shape,
+and again at each read; \code{\link[=query]{query()}} then narrows its result as it would any
+layer's.}
+
+\item{dialect}{The SQL dialect \code{sql} is written in: \code{NULL} for the driver's
+own, \code{"OGRSQL"} for GDAL's built-in one, or \code{"SQLITE"} for GDAL's SQLite
+dialect, which works against any source and has joins, aggregates and
+the SpatiaLite functions.}
 }
 \value{
 A \code{raster_source} or a \code{vector_source}.
@@ -29,6 +46,13 @@ what its metadata is missing, and nothing is read until \code{\link[=collect]{co
 \code{\link[=write_to]{write_to()}} or \code{plot()} asks for a result.
 }
 \details{
+\code{sql} is for what a layer name cannot say: a join, an aggregate, a
+computed column, a subset of columns renamed on the way out. It stands in
+for \code{layer} rather than being a \code{\link[=query]{query()}} argument, because it decides what
+the source \emph{is}; \code{where}, \code{extent}, \code{fields} and \code{limit} are narrowings of
+it, and compose with it the way they compose with each other. A statement
+that returns no rows (an \code{UPDATE}, a \code{DELETE}) is refused: \code{src()} reads.
+
 \code{options} is the non-virtualisation way to fix a deficient source, which is
 why it is here and why \code{\link[=report]{report()}} points at it: a CSV's
 \code{"X_POSSIBLE_NAMES=lon"}, a raster's \code{"OVERVIEW_LEVEL=2"}. It is handed
@@ -41,4 +65,7 @@ x
 
 v <- src(system.file("extdata/test.gpkg", package = "GDAL7"))
 v
+
+src(system.file("extdata/test.gpkg", package = "GDAL7"),
+    sql = "SELECT name, population / 1e6 AS millions FROM places")
 }

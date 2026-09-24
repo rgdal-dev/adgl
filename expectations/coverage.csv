@@ -19,7 +19,7 @@ vrt,raster,Build a VRT rather than a materialised file,gdalraster::buildVRT; vap
 subdatasets,raster,Reach a subdataset of a container format,stars::read_stars(sub); stars::read_ncdf(var); vapour_sds_names,gap,src() errors with no bands and no layers and does not mention subdatasets
 colour-table,raster,Read a colour table or palette,gdalraster::plot_raster(col_tbl),gap,an engine gap in GDAL7 as well
 read-layer,vector,Read a layer,sf::st_read 205 calls; terra::vect 208 calls,have,src() then collect()
-sql,vector,Run an SQL SELECT against the source,sf::st_read(query) and vapour_read_fields(sql); pyogrio sql 24 + sql_dialect 17,gap,"adgl has where = only, so a join or an aggregate or a computed column is out of reach"
+sql,vector,Run an SQL SELECT against the source,sf::st_read(query) and vapour_read_fields(sql); pyogrio sql 24 + sql_dialect 17,have,"src(sql = , dialect = ) in place of layer; query() narrows the result"
 where,vector,Filter features by an attribute expression,sf::st_read(query); OGR where,have,query(where = )
 spatial-filter-geometry,vector,Filter features by an arbitrary geometry rather than a rectangle,"geopandas read_file(mask), sf::st_read(wkt_filter), pyogrio mask 9",gap,"query(extent = ) takes four numbers; a mask takes a polygon, and GDAL has SetSpatialFilter for it"
 spatial-filter,vector,Filter features by a rectangle,sf::st_read(wkt_filter); vapour_read_extent(extent); geopandas read_file(bbox),have,query(extent = )
