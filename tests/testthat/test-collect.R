@@ -273,13 +273,31 @@ test_that("the id and the geometry are fid and geom whatever the driver", {
   expect_true(all(c("fid", "geom") %in% names(collect(q))))
 })
 
-test_that("an attribute that already has the standard name stops the read", {
+test_that("an attribute that already has a standard name moves aside", {
   path <- tempfile(fileext = ".geojson")
   GDAL7::write_vector(
-    data.frame(geom = c("a", "b"), value = 1:2), path, driver = "GeoJSON")
+    data.frame(geom = c("a", "b"), geom_1 = 1:2), path, driver = "GeoJSON")
   x <- src(path)
   on.exit(src_close(x), add = TRUE)
-  expect_error(collect(x), "attribute called 'geom'")
+  d <- collect(x)
+  expect_setequal(names(d), c("fid", "geom", "geom_2", "geom_1"))
+  expect_s3_class(d$geom, "wk_wkb")
+  expect_equal(d$geom_2, c("a", "b"))
+  expect_equal(d$geom_1, 1:2)
+
+  # A CSV keeps a fid column as an attribute, as a shapefile from QGIS does;
+  # GDAL's writers take one as the id, so the file is written by hand.
+  csv <- tempfile(fileext = ".csv")
+  writeLines(c("fid,name", "3,a", "4,b"), csv)
+  s <- src(csv)
+  on.exit(src_close(s), add = TRUE)
+  d <- collect(s)
+  expect_equal(d$fid, c(1, 2))
+  expect_equal(d$fid_1, c("3", "4"))
+
+  expect_equal(
+    adgl:::standard_names(c("fid", "x"), "OGC_FID", "wkb_geometry"),
+    c(fid = "OGC_FID", geom = "wkb_geometry", fid_1 = "fid"))
 })
 
 test_that("as = \"arrow\" hands back the plan as an unread stream", {

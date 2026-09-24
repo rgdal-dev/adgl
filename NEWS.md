@@ -30,8 +30,8 @@ document rather than grown by accretion.
   whatever the driver called them, so a shapefile's `OGC_FID` and
   `wkb_geometry` come back under the same names as a GeoPackage's. The names
   come from GDAL rather than being guessed, the source prints the renaming,
-  and an attribute that already has one of the names is an error saying how
-  to select it under another. `where` still uses GDAL's SQL, in which `fid`
+  and an attribute that already has one of the names, such as the `fid` QGIS
+  writes into a shapefile, comes back as `fid_1`. `where` still uses GDAL's SQL, in which `fid`
   is the id on every driver. `write_to(geometry_name = , fid_name = )` names
   both in the written layer, where the format stores them as columns.
 

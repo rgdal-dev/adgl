@@ -58,7 +58,8 @@ it is why \code{resample = "nearest"} is the default.
 
 For a vector, the result is a tibble whose geometry column is \code{\link[wk:wkb]{wk::wkb()}}
 with its CRS set. The id is always \code{fid} and the geometry always \code{geom},
-whatever the driver called them. When the plan carries a \code{crs} from
+whatever the driver called them. An attribute that already has one of
+those names comes back as \code{fid_1} or \code{geom_1}. When the plan carries a \code{crs} from
 \code{\link[=query]{query()}}, the coordinates are transformed with \code{\link[PROJ:proj_trans]{PROJ::proj_trans()}} on
 the way out, which is one pass over the geometry and nothing else.
 

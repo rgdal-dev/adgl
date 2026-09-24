@@ -43,7 +43,8 @@ NULL
 #'
 #' For a vector, the result is a tibble whose geometry column is [wk::wkb()]
 #' with its CRS set. The id is always `fid` and the geometry always `geom`,
-#' whatever the driver called them. When the plan carries a `crs` from
+#' whatever the driver called them. An attribute that already has one of
+#' those names comes back as `fid_1` or `geom_1`. When the plan carries a `crs` from
 #' [query()], the coordinates are transformed with [PROJ::proj_trans()] on
 #' the way out, which is one pass over the geometry and nothing else.
 #'
@@ -206,21 +207,21 @@ read_stream <- function(stream) {
 # called them, which is fid and geom in a GeoPackage but OGC_FID and
 # wkb_geometry in a shapefile, GeoJSON or any SQL result. GDAL says which
 # columns they are, so this renames and never guesses. An attribute being
-# read that already has one of those names would be shadowed, so that stops
-# instead. The result is the rename for GDAL7::arrow_stream(), c(new = "old").
+# read that already has one of those names, such as the `fid` QGIS writes
+# into a shapefile, moves aside to `fid_1` (or the first free `_n`), so the
+# standard names always mean the id and the geometry. The result is the
+# rename for GDAL7::arrow_stream(), c(new = "old").
 standard_names <- function(fields, fid_column, geometry_column) {
   from <- c(fid = fid_column, geom = geometry_column)
   from <- from[!is.na(from)]
   renaming <- from[names(from) != from]
-  clash <- names(renaming)[names(renaming) %in% fields]
-  if (length(clash) > 0L) {
-    stop("this source has an attribute called '", clash[1L], "', which is ",
-         "the name adgl gives the ",
-         if (clash[1L] == "fid") "feature id" else "geometry",
-         " (here '", renaming[[clash[1L]]], "').\n",
-         "  Select it under another name with sql = , as in\n",
-         "  SELECT ", clash[1L], " AS ", clash[1L], "_attr, <other columns> ",
-         "FROM <layer>", call. = FALSE)
+  taken <- c(fields, names(from))
+  for (clash in names(renaming)[names(renaming) %in% fields]) {
+    n <- 1L
+    while (paste0(clash, "_", n) %in% taken) n <- n + 1L
+    aside <- paste0(clash, "_", n)
+    taken <- c(taken, aside)
+    renaming[[aside]] <- clash
   }
   renaming
 }
