@@ -113,12 +113,17 @@ S7::method(collect, vector_source) <- function(x, ...) {
   plan <- S7::prop(x, "plan")
   info <- S7::prop(x, "info")
 
-  d <- GDAL7::read_vector(
-    S7::prop(x, "dataset"),
-    layer = plan$layer,
-    where = plan$where,
-    bbox = if (is.null(plan$extent)) NULL else unname(extent_to_bbox(plan$extent))
+  # Both filters are set every time, cleared when the plan has none, because
+  # GDAL keeps a filter on the layer object and hands back the same object for
+  # the same layer: a filter left over from an earlier read would narrow this
+  # one without the plan saying so.
+  lyr <- plan_layer(S7::prop(x, "dataset"), plan)
+  GDAL7::set_filter(
+    lyr,
+    where = plan$where %||% character(0),
+    bbox = if (is.null(plan$extent)) numeric(0) else unname(extent_to_bbox(plan$extent))
   )
+  d <- GDAL7::read_vector(lyr)
 
   geom <- which(vapply(d, is_wkb_column, logical(1)))
   if (length(geom) == 1L) {

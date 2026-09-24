@@ -9,6 +9,14 @@ document rather than grown by accretion.
   to GDAL, which is the non-virtualisation way to tell a source what its
   metadata does not say.
 
+* `src(sql = )` plans over the result of an SQL `SELECT` instead of a layer,
+  so a join, an aggregate or a computed column is a source like any other,
+  and `query()`'s `where`, `extent`, `fields` and `limit` narrow the result.
+  `dialect = "SQLITE"` gives GDAL's SQLite dialect against any source. The
+  statement is run again at each read, since the plan holds no GDAL object.
+  Separately, a vector read now clears the filters an earlier read left on
+  the layer, which could narrow a later read that asked for no filter.
+
 * `query()` narrows a plan and reads nothing. `extent` and `crs` mean the same
   thing for both kinds of source; `bands`, `dim` and `resample` are raster
   only and `where`, `fields` and `limit` are vector only, and passing one to

@@ -5,6 +5,13 @@
 #' what its metadata is missing, and nothing is read until [collect()],
 #' [write_to()] or `plot()` asks for a result.
 #'
+#' `sql` is for what a layer name cannot say: a join, an aggregate, a
+#' computed column, a subset of columns renamed on the way out. It stands in
+#' for `layer` rather than being a [query()] argument, because it decides what
+#' the source *is*; `where`, `extent`, `fields` and `limit` are narrowings of
+#' it, and compose with it the way they compose with each other. A statement
+#' that returns no rows (an `UPDATE`, a `DELETE`) is refused: `src()` reads.
+#'
 #' `options` is the non-virtualisation way to fix a deficient source, which is
 #' why it is here and why [report()] points at it: a CSV's
 #' `"X_POSSIBLE_NAMES=lon"`, a raster's `"OVERVIEW_LEVEL=2"`. It is handed
@@ -19,6 +26,14 @@
 #'   source, or `NULL` to place no restriction.
 #' @param layer For a vector source, the layer to plan over: a name, or a
 #'   one-based position. Ignored for a raster.
+#' @param sql An SQL `SELECT` whose result is the layer to plan over, in place
+#'   of `layer`. The statement is run once here, to learn the result's shape,
+#'   and again at each read; [query()] then narrows its result as it would any
+#'   layer's.
+#' @param dialect The SQL dialect `sql` is written in: `NULL` for the driver's
+#'   own, `"OGRSQL"` for GDAL's built-in one, or `"SQLITE"` for GDAL's SQLite
+#'   dialect, which works against any source and has joins, aggregates and
+#'   the SpatiaLite functions.
 #'
 #' @return A `raster_source` or a `vector_source`.
 #' @export
@@ -28,14 +43,21 @@
 #'
 #' v <- src(system.file("extdata/test.gpkg", package = "GDAL7"))
 #' v
-src <- function(dsn, options = NULL, drivers = NULL, layer = 1L) {
+#'
+#' src(system.file("extdata/test.gpkg", package = "GDAL7"),
+#'     sql = "SELECT name, population / 1e6 AS millions FROM places")
+src <- function(dsn, options = NULL, drivers = NULL, layer = 1L,
+                sql = NULL, dialect = NULL) {
   if (!is.character(dsn) || length(dsn) != 1L || is.na(dsn)) {
     stop("`dsn` must be a single, non-missing string", call. = FALSE)
   }
+  check_sql(sql, dialect, layer_given = !missing(layer))
 
   ds <- GDAL7::gdal_open(dsn, options = options, drivers = drivers)
 
-  if (ds@raster_count > 0L) {
+  if (!is.null(sql)) {
+    new_vector_source(dsn, ds, layer = NULL, sql = sql, dialect = dialect)
+  } else if (ds@raster_count > 0L) {
     new_raster_source(dsn, ds)
   } else if (ds@layer_count > 0L) {
     new_vector_source(dsn, ds, layer)
@@ -124,8 +146,50 @@ new_raster_source <- function(dsn, ds) {
   x
 }
 
-new_vector_source <- function(dsn, ds, layer) {
-  lyr <- GDAL7::get_layer(ds, layer)
+# `sql` and `layer` are two ways of naming the one layer a vector source plans
+# over, so giving both would leave two answers to which one that is.
+check_sql <- function(sql, dialect, layer_given) {
+  if (is.null(sql)) {
+    if (!is.null(dialect)) {
+      stop("`dialect` says what `sql` is written in, and there is no `sql`",
+           call. = FALSE)
+    }
+    return(invisible(NULL))
+  }
+  if (!is.character(sql) || length(sql) != 1L || is.na(sql) || !nzchar(sql)) {
+    stop("`sql` must be a single, non-empty string", call. = FALSE)
+  }
+  if (!is.null(dialect) &&
+      (!is.character(dialect) || length(dialect) != 1L || is.na(dialect))) {
+    stop("`dialect` must be a single string, or NULL for the driver's own",
+         call. = FALSE)
+  }
+  if (layer_given) {
+    stop("`sql` and `layer` both say which layer to read; give one.\n",
+         "  The table goes in the statement's FROM.", call. = FALSE)
+  }
+  invisible(NULL)
+}
+
+new_vector_source <- function(dsn, ds, layer, sql = NULL, dialect = NULL) {
+  plan <- list(
+    kind = "vector",
+    layer = layer,
+    sql = sql,
+    dialect = dialect,
+    extent = NULL,
+    where = NULL,
+    fields = NULL,
+    limit = NULL,
+    crs = NULL
+  )
+  lyr <- tryCatch(
+    plan_layer(ds, plan),
+    error = function(e) {
+      GDAL7::gdal_close(ds)
+      stop(conditionMessage(e), call. = FALSE)
+    }
+  )
   extent <- tryCatch(bbox_to_extent(GDAL7::get_extent(lyr)),
                      error = function(e) NULL)
 
@@ -141,19 +205,29 @@ new_vector_source <- function(dsn, ds, layer) {
       feature_count = GDAL7::feature_count(lyr, force = FALSE),
       fast_spatial_filter = isTRUE(GDAL7::test_capability(lyr, "FastSpatialFilter"))
     ),
-    plan = list(
-      kind = "vector",
-      layer = layer,
-      extent = NULL,
-      where = NULL,
-      fields = NULL,
-      limit = NULL,
-      crs = NULL
-    ),
+    plan = plan,
     findings = NULL
   )
   S7::prop(x, "findings") <- vector_findings(x)
   x
+}
+
+# The layer a vector plan reads: the named one, or a fresh result set for the
+# plan's statement. A result set is run again at each read rather than kept,
+# because the plan holds no GDAL object, and because a result set is a
+# cursor: reading it twice would need it rewound and its filters cleared.
+plan_layer <- function(ds, plan) {
+  if (is.null(plan$sql)) {
+    return(GDAL7::get_layer(ds, plan$layer))
+  }
+  lyr <- GDAL7::execute_sql(ds, plan$sql, dialect = plan$dialect)
+  if (is.null(lyr)) {
+    stop("that statement returned no result set, and src() reads one.\n",
+         "  A statement that changes the source belongs in ",
+         "GDAL7::execute_sql() on a dataset opened for update.",
+         call. = FALSE)
+  }
+  lyr
 }
 
 #' Close a source
@@ -221,6 +295,11 @@ S7::method(print, vector_source) <- function(x, ...) {
     cat("  extent ", format_extent(info$source_extent), "\n", sep = "")
   }
   cat("  crs    ", crs_label(info$crs), "\n", sep = "")
+  if (!is.null(plan$sql)) {
+    cat("  sql    ", plan$sql,
+        if (!is.null(plan$dialect)) paste0("  (", plan$dialect, ")"),
+        "\n", sep = "")
+  }
   if (!is.null(plan$where)) {
     cat("  where  ", plan$where, " (not checked until read)\n", sep = "")
   }

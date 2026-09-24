@@ -92,6 +92,11 @@ A tibble with a `wk` WKB column, keeping whatever name GDAL gave the geometry.
 wk finds a geometry column by asking rather than by name, so `wk_bbox()`,
 `wk_plot()` and the chunked handlers all work on the result unchanged.
 
+What a layer name cannot say, an SQL `SELECT` can, and it stands in for the
+layer: `src(dsn, sql = "SELECT name, population / 1e6 AS millions FROM places")`,
+with `dialect = "SQLITE"` for joins and aggregates against any source.
+`query()` narrows the result as it would a layer.
+
 `crs` is the one argument that means something different for each kind. On a
 vector it also sets the CRS the features come back in, because transforming
 coordinates is cheap and has no resampling decision in it:
