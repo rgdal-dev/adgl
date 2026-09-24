@@ -57,18 +57,29 @@ survives as a number. That is the same in every package that does this, and
 it is why \code{resample = "nearest"} is the default.
 
 For a vector, the result is a tibble whose geometry column is \code{\link[wk:wkb]{wk::wkb()}}
-with its CRS set. The column keeps whatever name GDAL gave it, because wk
-finds a geometry column by asking rather than by name, so \code{wk_bbox()},
-\code{wk_plot()} and the chunked handlers all work on the result unchanged. When
-the plan carries a \code{crs} from \code{\link[=query]{query()}}, the coordinates are transformed
-with \code{\link[PROJ:proj_trans]{PROJ::proj_trans()}} on the way out, which is one pass over the
-geometry and nothing else.
+with its CRS set. The id is always \code{fid} and the geometry always \code{geom},
+whatever the driver called them. An attribute that already has one of
+those names comes back as \code{fid_1} or \code{geom_1}. When the plan carries a \code{crs} from
+\code{\link[=query]{query()}}, the coordinates are transformed with \code{\link[PROJ:proj_trans]{PROJ::proj_trans()}} on
+the way out, which is one pass over the geometry and nothing else.
+
+The whole vector plan is carried out in GDAL: the filters, the fields,
+which the driver is told not to read at all, the names, and the limit,
+which stops the read rather than trimming it. So \code{as = "arrow"} can hand
+back the Arrow stream itself, unread, as a \code{nanoarrow_array_stream} for
+arrow, duckdb, geoarrow or anything else that takes one, with the CRS in
+the geometry column's GeoArrow metadata. The one part of a plan that is
+not in GDAL is \code{query(crs = )}, so a stream of a reprojected plan is an
+error rather than a stream in the wrong CRS. A layer allows one stream at a
+time: read it through, or release it with \code{\link[GDAL7:release_arrow_stream]{GDAL7::release_arrow_stream()}},
+before reading the source again.
 }
 \section{Arguments}{
 
 
 \describe{
-\item{\code{as}}{Raster only. \code{"grd"} (the default) or \code{"gis"}.}
+\item{\code{as}}{For a raster, \code{"grd"} (the default) or \code{"gis"}. For a
+vector, \code{"tibble"} (the default) or \code{"arrow"}.}
 \item{\code{type}}{Raster only. \code{"double"} (the default), \code{"integer"} or
 \code{"raw"}.}
 \item{\code{mask}}{Raster only. Return each band's nodata value as \code{NA}.
