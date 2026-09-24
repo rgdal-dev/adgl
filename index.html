@@ -108,6 +108,7 @@
 <span><span class="co">#&gt; 2 Sydney    &lt;POINT (151.2093 -33.8688)&gt;</span></span>
 <span><span class="co">#&gt; 3 Perth     &lt;POINT (115.8605 -31.9523)&gt;</span></span></code></pre></div>
 <p>A tibble with a <code>wk</code> WKB column, keeping whatever name GDAL gave the geometry. wk finds a geometry column by asking rather than by name, so <code>wk_bbox()</code>, <code>wk_plot()</code> and the chunked handlers all work on the result unchanged.</p>
+<p>What a layer name cannot say, an SQL <code>SELECT</code> can, and it stands in for the layer: <code>src(dsn, sql = "SELECT name, population / 1e6 AS millions FROM places")</code>, with <code>dialect = "SQLITE"</code> for joins and aggregates against any source. <code><a href="reference/query.html">query()</a></code> narrows the result as it would a layer.</p>
 <p><code>crs</code> is the one argument that means something different for each kind. On a vector it also sets the CRS the features come back in, because transforming coordinates is cheap and has no resampling decision in it:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/collect.html">collect</a></span><span class="op">(</span><span class="fu"><a href="reference/query.html">query</a></span><span class="op">(</span><span class="va">v</span>, crs <span class="op">=</span> <span class="st">"EPSG:3857"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -145,7 +146,7 @@
 <span>  <span class="fu"><a href="reference/query.html">query</a></span><span class="op">(</span>extent <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">160</span>, <span class="op">-</span><span class="fl">60</span>, <span class="op">-</span><span class="fl">20</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/warp.html">warp</a></span><span class="op">(</span><span class="st">"EPSG:3031"</span>, resample <span class="op">=</span> <span class="st">"bilinear"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/write_to.html">write_to</a></span><span class="op">(</span><span class="st">"polar.tif"</span>, options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"COMPRESS=ZSTD"</span>, <span class="st">"TILED=YES"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>A warped plan compiles into GDAL’s own pipeline and never enters R. Its target extent comes from <code><a href="https://rdrr.io/pkg/GDAL7/man/transform_extent.html" class="external-link">GDAL7::transform_extent()</a></code>, which unions GDAL’s boundary walk with an interior mesh, because the walk alone can come back hundreds of kilometres too narrow around a projection’s interior singularities and an extent that is too small clips data silently.</p>
+<p>A warped plan compiles into GDAL’s own pipeline and never enters R. Its target extent comes from <code><a href="https://rgdal-dev.github.io/GDAL7/reference/transform_extent.html" class="external-link">GDAL7::transform_extent()</a></code>, which unions GDAL’s boundary walk with an interior mesh, because the walk alone can come back hundreds of kilometres too narrow around a projection’s interior singularities and an extent that is too small clips data silently.</p>
 <p>Three arguments shape the output grid, and any one of them is enough:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/warp.html">warp</a></span><span class="op">(</span><span class="va">x</span>, <span class="st">"EPSG:3031"</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2048</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span>        <span class="co"># 2048 wide, GDAL picks the height</span></span>
@@ -167,7 +168,7 @@
 <li>Field and row narrowing are applied in R rather than in GDAL, because the Arrow stream GDAL7 exposes has no column projection and no row limit. It saves memory rather than I/O today.</li>
 <li>
 <code>as_vrt()</code>, and <code>as_sf()</code> / <code>as_terra()</code> / <code>as_stars()</code> behind Suggests.</li>
-<li>Multidimensional sources, which fit neither in-memory form; read them with <code><a href="https://rdrr.io/pkg/GDAL7/man/read_mdarray.html" class="external-link">GDAL7::read_mdarray()</a></code> for now.</li>
+<li>Multidimensional sources, which fit neither in-memory form; read them with <code><a href="https://rgdal-dev.github.io/GDAL7/reference/read_mdarray.html" class="external-link">GDAL7::read_mdarray()</a></code> for now.</li>
 </ul>
 </div>
 </div>

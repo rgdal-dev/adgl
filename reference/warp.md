@@ -70,7 +70,7 @@ will reproject when you ask it to, and it will still never invent a
 geotransform for a file that has none.
 
 The target extent is computed with
-[`GDAL7::transform_extent()`](https://rdrr.io/pkg/GDAL7/man/transform_extent.html),
+[`GDAL7::transform_extent()`](https://rgdal-dev.github.io/GDAL7/reference/transform_extent.html),
 which unions GDAL's boundary walk with an interior mesh, rather than
 left to the boundary walk alone. That matters where the target
 projection has an interior singularity: the walk alone can come back

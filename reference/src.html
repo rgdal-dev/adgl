@@ -48,7 +48,14 @@ what its metadata is missing, and nothing is read until <code><a href="collect.h
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">src</span><span class="op">(</span><span class="va">dsn</span>, options <span class="op">=</span> <span class="cn">NULL</span>, drivers <span class="op">=</span> <span class="cn">NULL</span>, layer <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">src</span><span class="op">(</span></span>
+<span>  <span class="va">dsn</span>,</span>
+<span>  options <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  drivers <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  layer <span class="op">=</span> <span class="fl">1L</span>,</span>
+<span>  sql <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  dialect <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -74,6 +81,20 @@ source, or <code>NULL</code> to place no restriction.</p></dd>
 <dd><p>For a vector source, the layer to plan over: a name, or a
 one-based position. Ignored for a raster.</p></dd>
 
+
+<dt id="arg-sql">sql<a class="anchor" aria-label="anchor" href="#arg-sql"></a></dt>
+<dd><p>An SQL <code>SELECT</code> whose result is the layer to plan over, in place
+of <code>layer</code>. The statement is run once here, to learn the result's shape,
+and again at each read; <code><a href="query.html">query()</a></code> then narrows its result as it would any
+layer's.</p></dd>
+
+
+<dt id="arg-dialect">dialect<a class="anchor" aria-label="anchor" href="#arg-dialect"></a></dt>
+<dd><p>The SQL dialect <code>sql</code> is written in: <code>NULL</code> for the driver's
+own, <code>"OGRSQL"</code> for GDAL's built-in one, or <code>"SQLITE"</code> for GDAL's SQLite
+dialect, which works against any source and has joins, aggregates and
+the SpatiaLite functions.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -81,7 +102,13 @@ one-based position. Ignored for a raster.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p><code>options</code> is the non-virtualisation way to fix a deficient source, which is
+    <p><code>sql</code> is for what a layer name cannot say: a join, an aggregate, a
+computed column, a subset of columns renamed on the way out. It stands in
+for <code>layer</code> rather than being a <code><a href="query.html">query()</a></code> argument, because it decides what
+the source <em>is</em>; <code>where</code>, <code>extent</code>, <code>fields</code> and <code>limit</code> are narrowings of
+it, and compose with it the way they compose with each other. A statement
+that returns no rows (an <code>UPDATE</code>, a <code>DELETE</code>) is refused: <code>src()</code> reads.</p>
+<p><code>options</code> is the non-virtualisation way to fix a deficient source, which is
 why it is here and why <code><a href="report.html">report()</a></code> points at it: a CSV's
 <code>"X_POSSIBLE_NAMES=lon"</code>, a raster's <code>"OVERVIEW_LEVEL=2"</code>. It is handed
 straight to GDAL. <code>drivers</code> restricts which drivers may try the file, so a
@@ -102,6 +129,13 @@ second driver cannot claim one the first should have had.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> vector source places  5 features  Point</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   extent 115.8605, 151.2093, -42.8826, -12.4634</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   crs    WGS 84</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   nothing missing</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">src</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/test.gpkg"</span>, package <span class="op">=</span> <span class="st">"GDAL7"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    sql <span class="op">=</span> <span class="st">"SELECT name, population / 1e6 AS millions FROM places"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> vector source SELECT  5 features  None</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   crs    none</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   sql    SELECT name, population / 1e6 AS millions FROM places</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   nothing missing</span>
 </code></pre></div>
     </div>

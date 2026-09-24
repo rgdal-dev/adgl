@@ -117,6 +117,13 @@ geometry. wk finds a geometry column by asking rather than by name, so
 `wk_bbox()`, `wk_plot()` and the chunked handlers all work on the result
 unchanged.
 
+What a layer name cannot say, an SQL `SELECT` can, and it stands in for
+the layer:
+`src(dsn, sql = "SELECT name, population / 1e6 AS millions FROM places")`,
+with `dialect = "SQLITE"` for joins and aggregates against any source.
+[`query()`](https://rgdal-dev.github.io/adgl/reference/query.md) narrows
+the result as it would a layer.
+
 `crs` is the one argument that means something different for each kind.
 On a vector it also sets the CRS the features come back in, because
 transforming coordinates is cheap and has no resampling decision in it:
@@ -183,7 +190,7 @@ x |>
 
 A warped plan compiles into GDAL’s own pipeline and never enters R. Its
 target extent comes from
-[`GDAL7::transform_extent()`](https://rdrr.io/pkg/GDAL7/man/transform_extent.html),
+[`GDAL7::transform_extent()`](https://rgdal-dev.github.io/GDAL7/reference/transform_extent.html),
 which unions GDAL’s boundary walk with an interior mesh, because the
 walk alone can come back hundreds of kilometres too narrow around a
 projection’s interior singularities and an extent that is too small
@@ -233,5 +240,5 @@ algebra, the deficiency report, the terminals and the interop edge.
   Suggests.
 - Multidimensional sources, which fit neither in-memory form; read them
   with
-  [`GDAL7::read_mdarray()`](https://rdrr.io/pkg/GDAL7/man/read_mdarray.html)
+  [`GDAL7::read_mdarray()`](https://rgdal-dev.github.io/GDAL7/reference/read_mdarray.html)
   for now.

@@ -11,7 +11,14 @@ result.
 ## Usage
 
 ``` r
-src(dsn, options = NULL, drivers = NULL, layer = 1L)
+src(
+  dsn,
+  options = NULL,
+  drivers = NULL,
+  layer = 1L,
+  sql = NULL,
+  dialect = NULL
+)
 ```
 
 ## Arguments
@@ -35,11 +42,35 @@ src(dsn, options = NULL, drivers = NULL, layer = 1L)
   For a vector source, the layer to plan over: a name, or a one-based
   position. Ignored for a raster.
 
+- sql:
+
+  An SQL `SELECT` whose result is the layer to plan over, in place of
+  `layer`. The statement is run once here, to learn the result's shape,
+  and again at each read;
+  [`query()`](https://rgdal-dev.github.io/adgl/reference/query.md) then
+  narrows its result as it would any layer's.
+
+- dialect:
+
+  The SQL dialect `sql` is written in: `NULL` for the driver's own,
+  `"OGRSQL"` for GDAL's built-in one, or `"SQLITE"` for GDAL's SQLite
+  dialect, which works against any source and has joins, aggregates and
+  the SpatiaLite functions.
+
 ## Value
 
 A `raster_source` or a `vector_source`.
 
 ## Details
+
+`sql` is for what a layer name cannot say: a join, an aggregate, a
+computed column, a subset of columns renamed on the way out. It stands
+in for `layer` rather than being a
+[`query()`](https://rgdal-dev.github.io/adgl/reference/query.md)
+argument, because it decides what the source *is*; `where`, `extent`,
+`fields` and `limit` are narrowings of it, and compose with it the way
+they compose with each other. A statement that returns no rows (an
+`UPDATE`, a `DELETE`) is refused: `src()` reads.
 
 `options` is the non-virtualisation way to fix a deficient source, which
 is why it is here and why
@@ -64,5 +95,12 @@ v
 #> vector source places  5 features  Point
 #>   extent 115.8605, 151.2093, -42.8826, -12.4634
 #>   crs    WGS 84
+#>   nothing missing
+
+src(system.file("extdata/test.gpkg", package = "GDAL7"),
+    sql = "SELECT name, population / 1e6 AS millions FROM places")
+#> vector source SELECT  5 features  None
+#>   crs    none
+#>   sql    SELECT name, population / 1e6 AS millions FROM places
 #>   nothing missing
 ```

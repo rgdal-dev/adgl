@@ -101,7 +101,7 @@ narrower one it was always about, that it will never quietly augment a
 source to supply metadata the source is missing. It will reproject when you
 ask it to, and it will still never invent a geotransform for a file that
 has none.</p>
-<p>The target extent is computed with <code><a href="https://rdrr.io/pkg/GDAL7/man/transform_extent.html" class="external-link">GDAL7::transform_extent()</a></code>, which
+<p>The target extent is computed with <code><a href="https://rgdal-dev.github.io/GDAL7/reference/transform_extent.html" class="external-link">GDAL7::transform_extent()</a></code>, which
 unions GDAL's boundary walk with an interior mesh, rather than left to the
 boundary walk alone. That matters where the target projection has an
 interior singularity: the walk alone can come back hundreds of kilometres

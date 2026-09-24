@@ -36,12 +36,12 @@ vector_source(
 - dataset:
 
   The open
-  [`GDAL7::GDALDataset`](https://rdrr.io/pkg/GDAL7/man/GDALDataset.html).
+  [`GDAL7::GDALDataset`](https://rgdal-dev.github.io/GDAL7/reference/GDALDataset.html).
 
 - info:
 
   What the one probe at open returned:
-  [`GDAL7::gdal_info()`](https://rdrr.io/pkg/GDAL7/man/gdal_info.html)
+  [`GDAL7::gdal_info()`](https://rgdal-dev.github.io/GDAL7/reference/gdal_info.html)
   for a raster, the layer's own description for a vector.
 
 - plan:
