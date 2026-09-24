@@ -149,7 +149,9 @@ the outside with <code>NA</code>. <code>FALSE</code> by default.</p></dd>
 <dt><code>where</code></dt>
 <dd><p>Vector only. An SQL <code>WHERE</code> clause. GDAL does not
 validate it when it is set, so a bad clause shows up as a warning at
-read time rather than an error here.</p></dd>
+read time rather than an error here. It is GDAL's SQL, so a field is
+named as the source names it, except that <code>fid</code> is the feature id on
+every driver.</p></dd>
 
 <dt><code>fields</code></dt>
 <dd><p>Vector only. Which attribute columns to read, by name.</p></dd>

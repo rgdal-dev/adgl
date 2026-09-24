@@ -94,6 +94,14 @@ such as <code>c("COMPRESS=ZSTD", "TILED=YES")</code>.</p></dd>
 <dd><p>Vector only. The layer name to create. Defaults to the
 file's base name.</p></dd>
 
+<dt><code>geometry_name</code>, <code>fid_name</code></dt>
+<dd><p>Vector only. What the written layer
+calls its geometry and its feature id. <code>NULL</code>, the default, leaves it
+to the driver, which is <code>geom</code> and <code>fid</code> for a GeoPackage. Only a format
+that stores them as named columns can take a name (GeoPackage, SQLite,
+PostgreSQL, Parquet); a shapefile or GeoJSON has nowhere to put one,
+and GDAL warns and ignores it.</p></dd>
+
 
 </dl></div>
 

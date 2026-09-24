@@ -112,10 +112,13 @@ collect(query(v, where = "population > 1e6", fields = "name"))
 #> 3 Perth     <POINT (115.8605 -31.9523)>
 ```
 
-A tibble with a `wk` WKB column, keeping whatever name GDAL gave the
-geometry. wk finds a geometry column by asking rather than by name, so
-`wk_bbox()`, `wk_plot()` and the chunked handlers all work on the result
-unchanged.
+A tibble with a `wk` WKB column. The geometry is always `geom` and the
+feature id always `fid`, whatever the driver called them (a shapefile
+says `wkb_geometry` and `OGC_FID`); printing the source says when they
+were renamed, and `write_to(geometry_name = , fid_name = )` chooses them
+on the way out. wk finds a geometry column by asking rather than by
+name, so `wk_bbox()`, `wk_plot()` and the chunked handlers all work on
+the result unchanged.
 
 What a layer name cannot say, an SQL `SELECT` can, and it stands in for
 the layer:

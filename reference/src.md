@@ -101,6 +101,7 @@ src(system.file("extdata/test.gpkg", package = "GDAL7"),
     sql = "SELECT name, population / 1e6 AS millions FROM places")
 #> vector source SELECT  5 features  None
 #>   crs    none
+#>   names  fid from OGC_FID
 #>   sql    SELECT name, population / 1e6 AS millions FROM places
 #>   nothing missing
 ```

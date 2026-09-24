@@ -107,7 +107,7 @@
 <span><span class="co">#&gt; 1 Melbourne &lt;POINT (144.9631 -37.8136)&gt;</span></span>
 <span><span class="co">#&gt; 2 Sydney    &lt;POINT (151.2093 -33.8688)&gt;</span></span>
 <span><span class="co">#&gt; 3 Perth     &lt;POINT (115.8605 -31.9523)&gt;</span></span></code></pre></div>
-<p>A tibble with a <code>wk</code> WKB column, keeping whatever name GDAL gave the geometry. wk finds a geometry column by asking rather than by name, so <code>wk_bbox()</code>, <code>wk_plot()</code> and the chunked handlers all work on the result unchanged.</p>
+<p>A tibble with a <code>wk</code> WKB column. The geometry is always <code>geom</code> and the feature id always <code>fid</code>, whatever the driver called them (a shapefile says <code>wkb_geometry</code> and <code>OGC_FID</code>); printing the source says when they were renamed, and <code>write_to(geometry_name = , fid_name = )</code> chooses them on the way out. wk finds a geometry column by asking rather than by name, so <code>wk_bbox()</code>, <code>wk_plot()</code> and the chunked handlers all work on the result unchanged.</p>
 <p>What a layer name cannot say, an SQL <code>SELECT</code> can, and it stands in for the layer: <code>src(dsn, sql = "SELECT name, population / 1e6 AS millions FROM places")</code>, with <code>dialect = "SQLITE"</code> for joins and aggregates against any source. <code><a href="reference/query.html">query()</a></code> narrows the result as it would a layer.</p>
 <p><code>crs</code> is the one argument that means something different for each kind. On a vector it also sets the CRS the features come back in, because transforming coordinates is cheap and has no resampling decision in it:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">

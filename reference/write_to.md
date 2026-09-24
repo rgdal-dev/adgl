@@ -58,6 +58,15 @@ yourself.
   Vector only. The layer name to create. Defaults to the file's base
   name.
 
+- `geometry_name`, `fid_name`:
+
+  Vector only. What the written layer calls its geometry and its feature
+  id. `NULL`, the default, leaves it to the driver, which is `geom` and
+  `fid` for a GeoPackage. Only a format that stores them as named
+  columns can take a name (GeoPackage, SQLite, PostgreSQL, Parquet); a
+  shapefile or GeoJSON has nowhere to put one, and GDAL warns and
+  ignores it.
+
 ## Examples
 
 ``` r
