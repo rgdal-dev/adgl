@@ -90,7 +90,9 @@ edges: \code{"out"} (the default), \code{"near"} or \code{"in"}.}
 the outside with \code{NA}. \code{FALSE} by default.}
 \item{\code{where}}{Vector only. An SQL \code{WHERE} clause. GDAL does not
 validate it when it is set, so a bad clause shows up as a warning at
-read time rather than an error here.}
+read time rather than an error here. It is GDAL's SQL, so a field is
+named as the source names it, except that \code{fid} is the feature id on
+every driver.}
 \item{\code{fields}}{Vector only. Which attribute columns to read, by name.}
 \item{\code{limit}}{Vector only. Stop after this many features.}
 }

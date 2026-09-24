@@ -27,6 +27,12 @@ NULL
 #'     such as `c("COMPRESS=ZSTD", "TILED=YES")`.}
 #'   \item{`layer`}{Vector only. The layer name to create. Defaults to the
 #'     file's base name.}
+#'   \item{`geometry_name`, `fid_name`}{Vector only. What the written layer
+#'     calls its geometry and its feature id. `NULL`, the default, leaves it
+#'     to the driver, which is `geom` and `fid` for a GeoPackage. Only a format
+#'     that stores them as named columns can take a name (GeoPackage, SQLite,
+#'     PostgreSQL, Parquet); a shapefile or GeoJSON has nowhere to put one,
+#'     and GDAL warns and ignores it.}
 #' }
 #'
 #' @return `dsn`, invisibly.
@@ -97,8 +103,13 @@ S7::method(write_to, raster_source) <- function(x, dsn, ..., driver = NULL,
 }
 
 S7::method(write_to, vector_source) <- function(x, dsn, ..., driver = NULL,
-                                                options = NULL, layer = NULL) {
+                                                options = NULL, layer = NULL,
+                                                geometry_name = NULL,
+                                                fid_name = NULL) {
   rlang_check_empty(...)
+  options <- c(options,
+               column_option("GEOMETRY_NAME", geometry_name, "geometry_name"),
+               column_option("FID", fid_name, "fid_name"))
   driver <- driver %||% driver_from_extension(dsn, "vector")
   info <- S7::prop(x, "info")
   plan <- S7::prop(x, "plan")
@@ -122,6 +133,19 @@ S7::method(write_to, vector_source) <- function(x, dsn, ..., driver = NULL,
     layer_options = options
   )
   invisible(dsn)
+}
+
+# A column name for the written layer is a layer creation option: it is the
+# target's name that is being chosen, not which column of the input to use.
+column_option <- function(key, value, arg) {
+  if (is.null(value)) {
+    return(NULL)
+  }
+  if (!is.character(value) || length(value) != 1L || is.na(value) ||
+      !nzchar(value)) {
+    stop("`", arg, "` must be a single, non-empty string", call. = FALSE)
+  }
+  paste0(key, "=", value)
 }
 
 # A nodata value is metadata the source does have, so losing it on the way

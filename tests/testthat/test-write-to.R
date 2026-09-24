@@ -87,3 +87,17 @@ test_that("the container type is wide enough for every band written", {
   on.exit(src_close(x), add = TRUE)
   expect_equal(adgl:::mem_type(S7::prop(x, "dataset"), 1:2), "Int16")
 })
+
+test_that("write_to() names the written geometry and id", {
+  v <- src(test_gpkg())
+  on.exit(src_close(v), add = TRUE)
+  out <- tempfile(fileext = ".gpkg")
+  on.exit(unlink(out), add = TRUE)
+  write_to(v, out, geometry_name = "shape", fid_name = "id")
+  back <- src(out)
+  on.exit(src_close(back), add = TRUE)
+  expect_equal(S7::prop(back, "info")$geometry_column, "shape")
+  expect_equal(S7::prop(back, "info")$fid_column, "id")
+  expect_equal(nrow(collect(back)), 5L)
+  expect_error(write_to(v, out, geometry_name = c("a", "b")), "single")
+})

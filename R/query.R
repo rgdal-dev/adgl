@@ -79,7 +79,9 @@ NULL
 #'     the outside with `NA`. `FALSE` by default.}
 #'   \item{`where`}{Vector only. An SQL `WHERE` clause. GDAL does not
 #'     validate it when it is set, so a bad clause shows up as a warning at
-#'     read time rather than an error here.}
+#'     read time rather than an error here. It is GDAL's SQL, so a field is
+#'     named as the source names it, except that `fid` is the feature id on
+#'     every driver.}
 #'   \item{`fields`}{Vector only. Which attribute columns to read, by name.}
 #'   \item{`limit`}{Vector only. Stop after this many features.}
 #' }

@@ -250,3 +250,34 @@ test_that("a padded read survives being resampled to a different size", {
   expect_true(all(is.na(g$data[1:4, , 1])))
   expect_false(anyNA(g$data[5:8, 5:8, 1]))
 })
+
+test_that("the id and the geometry are fid and geom whatever the driver", {
+  v <- src(test_gpkg())
+  on.exit(src_close(v), add = TRUE)
+  from_gpkg <- names(collect(v))
+
+  shp <- tempfile(fileext = ".shp")
+  write_to(v, shp)
+  s <- src(shp)
+  on.exit(src_close(s), add = TRUE)
+  expect_equal(S7::prop(s, "info")$fid_column, "OGC_FID")
+  expect_equal(S7::prop(s, "info")$geometry_column, "wkb_geometry")
+  expect_setequal(names(collect(s)), from_gpkg)
+  expect_s3_class(collect(s)$geom, "wk_wkb")
+  expect_true(any(grepl("fid from OGC_FID, geom from wkb_geometry",
+                        utils::capture.output(print(s)))))
+
+  # An SQL result names the id OGC_FID even over a GeoPackage.
+  q <- src(test_gpkg(), sql = "SELECT name, geom FROM places")
+  on.exit(src_close(q), add = TRUE)
+  expect_true(all(c("fid", "geom") %in% names(collect(q))))
+})
+
+test_that("an attribute that already has the standard name stops the read", {
+  path <- tempfile(fileext = ".geojson")
+  GDAL7::write_vector(
+    data.frame(geom = c("a", "b"), value = 1:2), path, driver = "GeoJSON")
+  x <- src(path)
+  on.exit(src_close(x), add = TRUE)
+  expect_error(collect(x), "attribute called 'geom'")
+})

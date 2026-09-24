@@ -39,6 +39,12 @@ the extension of \code{dsn}.}
 such as \code{c("COMPRESS=ZSTD", "TILED=YES")}.}
 \item{\code{layer}}{Vector only. The layer name to create. Defaults to the
 file's base name.}
+\item{\code{geometry_name}, \code{fid_name}}{Vector only. What the written layer
+calls its geometry and its feature id. \code{NULL}, the default, leaves it
+to the driver, which is \code{geom} and \code{fid} for a GeoPackage. Only a format
+that stores them as named columns can take a name (GeoPackage, SQLite,
+PostgreSQL, Parquet); a shapefile or GeoJSON has nowhere to put one,
+and GDAL warns and ignores it.}
 }
 }
 

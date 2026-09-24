@@ -354,8 +354,9 @@ test_that("sql: an SQL SELECT is the source, and query() narrows it", {
   expect_equal(nrow(d), 3L)
   expect_true(all(c("name", "population") %in% names(d)))
   expect_false("elevation" %in% names(d))
-  # The id comes back as OGC_FID here, though the same table read as a layer
-  # calls it fid: one more face of the fid row below.
+  # GDAL names a result set's id OGC_FID even over a GeoPackage; it comes back
+  # as fid, as it does from the layer.
+  expect_true("fid" %in% names(d))
   expect_equal(nrow(collect(query(v, extent = c(140, 155, -45, -30)))), 2L)
 
   agg <- src(gpkg(), dialect = "SQLITE",
@@ -370,15 +371,14 @@ gap("geometry-type", "geometry type control (sf::st_read(promote_to_multi =, typ
 gap("write-append", "appending to a layer rather than creating it (sf::st_write(append =))")
 gap("spatial-filter-geometry", "filtering by an arbitrary geometry, not a rectangle (geopandas read_file(mask =), sf::st_read(wkt_filter =))")
 gap("arrow-out", "handing back the Arrow stream rather than a tibble (geopandas to_arrow)")
-gap("geometry-name", "knowing or choosing the geometry column's name (pyogrio geometry_name =)")
 gap("datetime", "datetimes and time zones surviving the read (pyogrio datetime_as_string =)")
 gap("force-2d", "dropping Z and M on read (pyogrio force_2d =)")
 
-test_that("fid: the feature id is there, but under whatever name the driver used", {
-  # pyogrio: read_dataframe(fid_as_index = True). This is a gap written as a
-  # passing test, because what it asserts is the inconsistency itself: the
-  # same five features read back through two drivers name their identifier
-  # and their geometry differently, and adgl passes both through untouched.
+test_that("fid: the feature id is fid whatever the driver, and filters by that name", {
+  # pyogrio: read_dataframe(fid_as_index = True) ; read_dataframe(fids = )
+  # The same five features read back through two drivers used to name their
+  # identifier fid and OGC_FID; they are fid in both now, and GDAL's own SQL
+  # takes fid as the id in a where clause on every driver.
   v <- src(gpkg())
   on.exit(src_close(v), add = TRUE)
   expect_true("fid" %in% names(collect(v)))
@@ -388,8 +388,30 @@ test_that("fid: the feature id is there, but under whatever name the driver used
   write_to(v, path)
   again <- src(path)
   on.exit(src_close(again), add = TRUE)
-  expect_true("OGC_FID" %in% names(collect(again)))
-  expect_false("fid" %in% names(collect(again)))
+  expect_true("fid" %in% names(collect(again)))
+  expect_false("OGC_FID" %in% names(collect(again)))
+  expect_equal(nrow(collect(query(again, where = "fid IN (1, 2)"))), 2L)
+})
+
+test_that("geometry-name: the geometry is geom whatever the driver, and a write can name it", {
+  # pyogrio: read_dataframe(f) ; write_dataframe(df, f, geometry_name = )
+  v <- src(gpkg())
+  on.exit(src_close(v), add = TRUE)
+
+  shp <- tempfile(fileext = ".shp")
+  write_to(v, shp)
+  from_shp <- src(shp)
+  on.exit(src_close(from_shp), add = TRUE)
+  expect_true("geom" %in% names(collect(from_shp)))
+
+  out <- tempfile(fileext = ".gpkg")
+  on.exit(unlink(out), add = TRUE)
+  write_to(v, out, geometry_name = "shape", fid_name = "id")
+  back <- src(out)
+  on.exit(src_close(back), add = TRUE)
+  expect_equal(S7::prop(back, "info")$geometry_column, "shape")
+  expect_equal(S7::prop(back, "info")$fid_column, "id")
+  expect_true(all(c("fid", "geom") %in% names(collect(back))))
 })
 
 test_that("encoding: an encoding is an open option, not an argument", {
