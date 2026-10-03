@@ -1,5 +1,6 @@
 #' @keywords internal
 #'
+#' @importFrom nanoarrow convert_array_stream
 #' @importFrom PROJ proj_trans
 #' @importFrom vaster vcrop
 #' @importFrom ximage ximage

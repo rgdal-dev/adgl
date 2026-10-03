@@ -94,7 +94,7 @@ test_that("query() narrows an SQL source the way it narrows a layer", {
 
   expect_equal(nrow(collect(query(v, where = "name = 'Sydney'"))), 1L)
   expect_equal(nrow(collect(query(v, limit = 2))), 2L)
-  expect_equal(names(collect(query(v, fields = "name")))[1], "name")
+  expect_equal(names(collect(query(v, fields = "name"))), c("fid", "name", "geom"))
   expect_lt(nrow(collect(query(v, extent = c(140, 155, -45, -30)))), 3L)
 
   # The result set is run afresh at each read, so nothing an earlier read

@@ -370,7 +370,19 @@ gap("geometry-only", "geometry without attributes, or attributes without geometr
 gap("geometry-type", "geometry type control (sf::st_read(promote_to_multi =, type =))")
 gap("write-append", "appending to a layer rather than creating it (sf::st_write(append =))")
 gap("spatial-filter-geometry", "filtering by an arbitrary geometry, not a rectangle (geopandas read_file(mask =), sf::st_read(wkt_filter =))")
-gap("arrow-out", "handing back the Arrow stream rather than a tibble (geopandas to_arrow)")
+test_that("arrow-out: the Arrow stream comes back rather than a tibble", {
+  # pyogrio: read_dataframe(f, use_arrow = True) ; open_arrow(f, columns = , where = )
+  # geopandas: to_arrow()
+  v <- src(gpkg())
+  on.exit(src_close(v), add = TRUE)
+  stream <- collect(query(v, where = "population > 1e6", fields = "name"), as = "arrow")
+  expect_s3_class(stream, "nanoarrow_array_stream")
+  d <- suppressWarnings(nanoarrow::convert_array_stream(stream))
+  GDAL7::release_arrow_stream(stream)
+  expect_equal(nrow(d), 3L)
+  expect_identical(names(d), c("fid", "name", "geom"))
+})
+
 gap("datetime", "datetimes and time zones surviving the read (pyogrio datetime_as_string =)")
 gap("force-2d", "dropping Z and M on read (pyogrio force_2d =)")
 
