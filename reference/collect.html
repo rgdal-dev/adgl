@@ -96,12 +96,21 @@ neighbours, and the blend is no longer equal to the nodata value, so it
 survives as a number. That is the same in every package that does this, and
 it is why <code>resample = "nearest"</code> is the default.</p>
 <p>For a vector, the result is a tibble whose geometry column is <code><a href="https://paleolimbot.github.io/wk/reference/wkb.html" class="external-link">wk::wkb()</a></code>
-with its CRS set. The column keeps whatever name GDAL gave it, because wk
-finds a geometry column by asking rather than by name, so <code>wk_bbox()</code>,
-<code>wk_plot()</code> and the chunked handlers all work on the result unchanged. When
-the plan carries a <code>crs</code> from <code><a href="query.html">query()</a></code>, the coordinates are transformed
-with <code><a href="https://hypertidy.github.io/PROJ/reference/proj_trans.html" class="external-link">PROJ::proj_trans()</a></code> on the way out, which is one pass over the
-geometry and nothing else.</p>
+with its CRS set. The id is always <code>fid</code> and the geometry always <code>geom</code>,
+whatever the driver called them. An attribute that already has one of
+those names comes back as <code>fid_1</code> or <code>geom_1</code>. When the plan carries a <code>crs</code> from
+<code><a href="query.html">query()</a></code>, the coordinates are transformed with <code><a href="https://hypertidy.github.io/PROJ/reference/proj_trans.html" class="external-link">PROJ::proj_trans()</a></code> on
+the way out, which is one pass over the geometry and nothing else.</p>
+<p>The whole vector plan is carried out in GDAL: the filters, the fields,
+which the driver is told not to read at all, the names, and the limit,
+which stops the read rather than trimming it. So <code>as = "arrow"</code> can hand
+back the Arrow stream itself, unread, as a <code>nanoarrow_array_stream</code> for
+arrow, duckdb, geoarrow or anything else that takes one, with the CRS in
+the geometry column's GeoArrow metadata. The one part of a plan that is
+not in GDAL is <code>query(crs = )</code>, so a stream of a reprojected plan is an
+error rather than a stream in the wrong CRS. A layer allows one stream at a
+time: read it through, or release it with <code><a href="https://rgdal-dev.github.io/GDAL7/reference/release_arrow_stream.html" class="external-link">GDAL7::release_arrow_stream()</a></code>,
+before reading the source again.</p>
     </div>
     <div class="section level2">
     <h2 id="arguments-1">Arguments<a class="anchor" aria-label="anchor" href="#arguments-1"></a></h2>
@@ -109,7 +118,8 @@ geometry and nothing else.</p>
 
 
 <dl><dt><code>as</code></dt>
-<dd><p>Raster only. <code>"grd"</code> (the default) or <code>"gis"</code>.</p></dd>
+<dd><p>For a raster, <code>"grd"</code> (the default) or <code>"gis"</code>. For a
+vector, <code>"tibble"</code> (the default) or <code>"arrow"</code>.</p></dd>
 
 <dt><code>type</code></dt>
 <dd><p>Raster only. <code>"double"</code> (the default), <code>"integer"</code> or

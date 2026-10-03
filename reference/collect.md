@@ -72,20 +72,33 @@ this, and it is why `resample = "nearest"` is the default.
 
 For a vector, the result is a tibble whose geometry column is
 [`wk::wkb()`](https://paleolimbot.github.io/wk/reference/wkb.html) with
-its CRS set. The column keeps whatever name GDAL gave it, because wk
-finds a geometry column by asking rather than by name, so `wk_bbox()`,
-`wk_plot()` and the chunked handlers all work on the result unchanged.
-When the plan carries a `crs` from
+its CRS set. The id is always `fid` and the geometry always `geom`,
+whatever the driver called them. An attribute that already has one of
+those names comes back as `fid_1` or `geom_1`. When the plan carries a
+`crs` from
 [`query()`](https://rgdal-dev.github.io/adgl/reference/query.md), the
 coordinates are transformed with
 [`PROJ::proj_trans()`](https://hypertidy.github.io/PROJ/reference/proj_trans.html)
 on the way out, which is one pass over the geometry and nothing else.
 
+The whole vector plan is carried out in GDAL: the filters, the fields,
+which the driver is told not to read at all, the names, and the limit,
+which stops the read rather than trimming it. So `as = "arrow"` can hand
+back the Arrow stream itself, unread, as a `nanoarrow_array_stream` for
+arrow, duckdb, geoarrow or anything else that takes one, with the CRS in
+the geometry column's GeoArrow metadata. The one part of a plan that is
+not in GDAL is `query(crs = )`, so a stream of a reprojected plan is an
+error rather than a stream in the wrong CRS. A layer allows one stream
+at a time: read it through, or release it with
+[`GDAL7::release_arrow_stream()`](https://rgdal-dev.github.io/GDAL7/reference/release_arrow_stream.html),
+before reading the source again.
+
 ## Arguments
 
 - `as`:
 
-  Raster only. `"grd"` (the default) or `"gis"`.
+  For a raster, `"grd"` (the default) or `"gis"`. For a vector,
+  `"tibble"` (the default) or `"arrow"`.
 
 - `type`:
 

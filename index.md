@@ -120,6 +120,10 @@ on the way out. wk finds a geometry column by asking rather than by
 name, so `wk_bbox()`, `wk_plot()` and the chunked handlers all work on
 the result unchanged.
 
+Every part of a vector plan except `crs` is carried out in GDAL, so
+`collect(as = "arrow")` can hand back the Arrow stream itself, unread,
+for arrow, duckdb or geoarrow to take from there.
+
 What a layer name cannot say, an SQL `SELECT` can, and it stands in for
 the layer:
 `src(dsn, sql = "SELECT name, population / 1e6 AS millions FROM places")`,
@@ -236,9 +240,6 @@ algebra, the deficiency report, the terminals and the interop edge.
 
 ## Still to come
 
-- Field and row narrowing are applied in R rather than in GDAL, because
-  the Arrow stream GDAL7 exposes has no column projection and no row
-  limit. It saves memory rather than I/O today.
 - `as_vrt()`, and `as_sf()` / `as_terra()` / `as_stars()` behind
   Suggests.
 - Multidimensional sources, which fit neither in-memory form; read them
